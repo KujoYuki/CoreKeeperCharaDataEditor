@@ -1,5 +1,7 @@
 # CKFoodMaker
 
+![CKFoodMaker Overview](Document/images/imageSample.png)
+
 [CoreKeepr](https://store.steampowered.com/app/1621690/Core_Keeper/)のインベントリ内容を操作する外部拡張エディターです。  
 通常の手段では作れない料理の作成を目的として制作しています。  
 手に入りにくい金色食材同士の料理や、作成する料理のレア度や個数を調整することが出来ます。  

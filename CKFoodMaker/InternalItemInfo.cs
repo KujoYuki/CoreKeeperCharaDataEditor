@@ -1,18 +1,18 @@
 ﻿namespace CKFoodMaker
 {
     /// <summary>
-    /// アイテムの基本情報
+    /// ソフト側で持つアイテムの基本情報
     /// </summary>
     public record InternalItemInfo
     {
-        public string ObjectId { get; private set; }
+        public int ObjectID { get; private set; }
         public string InternalName { get; private set; }
         public string DisplayName { get; private set; }
         public MaterialSubCategory SubCategory { get; private set; } = MaterialSubCategory.None;
 
         public InternalItemInfo(string objectId, string internalName, string displayName, MaterialSubCategory subCategory = MaterialSubCategory.None)
         {
-            ObjectId = objectId;
+            ObjectID = int.Parse(objectId);
             InternalName = internalName;
             DisplayName = displayName;
             SubCategory = subCategory;

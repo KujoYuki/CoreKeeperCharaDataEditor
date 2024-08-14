@@ -196,7 +196,7 @@ namespace CKFoodMaker
                     rarityComboBox.SelectedIndex = 2;
                     cookedCategoryComboBox.SelectedIndex = Array.IndexOf(baseCookedArray.Select(c => c + _epicCorrectionValue).ToArray(), selectedObjectID);
                 }
-                
+                createdNumericNo.Value = _saveDataManager.Items[inventoryIndexComboBox.SelectedIndex].item.amount;
             }
         }
 

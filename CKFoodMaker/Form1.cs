@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace CKFoodMaker
 {
@@ -6,11 +7,30 @@ namespace CKFoodMaker
     {
         const int _rareCorrectionValue = 50;
         const int _epicCorrectionValue = 75;
+        static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
 
         private SaveDataManager _saveDataManager = new();
         private List<InternalItemInfo> _materialCategories = new();
         private List<InternalItemInfo> _cookedCategories = new();
-        public string SaveDataFolderPath { get; set; } = string.Empty;
+
+        private string _saveDataFolderPath = string.Empty;
+        public string SaveDataFolderPath
+        {
+            get { return _saveDataFolderPath; }
+            set
+            {
+                savePathTextBox.Text = value;
+                _saveDataFolderPath = value;
+                if (Directory.Exists(_saveDataFolderPath))
+                {
+                    EnabeleUI();
+                }
+                else
+                {
+                    DisabeleUI();
+                }
+            }
+        }
 
         public Form1()
         {
@@ -20,12 +40,25 @@ namespace CKFoodMaker
 
         public void Initialize()
         {
-            SaveDataFolderPath = InitilizeFolderPath();
-            SetMaterialCategory();
-            SetCookedCategory();
-            LoadSlots();
-            rarityComboBox.SelectedIndex = 0;
-            itemSlotToolTip.SetToolTip(itemSlotLabel, "----で空枠、番号は入っているobjectIdです。表示はインベントリ内30個まで。");
+            try
+            {
+                SetMaterialCategory();
+                SetCookedCategory();
+                rarityComboBox.SelectedIndex = 0;
+                itemSlotToolTip.SetToolTip(itemSlotLabel, "----で空枠、番号は入っているobjectIdです。表示はインベントリ内30個まで。");
+
+                InitilizeFolderPath();
+                if (Directory.Exists(SaveDataFolderPath))
+                {
+                    LoadSlots();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "初期化処理に失敗しました。");
+                File.AppendAllText(_errorLogFilePath, DateTime.Now + Environment.NewLine + ex.ToString());
+                throw;
+            }
         }
 
         private void SetMaterialCategory()
@@ -70,32 +103,46 @@ namespace CKFoodMaker
             cookedCategoryComboBox.SelectedIndex = 0;
         }
 
-        private string InitilizeFolderPath(string dialogPath = "")
+        private void InitilizeFolderPath()
         {
-            if (!string.IsNullOrEmpty(dialogPath))
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.LastSaveFolderPath))
             {
-            }
-
-            string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
-            string coreKeeperPath = dialogPath == "" ? Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper") : dialogPath;
-            if (Directory.Exists(coreKeeperPath))
-            {
-                savePathTextBox.Text = SaveDataFolderPath = coreKeeperPath;
+                SaveDataFolderPath = Properties.Settings.Default.LastSaveFolderPath;
             }
             else
             {
-                savePathTextBox.Text = SaveDataFolderPath = appDataPath;
+                string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
+                string generalPath = Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper\Steam");
+                if (Directory.GetDirectories(generalPath).Count() is 0)
+                {
+                    SaveDataFolderPath = generalPath;
+                    return;
+                }
+                SaveDataFolderPath = Path.Combine(Directory.GetDirectories(generalPath).SingleOrDefault()!, "saves");
+                if (!Directory.Exists(SaveDataFolderPath))
+                {
+                    SaveDataFolderPath = appDataPath;
+                }
             }
-            return savePathTextBox.Text;
         }
 
         private void LoadSlots()
         {
-            inventoryIndexComboBox.Items.Clear();
+            saveSlotNoComboBox.Items.Clear();
             // セーブデータ一覧の取得
-            string steamDirecotory = Path.Combine(savePathTextBox.Text, "Steam");
-            SaveDataFolderPath = Path.Combine(Directory.GetDirectories(steamDirecotory).SingleOrDefault()!, "saves");
-            string[] savePaths = new DirectoryInfo(SaveDataFolderPath).GetFiles(@"*.json").Select(fileInfo => fileInfo.FullName).ToArray();
+            Regex regex = new Regex(@"^\d{1,2}|debug$", RegexOptions.Compiled);
+            string[] savePaths = new DirectoryInfo(SaveDataFolderPath).GetFiles(@"*.json")
+                .Where(file => regex.IsMatch(Path.GetFileNameWithoutExtension(file.Name)))
+                .Select(fileInfo => fileInfo.FullName).ToArray();
+            if (savePaths.Length is 0)
+            {
+                DisabeleUI();
+                return;
+            }
+            else
+            {
+                EnabeleUI();
+            }
 
             foreach (string savePath in savePaths)
             {
@@ -106,14 +153,15 @@ namespace CKFoodMaker
             {
                 saveSlotNoComboBox.SelectedItem = saveSlotNoComboBox.Items[0];
             }
+
             LoadItems();
         }
 
         private void LoadItems()
         {
-            // リロード時のindex保持
+            // リロード時のindex保持とクリア
             int selectedInventoryIndex = 0;
-            if (inventoryIndexComboBox.Items.Count>0)
+            if (inventoryIndexComboBox.Items.Count > 0)
             {
                 selectedInventoryIndex = inventoryIndexComboBox.SelectedIndex;
             }
@@ -158,8 +206,26 @@ namespace CKFoodMaker
         private void openSevePathDialogButton_Click(object sender, EventArgs e)
         {
             string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
-            saveFolderBrowserDialog.SelectedPath = Path.Combine(appDataPath, "LocalLow");
-            saveFolderBrowserDialog.ShowDialog();
+            string generalPath = Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper\Steam");
+            if (Directory.GetDirectories(generalPath).Count() is 0)
+            {
+                // ユーザーIDフォルダ見つからない場合はSteamフォルダで留め置く
+                saveFolderBrowserDialog.SelectedPath = generalPath;
+            }
+            else
+            {
+                saveFolderBrowserDialog.SelectedPath = Path.Combine(Directory.GetDirectories(generalPath).FirstOrDefault()!, "saves");
+            }
+
+            var result = saveFolderBrowserDialog.ShowDialog();
+            if (result is DialogResult.OK)
+            {
+                SaveDataFolderPath = saveFolderBrowserDialog.SelectedPath;
+            }
+            if (Directory.Exists(SaveDataFolderPath))
+            {
+                LoadSlots();
+            }
         }
 
         private void LoadPanel()
@@ -184,14 +250,14 @@ namespace CKFoodMaker
                 {
                     rarityComboBox.SelectedIndex = 0;
                     cookedCategoryComboBox.SelectedIndex = Array.IndexOf(baseCookedArray, selectedObjectID);
-                    
+
                 }
-                else if (baseCookedArray.Select(c=>c+_rareCorrectionValue).Contains(selectedObjectID))
+                else if (baseCookedArray.Select(c => c + _rareCorrectionValue).Contains(selectedObjectID))
                 {
                     rarityComboBox.SelectedIndex = 1;
                     cookedCategoryComboBox.SelectedIndex = Array.IndexOf(baseCookedArray.Select(c => c + _rareCorrectionValue).ToArray(), selectedObjectID);
                 }
-                else 
+                else
                 {
                     rarityComboBox.SelectedIndex = 2;
                     cookedCategoryComboBox.SelectedIndex = Array.IndexOf(baseCookedArray.Select(c => c + _epicCorrectionValue).ToArray(), selectedObjectID);
@@ -249,7 +315,7 @@ namespace CKFoodMaker
             }
             _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, internalName);
             EnableResultMessage($"{internalName}の作成に成功しました。");
-            
+
             // 書き換え後の再読み込み
             LoadItems();
         }
@@ -317,7 +383,7 @@ namespace CKFoodMaker
         /// <param name="variation"></param>
         /// <param name="materialA">材料の食材A</param>
         /// <param name="materialB">材料の食材B</param>
-        public static void ReverseCalcurateVariation(int variation ,out int materialA, out int materialB)
+        public static void ReverseCalcurateVariation(int variation, out int materialA, out int materialB)
         {
             string combinedHex = variation.ToString("X8");
             string strA = combinedHex.Substring(0, 4);
@@ -329,9 +395,33 @@ namespace CKFoodMaker
         private bool IsCookedItem(int objectID)
         {
             List<int> cookedCategoryIds = _cookedCategories
-                .SelectMany(id => new[] { id.ObjectID, id.ObjectID + _rareCorrectionValue, id.ObjectID + _epicCorrectionValue} )
+                .SelectMany(id => new[] { id.ObjectID, id.ObjectID + _rareCorrectionValue, id.ObjectID + _epicCorrectionValue })
                 .ToList();
             return cookedCategoryIds.Contains(objectID);
+        }
+
+        private void EnabeleUI()
+        {
+            saveSlotNoComboBox.Enabled = true;
+            inventoryIndexComboBox.Enabled = true;
+            createButton.Enabled = true;
+        }
+        private void DisabeleUI()
+        {
+            saveSlotNoComboBox.Enabled = false;
+            inventoryIndexComboBox.Enabled = false;
+            createButton.Enabled = false;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.LastSaveFolderPath = SaveDataFolderPath;
+            Properties.Settings.Default.Save();
+        }
+
+        private void savePathTextBox_TextChanged(object sender, EventArgs e)
+        {
+            SaveDataFolderPath = savePathTextBox.Text;
         }
     }
 }

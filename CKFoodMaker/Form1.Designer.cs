@@ -376,10 +376,11 @@
             savePathTextBox.Name = "savePathTextBox";
             savePathTextBox.Size = new Size(431, 23);
             savePathTextBox.TabIndex = 4;
+            savePathTextBox.TextChanged += savePathTextBox_TextChanged;
             // 
             // saveFolderBrowserDialog
             // 
-            saveFolderBrowserDialog.SelectedPath = "C:\\Users";
+            saveFolderBrowserDialog.RootFolder = Environment.SpecialFolder.LocalApplicationData;
             // 
             // openSevePathDialogButton
             // 
@@ -448,6 +449,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "CKFoodMaker";
+            FormClosing += Form1_FormClosing;
             itemEditTabControl.ResumeLayout(false);
             foodTab.ResumeLayout(false);
             foodTab.PerformLayout();

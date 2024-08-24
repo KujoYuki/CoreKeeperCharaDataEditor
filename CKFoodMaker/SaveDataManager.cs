@@ -7,7 +7,8 @@ namespace CKFoodMaker
     /// </summary>
     public class SaveDataManager
     {
-        private int _loadItemLimit = 30;
+        //インベントリ数（バッグ装備）が最大の場合は50
+        private int _loadItemLimit = 50;
 
         public string SaveDataPath { get; private set; } = String.Empty;
         public List<(Item item, string objectName)> Items { get; private set; } = new();

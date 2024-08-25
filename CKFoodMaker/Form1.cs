@@ -405,12 +405,16 @@ namespace CKFoodMaker
             saveSlotNoComboBox.Enabled = true;
             inventoryIndexComboBox.Enabled = true;
             createButton.Enabled = true;
+            previousItemButton.Enabled = true;
+            nextItemButton.Enabled = true;
         }
         private void DisabeleUI()
         {
             saveSlotNoComboBox.Enabled = false;
             inventoryIndexComboBox.Enabled = false;
             createButton.Enabled = false;
+            previousItemButton.Enabled = false;
+            nextItemButton.Enabled = false;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -422,6 +426,22 @@ namespace CKFoodMaker
         private void savePathTextBox_TextChanged(object sender, EventArgs e)
         {
             SaveDataFolderPath = savePathTextBox.Text;
+        }
+
+        private void previousItemButton_Click(object sender, EventArgs e)
+        {
+            if (inventoryIndexComboBox.SelectedIndex > 0)
+            {
+                inventoryIndexComboBox.SelectedIndex--;
+            }
+        }
+
+        private void nextItemButton_Click(object sender, EventArgs e)
+        {
+            if (inventoryIndexComboBox.SelectedIndex < SaveDataManager.LoadItemLimit - 1)
+            {
+                inventoryIndexComboBox.SelectedIndex++;
+            }
         }
     }
 }

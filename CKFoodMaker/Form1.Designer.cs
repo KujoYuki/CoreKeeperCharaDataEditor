@@ -68,6 +68,8 @@
             createButton = new Button();
             itemSlotToolTip = new ToolTip(components);
             resultLabel = new Label();
+            previousItemButton = new Button();
+            nextItemButton = new Button();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
@@ -431,11 +433,33 @@
             resultLabel.Text = "resultLabel";
             resultLabel.Visible = false;
             // 
+            // previousItemButton
+            // 
+            previousItemButton.Location = new Point(385, 80);
+            previousItemButton.Name = "previousItemButton";
+            previousItemButton.Size = new Size(58, 23);
+            previousItemButton.TabIndex = 15;
+            previousItemButton.Text = "◀";
+            previousItemButton.UseVisualStyleBackColor = true;
+            previousItemButton.Click += previousItemButton_Click;
+            // 
+            // nextItemButton
+            // 
+            nextItemButton.Location = new Point(449, 80);
+            nextItemButton.Name = "nextItemButton";
+            nextItemButton.Size = new Size(58, 23);
+            nextItemButton.TabIndex = 16;
+            nextItemButton.Text = "▶";
+            nextItemButton.UseVisualStyleBackColor = true;
+            nextItemButton.Click += nextItemButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(540, 378);
+            Controls.Add(nextItemButton);
+            Controls.Add(previousItemButton);
             Controls.Add(resultLabel);
             Controls.Add(createButton);
             Controls.Add(inventoryIndexComboBox);
@@ -500,5 +524,7 @@
         private TextBox internalNameTextBox;
         private Button SetDefaultButton;
         private Label resultLabel;
+        private Button previousItemButton;
+        private Button nextItemButton;
     }
 }

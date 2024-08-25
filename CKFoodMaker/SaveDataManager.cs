@@ -8,7 +8,7 @@ namespace CKFoodMaker
     public class SaveDataManager
     {
         //インベントリ数（バッグ装備）が最大の場合は50
-        private int _loadItemLimit = 50;
+        public const int LoadItemLimit = 50;
 
         public string SaveDataPath { get; private set; } = String.Empty;
         public List<(Item item, string objectName)> Items { get; private set; } = new();
@@ -52,7 +52,7 @@ namespace CKFoodMaker
             {
                 var limitedItems = inventoryElement.EnumerateArray()
                     .Zip(inventoryNameElement.EnumerateArray())
-                    .Take(_loadItemLimit);
+                    .Take(LoadItemLimit);
                 foreach (var (inventoryItem, objectName) in limitedItems)
                 {
                     if (!inventoryItem.TryGetProperty("objectID", out var objectIdElement) ||
@@ -90,7 +90,7 @@ namespace CKFoodMaker
                 // inventoryとinventoryObjectNamesを部分的に取得して置換する
                 var inventoryList = inventoryElement.EnumerateArray().ToList();
                 var inventoryObjectNamesList = inventoryNameElement.EnumerateArray().ToList();
-                if (insertIndex >= 0 && insertIndex < _loadItemLimit)
+                if (insertIndex >= 0 && insertIndex < LoadItemLimit)
                 {
                     // 単一アイテム分のみをシリアライズ
                     string newItemJson = JsonSerializer.Serialize(newItem);

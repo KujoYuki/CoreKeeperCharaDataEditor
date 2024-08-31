@@ -8,6 +8,7 @@ namespace CKFoodMaker
         const int _rareCorrectionValue = 50;
         const int _epicCorrectionValue = 75;
         static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
+        static readonly Random _random = new Random((int)DateTime.Now.Ticks);
 
         private SaveDataManager _saveDataManager = new();
         private List<InternalItemInfo> _materialCategories = new();
@@ -310,6 +311,10 @@ namespace CKFoodMaker
                     MessageBox.Show("‹ó—“‚ª‚ ‚è‚Ü‚·B", "“ü—Í’l•s”õ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+                if (amountRangeCheckBox.Checked)
+                {
+                    amoutTextBox.Text = GetRandomNumber(amountRangeDown.Value, amountRangeUp.Value);
+                }
                 item = new(objectId: objectIdTextBox.Text, amount: amoutTextBox.Text, variation: variationTextBox.Text);
                 internalName = internalNameTextBox.Text;
             }
@@ -318,6 +323,17 @@ namespace CKFoodMaker
 
             // ‘‚«Š·‚¦Œã‚ÌÄ“Ç‚Ýž‚Ý
             LoadItems();
+        }
+
+        private string GetRandomNumber(decimal down, decimal up)
+        {
+            if (down>up)
+            {
+                var _ = down;
+                down = up;
+                up = _;
+            }
+            return _random.Next((int)amountRangeDown.Value, (int)amountRangeUp.Value + 1).ToString();
         }
 
         private async void EnableResultMessage(string message)

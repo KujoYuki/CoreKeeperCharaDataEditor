@@ -70,10 +70,16 @@
             resultLabel = new Label();
             previousItemButton = new Button();
             nextItemButton = new Button();
+            amountRangeCheckBox = new CheckBox();
+            amountRangeDown = new NumericUpDown();
+            amountRangeUp = new NumericUpDown();
+            label13 = new Label();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
             advancedTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)amountRangeDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)amountRangeUp).BeginInit();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -222,6 +228,10 @@
             // 
             // advancedTab
             // 
+            advancedTab.Controls.Add(label13);
+            advancedTab.Controls.Add(amountRangeUp);
+            advancedTab.Controls.Add(amountRangeDown);
+            advancedTab.Controls.Add(amountRangeCheckBox);
             advancedTab.Controls.Add(SetDefaultButton);
             advancedTab.Controls.Add(label3);
             advancedTab.Controls.Add(internalNameTextBox);
@@ -246,7 +256,7 @@
             // 
             SetDefaultButton.Location = new Point(136, 119);
             SetDefaultButton.Name = "SetDefaultButton";
-            SetDefaultButton.Size = new Size(166, 23);
+            SetDefaultButton.Size = new Size(152, 23);
             SetDefaultButton.TabIndex = 18;
             SetDefaultButton.Text = "デフォルト値(空アイテム)セット";
             SetDefaultButton.UseVisualStyleBackColor = true;
@@ -453,6 +463,45 @@
             nextItemButton.UseVisualStyleBackColor = true;
             nextItemButton.Click += nextItemButton_Click;
             // 
+            // amountRangeCheckBox
+            // 
+            amountRangeCheckBox.AutoSize = true;
+            amountRangeCheckBox.Location = new Point(320, 79);
+            amountRangeCheckBox.Name = "amountRangeCheckBox";
+            amountRangeCheckBox.Size = new Size(144, 19);
+            amountRangeCheckBox.TabIndex = 20;
+            amountRangeCheckBox.Text = "amount random range";
+            amountRangeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // amountRangeDown
+            // 
+            amountRangeDown.Location = new Point(320, 119);
+            amountRangeDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            amountRangeDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            amountRangeDown.Name = "amountRangeDown";
+            amountRangeDown.Size = new Size(62, 23);
+            amountRangeDown.TabIndex = 21;
+            amountRangeDown.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            // 
+            // amountRangeUp
+            // 
+            amountRangeUp.Location = new Point(409, 119);
+            amountRangeUp.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+            amountRangeUp.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            amountRangeUp.Name = "amountRangeUp";
+            amountRangeUp.Size = new Size(62, 23);
+            amountRangeUp.TabIndex = 22;
+            amountRangeUp.Value = new decimal(new int[] { 200, 0, 0, 0 });
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(389, 122);
+            label13.Name = "label13";
+            label13.Size = new Size(12, 15);
+            label13.TabIndex = 23;
+            label13.Text = "-";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -480,6 +529,8 @@
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).EndInit();
             advancedTab.ResumeLayout(false);
             advancedTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)amountRangeDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)amountRangeUp).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -526,5 +577,9 @@
         private Label resultLabel;
         private Button previousItemButton;
         private Button nextItemButton;
+        private NumericUpDown amountRangeDown;
+        private CheckBox amountRangeCheckBox;
+        private NumericUpDown amountRangeUp;
+        private Label label13;
     }
 }

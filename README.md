@@ -55,3 +55,8 @@ This tool directly edits the character data's inventory. It also includes advanc
 ## Limitations
 - Cannot modify character data outside of the inventory
 - Cannot modify items with auxiliary data, such as pets
+
+## 仕組みと解説
+[セーブデータ編集について](Document/analysis.md)  
+[パラメータについて](Document/parameter.md)  
+Japanese only.

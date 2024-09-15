@@ -26,9 +26,9 @@ This tool directly edits the character data's inventory. It also includes advanc
 - 任意の食材を指定した料理の作成
 - ポーションやシーズン限定アイテムなどの、通常は食材として鍋に入れられないアイテムを食材指定した料理の作成
 - 作成する料理の個数、レア度、カテゴリの変更
-- 999個を超えた料理の作成。
+- 9999個を超えた料理の作成。
 - 負数個の料理の作成
-  - 負数個のアイテムは回路を使ったアイテム増殖に利用出来ます。
+  - 負数個のアイテムは回路のバグ挙動を使ったアイテム増殖に利用出来ます。
 
 ## Features
 - Create dishes with any specified ingredients

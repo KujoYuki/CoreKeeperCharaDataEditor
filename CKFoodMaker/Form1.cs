@@ -305,15 +305,14 @@ namespace CKFoodMaker
                 if (objectIdTextBox.Text == string.Empty ||
                     amoutTextBox.Text == string.Empty ||
                     variationTextBox.Text == string.Empty ||
-                    variationUpdateCountTextBox.Text == string.Empty ||
-                    internalNameTextBox.Text == string.Empty)
+                    variationUpdateCountTextBox.Text == string.Empty)
                 {
                     MessageBox.Show("‹ó—“‚ª‚ ‚è‚Ü‚·B", "“ü—Í’l•s”õ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                if (amountRangeCheckBox.Checked)
+                if (amountConstCheckBox.Checked)
                 {
-                    amoutTextBox.Text = GetRandomNumber(amountRangeDown.Value, amountRangeUp.Value);
+                    amoutTextBox.Text = amountConst.Value.ToString();
                 }
                 item = new(objectId: objectIdTextBox.Text, amount: amoutTextBox.Text, variation: variationTextBox.Text);
                 internalName = internalNameTextBox.Text;
@@ -323,17 +322,6 @@ namespace CKFoodMaker
 
             // ‘‚«Š·‚¦Œã‚ÌÄ“Ç‚Ýž‚Ý
             LoadItems();
-        }
-
-        private string GetRandomNumber(decimal down, decimal up)
-        {
-            if (down>up)
-            {
-                var _ = down;
-                down = up;
-                up = _;
-            }
-            return _random.Next((int)amountRangeDown.Value, (int)amountRangeUp.Value + 1).ToString();
         }
 
         private async void EnableResultMessage(string message)
@@ -391,6 +379,7 @@ namespace CKFoodMaker
             amoutTextBox.Text = Item.Default.amount.ToString();
             variationTextBox.Text = Item.Default.variation.ToString();
             variationUpdateCountTextBox.Text = Item.Default.variationUpdateCount.ToString();
+            internalNameTextBox.Text = string.Empty;
         }
 
         /// <summary>

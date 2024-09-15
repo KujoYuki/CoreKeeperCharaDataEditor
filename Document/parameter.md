@@ -17,7 +17,6 @@
 ]
 ```
 inventoryとinventoryObjectNamesは配列内の先頭からインデックス情報が一致するものが同一アイテムです。  
-objectIDとinventoryObjectNameが対応したアイテムになっていない場合は、読み込み時に整合性チェックにひっかかり、バックアップからの読み込みが優先されます。  
 inventoryObjectNameは海外wikiではInternalNameとも呼ばれ、内部で扱われるアイテム名です。  
 
 ## ObectIdとInternalName

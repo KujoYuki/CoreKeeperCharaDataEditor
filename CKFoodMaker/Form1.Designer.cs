@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             foodTab = new TabPage();
+            unlockAllRecipeButton = new Button();
             rarityComboBox = new ComboBox();
             cookedCategoryComboBox = new ComboBox();
             label12 = new Label();
@@ -59,6 +60,33 @@
             amoutTextBox = new TextBox();
             label8 = new Label();
             variationTextBox = new TextBox();
+            petTab = new TabPage();
+            petNameTextBox = new TextBox();
+            label16 = new Label();
+            petTalent9ComboBox = new ComboBox();
+            petTalent9ValidCheckBox = new CheckBox();
+            petTalent8ComboBox = new ComboBox();
+            petTalent8ValidCheckBox = new CheckBox();
+            petTalent7ComboBox = new ComboBox();
+            petTalent7ValidCheckBox = new CheckBox();
+            petTalent6ComboBox = new ComboBox();
+            petTalent6ValidCheckBox = new CheckBox();
+            petTalent5ComboBox = new ComboBox();
+            petTalent5ValidCheckBox = new CheckBox();
+            petTalent4ComboBox = new ComboBox();
+            petTalent4ValidCheckBox = new CheckBox();
+            petTalent3ComboBox = new ComboBox();
+            petTalent3ValidCheckBox = new CheckBox();
+            petTalent2ComboBox = new ComboBox();
+            petTalent2ValidCheckBox = new CheckBox();
+            petTalent1ComboBox = new ComboBox();
+            petTalent1ValidCheckBox = new CheckBox();
+            petExpNumeric = new NumericUpDown();
+            label15 = new Label();
+            petKindComboBox = new ComboBox();
+            label14 = new Label();
+            petColorComboBox = new ComboBox();
+            label13 = new Label();
             label1 = new Label();
             saveSlotNoComboBox = new ComboBox();
             label2 = new Label();
@@ -77,20 +105,24 @@
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)amountConst).BeginInit();
+            petTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)petExpNumeric).BeginInit();
             SuspendLayout();
             // 
             // itemEditTabControl
             // 
             itemEditTabControl.Controls.Add(foodTab);
             itemEditTabControl.Controls.Add(advancedTab);
+            itemEditTabControl.Controls.Add(petTab);
             itemEditTabControl.Location = new Point(13, 110);
             itemEditTabControl.Name = "itemEditTabControl";
             itemEditTabControl.SelectedIndex = 0;
-            itemEditTabControl.Size = new Size(511, 196);
+            itemEditTabControl.Size = new Size(635, 177);
             itemEditTabControl.TabIndex = 0;
             // 
             // foodTab
             // 
+            foodTab.Controls.Add(unlockAllRecipeButton);
             foodTab.Controls.Add(rarityComboBox);
             foodTab.Controls.Add(cookedCategoryComboBox);
             foodTab.Controls.Add(label12);
@@ -106,10 +138,20 @@
             foodTab.Location = new Point(4, 24);
             foodTab.Name = "foodTab";
             foodTab.Padding = new Padding(3);
-            foodTab.Size = new Size(503, 168);
+            foodTab.Size = new Size(627, 149);
             foodTab.TabIndex = 0;
             foodTab.Text = "料理作成";
             foodTab.UseVisualStyleBackColor = true;
+            // 
+            // unlockAllRecipeButton
+            // 
+            unlockAllRecipeButton.Location = new Point(274, 124);
+            unlockAllRecipeButton.Name = "unlockAllRecipeButton";
+            unlockAllRecipeButton.Size = new Size(203, 23);
+            unlockAllRecipeButton.TabIndex = 18;
+            unlockAllRecipeButton.Text = "ゲーム内の全レシピ解放";
+            unlockAllRecipeButton.UseVisualStyleBackColor = true;
+            unlockAllRecipeButton.Click += unlockAllRecipeButton_Click;
             // 
             // rarityComboBox
             // 
@@ -164,7 +206,7 @@
             toMaxButton.Name = "toMaxButton";
             toMaxButton.Size = new Size(53, 23);
             toMaxButton.TabIndex = 12;
-            toMaxButton.Text = "999個";
+            toMaxButton.Text = "9999個";
             toMaxButton.UseVisualStyleBackColor = true;
             toMaxButton.Click += toMaxButton_Click;
             // 
@@ -242,7 +284,7 @@
             advancedTab.Location = new Point(4, 24);
             advancedTab.Name = "advancedTab";
             advancedTab.Padding = new Padding(3);
-            advancedTab.Size = new Size(503, 168);
+            advancedTab.Size = new Size(627, 149);
             advancedTab.TabIndex = 1;
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
@@ -369,6 +411,282 @@
             variationTextBox.Size = new Size(100, 23);
             variationTextBox.TabIndex = 13;
             // 
+            // petTab
+            // 
+            petTab.Controls.Add(petNameTextBox);
+            petTab.Controls.Add(label16);
+            petTab.Controls.Add(petTalent9ComboBox);
+            petTab.Controls.Add(petTalent9ValidCheckBox);
+            petTab.Controls.Add(petTalent8ComboBox);
+            petTab.Controls.Add(petTalent8ValidCheckBox);
+            petTab.Controls.Add(petTalent7ComboBox);
+            petTab.Controls.Add(petTalent7ValidCheckBox);
+            petTab.Controls.Add(petTalent6ComboBox);
+            petTab.Controls.Add(petTalent6ValidCheckBox);
+            petTab.Controls.Add(petTalent5ComboBox);
+            petTab.Controls.Add(petTalent5ValidCheckBox);
+            petTab.Controls.Add(petTalent4ComboBox);
+            petTab.Controls.Add(petTalent4ValidCheckBox);
+            petTab.Controls.Add(petTalent3ComboBox);
+            petTab.Controls.Add(petTalent3ValidCheckBox);
+            petTab.Controls.Add(petTalent2ComboBox);
+            petTab.Controls.Add(petTalent2ValidCheckBox);
+            petTab.Controls.Add(petTalent1ComboBox);
+            petTab.Controls.Add(petTalent1ValidCheckBox);
+            petTab.Controls.Add(petExpNumeric);
+            petTab.Controls.Add(label15);
+            petTab.Controls.Add(petKindComboBox);
+            petTab.Controls.Add(label14);
+            petTab.Controls.Add(petColorComboBox);
+            petTab.Controls.Add(label13);
+            petTab.Location = new Point(4, 24);
+            petTab.Name = "petTab";
+            petTab.Padding = new Padding(3);
+            petTab.Size = new Size(627, 149);
+            petTab.TabIndex = 2;
+            petTab.Text = "ペット";
+            petTab.UseVisualStyleBackColor = true;
+            // 
+            // petNameTextBox
+            // 
+            petNameTextBox.Location = new Point(496, 8);
+            petNameTextBox.Name = "petNameTextBox";
+            petNameTextBox.Size = new Size(100, 23);
+            petNameTextBox.TabIndex = 26;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(459, 12);
+            label16.Name = "label16";
+            label16.Size = new Size(31, 15);
+            label16.TabIndex = 25;
+            label16.Text = "名前";
+            // 
+            // petTalent9ComboBox
+            // 
+            petTalent9ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent9ComboBox.FormattingEnabled = true;
+            petTalent9ComboBox.Location = new Point(492, 104);
+            petTalent9ComboBox.Name = "petTalent9ComboBox";
+            petTalent9ComboBox.Size = new Size(129, 23);
+            petTalent9ComboBox.TabIndex = 24;
+            // 
+            // petTalent9ValidCheckBox
+            // 
+            petTalent9ValidCheckBox.AutoSize = true;
+            petTalent9ValidCheckBox.Location = new Point(426, 106);
+            petTalent9ValidCheckBox.Name = "petTalent9ValidCheckBox";
+            petTalent9ValidCheckBox.Size = new Size(60, 19);
+            petTalent9ValidCheckBox.TabIndex = 23;
+            petTalent9ValidCheckBox.Text = "スキル9";
+            petTalent9ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent8ComboBox
+            // 
+            petTalent8ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent8ComboBox.FormattingEnabled = true;
+            petTalent8ComboBox.Location = new Point(283, 104);
+            petTalent8ComboBox.Name = "petTalent8ComboBox";
+            petTalent8ComboBox.Size = new Size(129, 23);
+            petTalent8ComboBox.TabIndex = 22;
+            // 
+            // petTalent8ValidCheckBox
+            // 
+            petTalent8ValidCheckBox.AutoSize = true;
+            petTalent8ValidCheckBox.Location = new Point(217, 106);
+            petTalent8ValidCheckBox.Name = "petTalent8ValidCheckBox";
+            petTalent8ValidCheckBox.Size = new Size(60, 19);
+            petTalent8ValidCheckBox.TabIndex = 21;
+            petTalent8ValidCheckBox.Text = "スキル8";
+            petTalent8ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent7ComboBox
+            // 
+            petTalent7ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent7ComboBox.FormattingEnabled = true;
+            petTalent7ComboBox.Location = new Point(73, 104);
+            petTalent7ComboBox.Name = "petTalent7ComboBox";
+            petTalent7ComboBox.Size = new Size(129, 23);
+            petTalent7ComboBox.TabIndex = 20;
+            // 
+            // petTalent7ValidCheckBox
+            // 
+            petTalent7ValidCheckBox.AutoSize = true;
+            petTalent7ValidCheckBox.Location = new Point(7, 106);
+            petTalent7ValidCheckBox.Name = "petTalent7ValidCheckBox";
+            petTalent7ValidCheckBox.Size = new Size(60, 19);
+            petTalent7ValidCheckBox.TabIndex = 19;
+            petTalent7ValidCheckBox.Text = "スキル7";
+            petTalent7ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent6ComboBox
+            // 
+            petTalent6ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent6ComboBox.FormattingEnabled = true;
+            petTalent6ComboBox.Location = new Point(492, 79);
+            petTalent6ComboBox.Name = "petTalent6ComboBox";
+            petTalent6ComboBox.Size = new Size(129, 23);
+            petTalent6ComboBox.TabIndex = 18;
+            // 
+            // petTalent6ValidCheckBox
+            // 
+            petTalent6ValidCheckBox.AutoSize = true;
+            petTalent6ValidCheckBox.Location = new Point(426, 81);
+            petTalent6ValidCheckBox.Name = "petTalent6ValidCheckBox";
+            petTalent6ValidCheckBox.Size = new Size(60, 19);
+            petTalent6ValidCheckBox.TabIndex = 17;
+            petTalent6ValidCheckBox.Text = "スキル6";
+            petTalent6ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent5ComboBox
+            // 
+            petTalent5ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent5ComboBox.FormattingEnabled = true;
+            petTalent5ComboBox.Location = new Point(283, 79);
+            petTalent5ComboBox.Name = "petTalent5ComboBox";
+            petTalent5ComboBox.Size = new Size(129, 23);
+            petTalent5ComboBox.TabIndex = 16;
+            // 
+            // petTalent5ValidCheckBox
+            // 
+            petTalent5ValidCheckBox.AutoSize = true;
+            petTalent5ValidCheckBox.Location = new Point(217, 81);
+            petTalent5ValidCheckBox.Name = "petTalent5ValidCheckBox";
+            petTalent5ValidCheckBox.Size = new Size(60, 19);
+            petTalent5ValidCheckBox.TabIndex = 15;
+            petTalent5ValidCheckBox.Text = "スキル5";
+            petTalent5ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent4ComboBox
+            // 
+            petTalent4ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent4ComboBox.FormattingEnabled = true;
+            petTalent4ComboBox.Location = new Point(73, 79);
+            petTalent4ComboBox.Name = "petTalent4ComboBox";
+            petTalent4ComboBox.Size = new Size(129, 23);
+            petTalent4ComboBox.TabIndex = 14;
+            // 
+            // petTalent4ValidCheckBox
+            // 
+            petTalent4ValidCheckBox.AutoSize = true;
+            petTalent4ValidCheckBox.Location = new Point(7, 81);
+            petTalent4ValidCheckBox.Name = "petTalent4ValidCheckBox";
+            petTalent4ValidCheckBox.Size = new Size(60, 19);
+            petTalent4ValidCheckBox.TabIndex = 13;
+            petTalent4ValidCheckBox.Text = "スキル4";
+            petTalent4ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent3ComboBox
+            // 
+            petTalent3ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent3ComboBox.FormattingEnabled = true;
+            petTalent3ComboBox.Location = new Point(492, 54);
+            petTalent3ComboBox.Name = "petTalent3ComboBox";
+            petTalent3ComboBox.Size = new Size(129, 23);
+            petTalent3ComboBox.TabIndex = 12;
+            // 
+            // petTalent3ValidCheckBox
+            // 
+            petTalent3ValidCheckBox.AutoSize = true;
+            petTalent3ValidCheckBox.Location = new Point(426, 56);
+            petTalent3ValidCheckBox.Name = "petTalent3ValidCheckBox";
+            petTalent3ValidCheckBox.Size = new Size(60, 19);
+            petTalent3ValidCheckBox.TabIndex = 11;
+            petTalent3ValidCheckBox.Text = "スキル3";
+            petTalent3ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent2ComboBox
+            // 
+            petTalent2ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent2ComboBox.FormattingEnabled = true;
+            petTalent2ComboBox.Location = new Point(283, 54);
+            petTalent2ComboBox.Name = "petTalent2ComboBox";
+            petTalent2ComboBox.Size = new Size(129, 23);
+            petTalent2ComboBox.TabIndex = 10;
+            // 
+            // petTalent2ValidCheckBox
+            // 
+            petTalent2ValidCheckBox.AutoSize = true;
+            petTalent2ValidCheckBox.Location = new Point(217, 56);
+            petTalent2ValidCheckBox.Name = "petTalent2ValidCheckBox";
+            petTalent2ValidCheckBox.Size = new Size(60, 19);
+            petTalent2ValidCheckBox.TabIndex = 9;
+            petTalent2ValidCheckBox.Text = "スキル2";
+            petTalent2ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petTalent1ComboBox
+            // 
+            petTalent1ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent1ComboBox.FormattingEnabled = true;
+            petTalent1ComboBox.Location = new Point(73, 54);
+            petTalent1ComboBox.Name = "petTalent1ComboBox";
+            petTalent1ComboBox.Size = new Size(129, 23);
+            petTalent1ComboBox.TabIndex = 8;
+            // 
+            // petTalent1ValidCheckBox
+            // 
+            petTalent1ValidCheckBox.AutoSize = true;
+            petTalent1ValidCheckBox.Location = new Point(7, 56);
+            petTalent1ValidCheckBox.Name = "petTalent1ValidCheckBox";
+            petTalent1ValidCheckBox.Size = new Size(60, 19);
+            petTalent1ValidCheckBox.TabIndex = 7;
+            petTalent1ValidCheckBox.Text = "スキル1";
+            petTalent1ValidCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // petExpNumeric
+            // 
+            petExpNumeric.Location = new Point(354, 9);
+            petExpNumeric.Maximum = new decimal(new int[] { 107000, 0, 0, 0 });
+            petExpNumeric.Name = "petExpNumeric";
+            petExpNumeric.Size = new Size(83, 23);
+            petExpNumeric.TabIndex = 6;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(305, 12);
+            label15.Name = "label15";
+            label15.Size = new Size(43, 15);
+            label15.TabIndex = 5;
+            label15.Text = "経験値";
+            // 
+            // petKindComboBox
+            // 
+            petKindComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petKindComboBox.FormattingEnabled = true;
+            petKindComboBox.Location = new Point(44, 9);
+            petKindComboBox.Name = "petKindComboBox";
+            petKindComboBox.Size = new Size(140, 23);
+            petKindComboBox.TabIndex = 4;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(7, 12);
+            label14.Name = "label14";
+            label14.Size = new Size(31, 15);
+            label14.TabIndex = 3;
+            label14.Text = "種類";
+            // 
+            // petColorComboBox
+            // 
+            petColorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petColorComboBox.FormattingEnabled = true;
+            petColorComboBox.Location = new Point(224, 9);
+            petColorComboBox.Name = "petColorComboBox";
+            petColorComboBox.Size = new Size(64, 23);
+            petColorComboBox.TabIndex = 2;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(205, 12);
+            label13.Name = "label13";
+            label13.Size = new Size(19, 15);
+            label13.TabIndex = 0;
+            label13.Text = "色";
+            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -401,7 +719,7 @@
             // 
             savePathTextBox.Location = new Point(12, 27);
             savePathTextBox.Name = "savePathTextBox";
-            savePathTextBox.Size = new Size(431, 23);
+            savePathTextBox.Size = new Size(551, 23);
             savePathTextBox.TabIndex = 4;
             savePathTextBox.TextChanged += savePathTextBox_TextChanged;
             // 
@@ -411,7 +729,7 @@
             // 
             // openSevePathDialogButton
             // 
-            openSevePathDialogButton.Location = new Point(449, 26);
+            openSevePathDialogButton.Location = new Point(569, 26);
             openSevePathDialogButton.Name = "openSevePathDialogButton";
             openSevePathDialogButton.Size = new Size(75, 23);
             openSevePathDialogButton.TabIndex = 5;
@@ -482,7 +800,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(540, 378);
+            ClientSize = new Size(660, 374);
             Controls.Add(nextItemButton);
             Controls.Add(previousItemButton);
             Controls.Add(resultLabel);
@@ -495,6 +813,7 @@
             Controls.Add(saveSlotNoComboBox);
             Controls.Add(label1);
             Controls.Add(itemEditTabControl);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "CKFoodMaker";
@@ -506,6 +825,9 @@
             advancedTab.ResumeLayout(false);
             advancedTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)amountConst).EndInit();
+            petTab.ResumeLayout(false);
+            petTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)petExpNumeric).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -554,5 +876,33 @@
         private Button nextItemButton;
         private NumericUpDown amountConst;
         private CheckBox amountConstCheckBox;
+        private TabPage petTab;
+        private Label label13;
+        private ComboBox petKindComboBox;
+        private Label label14;
+        private ComboBox petColorComboBox;
+        private NumericUpDown petExpNumeric;
+        private Label label15;
+        private ComboBox petTalent1ComboBox;
+        private CheckBox petTalent1ValidCheckBox;
+        private ComboBox petTalent9ComboBox;
+        private CheckBox petTalent9ValidCheckBox;
+        private ComboBox petTalent8ComboBox;
+        private CheckBox petTalent8ValidCheckBox;
+        private ComboBox petTalent7ComboBox;
+        private CheckBox petTalent7ValidCheckBox;
+        private ComboBox petTalent6ComboBox;
+        private CheckBox petTalent6ValidCheckBox;
+        private ComboBox petTalent5ComboBox;
+        private CheckBox petTalent5ValidCheckBox;
+        private ComboBox petTalent4ComboBox;
+        private CheckBox petTalent4ValidCheckBox;
+        private ComboBox petTalent3ComboBox;
+        private CheckBox petTalent3ValidCheckBox;
+        private ComboBox petTalent2ComboBox;
+        private CheckBox petTalent2ValidCheckBox;
+        private TextBox petNameTextBox;
+        private Label label16;
+        private Button unlockAllRecipeButton;
     }
 }

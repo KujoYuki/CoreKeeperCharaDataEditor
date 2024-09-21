@@ -13,5 +13,13 @@ namespace CKFoodMaker
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
         }
+
+        static Program()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            IsDeveloper = args.Contains("--Usagi");
+        }
+
+        public static bool IsDeveloper { get; private set; }
     }
 }

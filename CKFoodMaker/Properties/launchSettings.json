@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CKFoodMaker": {
+      "commandName": "Project",
+      "commandLineArgs": "--Usagi"
+    }
+  }
+}

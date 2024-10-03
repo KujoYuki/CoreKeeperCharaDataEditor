@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             foodTab = new TabPage();
@@ -37,7 +36,7 @@
             cookedCategoryComboBox = new ComboBox();
             label12 = new Label();
             label11 = new Label();
-            button1 = new Button();
+            toMinusOneButton = new Button();
             toMaxButton = new Button();
             label10 = new Label();
             createdNumericNo = new NumericUpDown();
@@ -45,21 +44,6 @@
             label5 = new Label();
             materialComboBoxA = new ComboBox();
             label4 = new Label();
-            advancedTab = new TabPage();
-            amountConst = new NumericUpDown();
-            amountConstCheckBox = new CheckBox();
-            SetDefaultButton = new Button();
-            label3 = new Label();
-            internalNameTextBox = new TextBox();
-            objectIdsLinkLabel = new LinkLabel();
-            label6 = new Label();
-            variationUpdateCountTextBox = new TextBox();
-            objectIdTextBox = new TextBox();
-            label7 = new Label();
-            label9 = new Label();
-            amoutTextBox = new TextBox();
-            label8 = new Label();
-            variationTextBox = new TextBox();
             petTab = new TabPage();
             petNameTextBox = new TextBox();
             label16 = new Label();
@@ -87,6 +71,25 @@
             label14 = new Label();
             petColorComboBox = new ComboBox();
             label13 = new Label();
+            advancedTab = new TabPage();
+            auxDataTextBox = new TextBox();
+            label18 = new Label();
+            auxIndexTextBox = new TextBox();
+            label17 = new Label();
+            amountConst = new NumericUpDown();
+            amountConstCheckBox = new CheckBox();
+            SetDefaultButton = new Button();
+            label3 = new Label();
+            objectNameTextBox = new TextBox();
+            objectIdsLinkLabel = new LinkLabel();
+            label6 = new Label();
+            variationUpdateCountTextBox = new TextBox();
+            objectIdTextBox = new TextBox();
+            label7 = new Label();
+            label9 = new Label();
+            amoutTextBox = new TextBox();
+            label8 = new Label();
+            variationTextBox = new TextBox();
             label1 = new Label();
             saveSlotNoComboBox = new ComboBox();
             label2 = new Label();
@@ -96,24 +99,23 @@
             itemSlotLabel = new Label();
             inventoryIndexComboBox = new ComboBox();
             createButton = new Button();
-            itemSlotToolTip = new ToolTip(components);
             resultLabel = new Label();
             previousItemButton = new Button();
             nextItemButton = new Button();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
-            advancedTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)amountConst).BeginInit();
             petTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)petExpNumeric).BeginInit();
+            advancedTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)amountConst).BeginInit();
             SuspendLayout();
             // 
             // itemEditTabControl
             // 
             itemEditTabControl.Controls.Add(foodTab);
-            itemEditTabControl.Controls.Add(advancedTab);
             itemEditTabControl.Controls.Add(petTab);
+            itemEditTabControl.Controls.Add(advancedTab);
             itemEditTabControl.Location = new Point(13, 110);
             itemEditTabControl.Name = "itemEditTabControl";
             itemEditTabControl.SelectedIndex = 0;
@@ -127,7 +129,7 @@
             foodTab.Controls.Add(cookedCategoryComboBox);
             foodTab.Controls.Add(label12);
             foodTab.Controls.Add(label11);
-            foodTab.Controls.Add(button1);
+            foodTab.Controls.Add(toMinusOneButton);
             foodTab.Controls.Add(toMaxButton);
             foodTab.Controls.Add(label10);
             foodTab.Controls.Add(createdNumericNo);
@@ -149,7 +151,7 @@
             unlockAllRecipeButton.Name = "unlockAllRecipeButton";
             unlockAllRecipeButton.Size = new Size(203, 23);
             unlockAllRecipeButton.TabIndex = 18;
-            unlockAllRecipeButton.Text = "ゲーム内の全レシピ解放";
+            unlockAllRecipeButton.Text = "未作成の正規レシピ調査";
             unlockAllRecipeButton.UseVisualStyleBackColor = true;
             unlockAllRecipeButton.Click += unlockAllRecipeButton_Click;
             // 
@@ -190,15 +192,16 @@
             label11.TabIndex = 14;
             label11.Text = "調理後カテゴリ";
             // 
-            // button1
+            // toMinusOneButton
             // 
-            button1.Location = new Point(200, 124);
-            button1.Name = "button1";
-            button1.Size = new Size(53, 23);
-            button1.TabIndex = 13;
-            button1.Text = "-1個";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            toMinusOneButton.Location = new Point(200, 124);
+            toMinusOneButton.Name = "toMinusOneButton";
+            toMinusOneButton.Size = new Size(53, 23);
+            toMinusOneButton.TabIndex = 13;
+            toMinusOneButton.Text = "-1個";
+            toMinusOneButton.UseVisualStyleBackColor = true;
+            toMinusOneButton.Visible = false;
+            toMinusOneButton.Click += toMinusOneButton_Click;
             // 
             // toMaxButton
             // 
@@ -265,152 +268,6 @@
             label4.TabIndex = 8;
             label4.Text = "食材その1";
             // 
-            // advancedTab
-            // 
-            advancedTab.Controls.Add(amountConst);
-            advancedTab.Controls.Add(amountConstCheckBox);
-            advancedTab.Controls.Add(SetDefaultButton);
-            advancedTab.Controls.Add(label3);
-            advancedTab.Controls.Add(internalNameTextBox);
-            advancedTab.Controls.Add(objectIdsLinkLabel);
-            advancedTab.Controls.Add(label6);
-            advancedTab.Controls.Add(variationUpdateCountTextBox);
-            advancedTab.Controls.Add(objectIdTextBox);
-            advancedTab.Controls.Add(label7);
-            advancedTab.Controls.Add(label9);
-            advancedTab.Controls.Add(amoutTextBox);
-            advancedTab.Controls.Add(label8);
-            advancedTab.Controls.Add(variationTextBox);
-            advancedTab.Location = new Point(4, 24);
-            advancedTab.Name = "advancedTab";
-            advancedTab.Padding = new Padding(3);
-            advancedTab.Size = new Size(627, 149);
-            advancedTab.TabIndex = 1;
-            advancedTab.Text = "上級者向け";
-            advancedTab.UseVisualStyleBackColor = true;
-            // 
-            // amountConst
-            // 
-            amountConst.Location = new Point(271, 75);
-            amountConst.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
-            amountConst.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            amountConst.Name = "amountConst";
-            amountConst.Size = new Size(62, 23);
-            amountConst.TabIndex = 21;
-            amountConst.Value = new decimal(new int[] { 100, 0, 0, 0 });
-            // 
-            // amountConstCheckBox
-            // 
-            amountConstCheckBox.AutoSize = true;
-            amountConstCheckBox.Location = new Point(271, 57);
-            amountConstCheckBox.Name = "amountConstCheckBox";
-            amountConstCheckBox.Size = new Size(99, 19);
-            amountConstCheckBox.TabIndex = 20;
-            amountConstCheckBox.Text = "const amount";
-            amountConstCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // SetDefaultButton
-            // 
-            SetDefaultButton.Location = new Point(136, 119);
-            SetDefaultButton.Name = "SetDefaultButton";
-            SetDefaultButton.Size = new Size(152, 23);
-            SetDefaultButton.TabIndex = 18;
-            SetDefaultButton.Text = "デフォルト値(空アイテム)セット";
-            SetDefaultButton.UseVisualStyleBackColor = true;
-            SetDefaultButton.Click += SetDefaultButton_Click;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(271, 9);
-            label3.Name = "label3";
-            label3.Size = new Size(78, 15);
-            label3.TabIndex = 16;
-            label3.Text = "internalName";
-            // 
-            // internalNameTextBox
-            // 
-            internalNameTextBox.Location = new Point(271, 27);
-            internalNameTextBox.Name = "internalNameTextBox";
-            internalNameTextBox.Size = new Size(209, 23);
-            internalNameTextBox.TabIndex = 17;
-            // 
-            // objectIdsLinkLabel
-            // 
-            objectIdsLinkLabel.AutoSize = true;
-            objectIdsLinkLabel.Location = new Point(9, 123);
-            objectIdsLinkLabel.Name = "objectIdsLinkLabel";
-            objectIdsLinkLabel.Size = new Size(87, 15);
-            objectIdsLinkLabel.TabIndex = 14;
-            objectIdsLinkLabel.TabStop = true;
-            objectIdsLinkLabel.Text = "ObjectIDs(wiki)";
-            itemSlotToolTip.SetToolTip(objectIdsLinkLabel, "海外wikiのURLを開きます。");
-            objectIdsLinkLabel.LinkClicked += objectIdsLinkLabel_LinkClicked;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(9, 9);
-            label6.Name = "label6";
-            label6.Size = new Size(51, 15);
-            label6.TabIndex = 8;
-            label6.Text = "objectID";
-            // 
-            // variationUpdateCountTextBox
-            // 
-            variationUpdateCountTextBox.Location = new Point(136, 75);
-            variationUpdateCountTextBox.Name = "variationUpdateCountTextBox";
-            variationUpdateCountTextBox.Size = new Size(100, 23);
-            variationUpdateCountTextBox.TabIndex = 15;
-            // 
-            // objectIdTextBox
-            // 
-            objectIdTextBox.Location = new Point(9, 27);
-            objectIdTextBox.Name = "objectIdTextBox";
-            objectIdTextBox.Size = new Size(100, 23);
-            objectIdTextBox.TabIndex = 9;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(9, 57);
-            label7.Name = "label7";
-            label7.Size = new Size(48, 15);
-            label7.TabIndex = 10;
-            label7.Text = "amount";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(136, 57);
-            label9.Name = "label9";
-            label9.Size = new Size(123, 15);
-            label9.TabIndex = 14;
-            label9.Text = "variationUpdateCount";
-            // 
-            // amoutTextBox
-            // 
-            amoutTextBox.Location = new Point(9, 75);
-            amoutTextBox.Name = "amoutTextBox";
-            amoutTextBox.Size = new Size(100, 23);
-            amoutTextBox.TabIndex = 11;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(136, 9);
-            label8.Name = "label8";
-            label8.Size = new Size(53, 15);
-            label8.TabIndex = 12;
-            label8.Text = "variation";
-            // 
-            // variationTextBox
-            // 
-            variationTextBox.Location = new Point(136, 27);
-            variationTextBox.Name = "variationTextBox";
-            variationTextBox.Size = new Size(100, 23);
-            variationTextBox.TabIndex = 13;
-            // 
             // petTab
             // 
             petTab.Controls.Add(petNameTextBox);
@@ -466,6 +323,7 @@
             // petTalent9ComboBox
             // 
             petTalent9ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent9ComboBox.DropDownWidth = 400;
             petTalent9ComboBox.FormattingEnabled = true;
             petTalent9ComboBox.Location = new Point(492, 104);
             petTalent9ComboBox.Name = "petTalent9ComboBox";
@@ -485,6 +343,7 @@
             // petTalent8ComboBox
             // 
             petTalent8ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent8ComboBox.DropDownWidth = 400;
             petTalent8ComboBox.FormattingEnabled = true;
             petTalent8ComboBox.Location = new Point(283, 104);
             petTalent8ComboBox.Name = "petTalent8ComboBox";
@@ -504,6 +363,7 @@
             // petTalent7ComboBox
             // 
             petTalent7ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent7ComboBox.DropDownWidth = 400;
             petTalent7ComboBox.FormattingEnabled = true;
             petTalent7ComboBox.Location = new Point(73, 104);
             petTalent7ComboBox.Name = "petTalent7ComboBox";
@@ -523,6 +383,7 @@
             // petTalent6ComboBox
             // 
             petTalent6ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent6ComboBox.DropDownWidth = 400;
             petTalent6ComboBox.FormattingEnabled = true;
             petTalent6ComboBox.Location = new Point(492, 79);
             petTalent6ComboBox.Name = "petTalent6ComboBox";
@@ -542,6 +403,7 @@
             // petTalent5ComboBox
             // 
             petTalent5ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent5ComboBox.DropDownWidth = 400;
             petTalent5ComboBox.FormattingEnabled = true;
             petTalent5ComboBox.Location = new Point(283, 79);
             petTalent5ComboBox.Name = "petTalent5ComboBox";
@@ -561,6 +423,7 @@
             // petTalent4ComboBox
             // 
             petTalent4ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent4ComboBox.DropDownWidth = 400;
             petTalent4ComboBox.FormattingEnabled = true;
             petTalent4ComboBox.Location = new Point(73, 79);
             petTalent4ComboBox.Name = "petTalent4ComboBox";
@@ -580,6 +443,7 @@
             // petTalent3ComboBox
             // 
             petTalent3ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent3ComboBox.DropDownWidth = 400;
             petTalent3ComboBox.FormattingEnabled = true;
             petTalent3ComboBox.Location = new Point(492, 54);
             petTalent3ComboBox.Name = "petTalent3ComboBox";
@@ -599,6 +463,7 @@
             // petTalent2ComboBox
             // 
             petTalent2ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent2ComboBox.DropDownWidth = 400;
             petTalent2ComboBox.FormattingEnabled = true;
             petTalent2ComboBox.Location = new Point(283, 54);
             petTalent2ComboBox.Name = "petTalent2ComboBox";
@@ -618,6 +483,7 @@
             // petTalent1ComboBox
             // 
             petTalent1ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            petTalent1ComboBox.DropDownWidth = 400;
             petTalent1ComboBox.FormattingEnabled = true;
             petTalent1ComboBox.Location = new Point(73, 54);
             petTalent1ComboBox.Name = "petTalent1ComboBox";
@@ -659,6 +525,7 @@
             petKindComboBox.Name = "petKindComboBox";
             petKindComboBox.Size = new Size(140, 23);
             petKindComboBox.TabIndex = 4;
+            petKindComboBox.SelectedIndexChanged += petKindComboBox_SelectedIndexChanged;
             // 
             // label14
             // 
@@ -686,6 +553,189 @@
             label13.Size = new Size(19, 15);
             label13.TabIndex = 0;
             label13.Text = "色";
+            // 
+            // advancedTab
+            // 
+            advancedTab.Controls.Add(auxDataTextBox);
+            advancedTab.Controls.Add(label18);
+            advancedTab.Controls.Add(auxIndexTextBox);
+            advancedTab.Controls.Add(label17);
+            advancedTab.Controls.Add(amountConst);
+            advancedTab.Controls.Add(amountConstCheckBox);
+            advancedTab.Controls.Add(SetDefaultButton);
+            advancedTab.Controls.Add(label3);
+            advancedTab.Controls.Add(objectNameTextBox);
+            advancedTab.Controls.Add(objectIdsLinkLabel);
+            advancedTab.Controls.Add(label6);
+            advancedTab.Controls.Add(variationUpdateCountTextBox);
+            advancedTab.Controls.Add(objectIdTextBox);
+            advancedTab.Controls.Add(label7);
+            advancedTab.Controls.Add(label9);
+            advancedTab.Controls.Add(amoutTextBox);
+            advancedTab.Controls.Add(label8);
+            advancedTab.Controls.Add(variationTextBox);
+            advancedTab.Location = new Point(4, 24);
+            advancedTab.Name = "advancedTab";
+            advancedTab.Padding = new Padding(3);
+            advancedTab.Size = new Size(627, 149);
+            advancedTab.TabIndex = 1;
+            advancedTab.Text = "上級者向け";
+            advancedTab.UseVisualStyleBackColor = true;
+            // 
+            // auxDataTextBox
+            // 
+            auxDataTextBox.Location = new Point(368, 74);
+            auxDataTextBox.Name = "auxDataTextBox";
+            auxDataTextBox.ReadOnly = true;
+            auxDataTextBox.Size = new Size(243, 23);
+            auxDataTextBox.TabIndex = 25;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(368, 56);
+            label18.Name = "label18";
+            label18.Size = new Size(50, 15);
+            label18.TabIndex = 24;
+            label18.Text = "auxData";
+            // 
+            // auxIndexTextBox
+            // 
+            auxIndexTextBox.Location = new Point(446, 27);
+            auxIndexTextBox.Name = "auxIndexTextBox";
+            auxIndexTextBox.Size = new Size(100, 23);
+            auxIndexTextBox.TabIndex = 23;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new Point(446, 9);
+            label17.Name = "label17";
+            label17.Size = new Size(55, 15);
+            label17.TabIndex = 22;
+            label17.Text = "auxIndex";
+            // 
+            // amountConst
+            // 
+            amountConst.Location = new Point(121, 74);
+            amountConst.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            amountConst.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            amountConst.Name = "amountConst";
+            amountConst.Size = new Size(62, 23);
+            amountConst.TabIndex = 21;
+            amountConst.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            // 
+            // amountConstCheckBox
+            // 
+            amountConstCheckBox.AutoSize = true;
+            amountConstCheckBox.Location = new Point(121, 56);
+            amountConstCheckBox.Name = "amountConstCheckBox";
+            amountConstCheckBox.Size = new Size(99, 19);
+            amountConstCheckBox.TabIndex = 20;
+            amountConstCheckBox.Text = "const amount";
+            amountConstCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // SetDefaultButton
+            // 
+            SetDefaultButton.Location = new Point(136, 119);
+            SetDefaultButton.Name = "SetDefaultButton";
+            SetDefaultButton.Size = new Size(152, 23);
+            SetDefaultButton.TabIndex = 18;
+            SetDefaultButton.Text = "デフォルト値(空アイテム)セット";
+            SetDefaultButton.UseVisualStyleBackColor = true;
+            SetDefaultButton.Click += SetDefaultButton_Click;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(226, 9);
+            label3.Name = "label3";
+            label3.Size = new Size(71, 15);
+            label3.TabIndex = 16;
+            label3.Text = "objectName";
+            // 
+            // objectNameTextBox
+            // 
+            objectNameTextBox.Location = new Point(226, 27);
+            objectNameTextBox.Name = "objectNameTextBox";
+            objectNameTextBox.Size = new Size(209, 23);
+            objectNameTextBox.TabIndex = 17;
+            // 
+            // objectIdsLinkLabel
+            // 
+            objectIdsLinkLabel.AutoSize = true;
+            objectIdsLinkLabel.Location = new Point(9, 123);
+            objectIdsLinkLabel.Name = "objectIdsLinkLabel";
+            objectIdsLinkLabel.Size = new Size(87, 15);
+            objectIdsLinkLabel.TabIndex = 14;
+            objectIdsLinkLabel.TabStop = true;
+            objectIdsLinkLabel.Text = "ObjectIDs(wiki)";
+            objectIdsLinkLabel.LinkClicked += objectIdsLinkLabel_LinkClicked;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(9, 9);
+            label6.Name = "label6";
+            label6.Size = new Size(51, 15);
+            label6.TabIndex = 8;
+            label6.Text = "objectID";
+            // 
+            // variationUpdateCountTextBox
+            // 
+            variationUpdateCountTextBox.Location = new Point(226, 73);
+            variationUpdateCountTextBox.Name = "variationUpdateCountTextBox";
+            variationUpdateCountTextBox.ReadOnly = true;
+            variationUpdateCountTextBox.Size = new Size(100, 23);
+            variationUpdateCountTextBox.TabIndex = 15;
+            // 
+            // objectIdTextBox
+            // 
+            objectIdTextBox.Location = new Point(9, 27);
+            objectIdTextBox.Name = "objectIdTextBox";
+            objectIdTextBox.Size = new Size(100, 23);
+            objectIdTextBox.TabIndex = 9;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(9, 57);
+            label7.Name = "label7";
+            label7.Size = new Size(48, 15);
+            label7.TabIndex = 10;
+            label7.Text = "amount";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(226, 57);
+            label9.Name = "label9";
+            label9.Size = new Size(123, 15);
+            label9.TabIndex = 14;
+            label9.Text = "variationUpdateCount";
+            // 
+            // amoutTextBox
+            // 
+            amoutTextBox.Location = new Point(9, 75);
+            amoutTextBox.Name = "amoutTextBox";
+            amoutTextBox.Size = new Size(100, 23);
+            amoutTextBox.TabIndex = 11;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(120, 9);
+            label8.Name = "label8";
+            label8.Size = new Size(53, 15);
+            label8.TabIndex = 12;
+            label8.Text = "variation";
+            // 
+            // variationTextBox
+            // 
+            variationTextBox.Location = new Point(120, 27);
+            variationTextBox.Name = "variationTextBox";
+            variationTextBox.Size = new Size(100, 23);
+            variationTextBox.TabIndex = 13;
             // 
             // label1
             // 
@@ -742,9 +792,9 @@
             itemSlotLabel.AutoSize = true;
             itemSlotLabel.Location = new Point(127, 63);
             itemSlotLabel.Name = "itemSlotLabel";
-            itemSlotLabel.Size = new Size(89, 15);
+            itemSlotLabel.Size = new Size(72, 15);
             itemSlotLabel.TabIndex = 6;
-            itemSlotLabel.Text = "アイテムスロット枠";
+            itemSlotLabel.Text = "インベントリ枠";
             // 
             // inventoryIndexComboBox
             // 
@@ -822,12 +872,12 @@
             foodTab.ResumeLayout(false);
             foodTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).EndInit();
-            advancedTab.ResumeLayout(false);
-            advancedTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)amountConst).EndInit();
             petTab.ResumeLayout(false);
             petTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)petExpNumeric).EndInit();
+            advancedTab.ResumeLayout(false);
+            advancedTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)amountConst).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -862,14 +912,13 @@
         private Label label9;
         private Button createButton;
         private LinkLabel objectIdsLinkLabel;
-        private Button button1;
+        private Button toMinusOneButton;
         private ComboBox rarityComboBox;
         private ComboBox cookedCategoryComboBox;
         private Label label12;
         private Label label11;
-        private ToolTip itemSlotToolTip;
         private Label label3;
-        private TextBox internalNameTextBox;
+        private TextBox objectNameTextBox;
         private Button SetDefaultButton;
         private Label resultLabel;
         private Button previousItemButton;
@@ -904,5 +953,9 @@
         private TextBox petNameTextBox;
         private Label label16;
         private Button unlockAllRecipeButton;
+        private TextBox auxDataTextBox;
+        private Label label18;
+        private TextBox auxIndexTextBox;
+        private Label label17;
     }
 }

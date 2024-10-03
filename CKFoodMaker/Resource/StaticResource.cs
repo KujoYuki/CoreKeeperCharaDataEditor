@@ -1,11 +1,20 @@
 ﻿using CKFoodMaker.Model;
+using System.Collections.ObjectModel;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace CKFoodMaker.Resource
 {
     public static class StaticResource
     {
-        public static List<CookedCategory> AllCookedBaseCategories { get; } = new()
+        public static readonly JsonSerializerOptions SerializerOption = new()
         {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+        };
+
+        public static IReadOnlyCollection<CookedCategory> AllCookedBaseCategories { get; } =
+        [
             new(9500, "CookedSoup", "スープ"),
             new(9501, "CookedPudding", "プリン"),
             new(9502, "CookedSalad", "サラダ"),
@@ -21,10 +30,10 @@ namespace CKFoodMaker.Resource
             new(9512, "CookedSandwich", "サンドイッチ"),
             new(9513, "CookedPanCurry", "カレー"),
             new(9514, "CookedCake", "ケーキ"),
-        };
+        ];
 
-        public static List<FoodMaterial> AllFoodMaterials { get; } = new()
-        {
+        public static IReadOnlyCollection<FoodMaterial> AllFoodMaterials { get; } =
+        [
             new(1645,"LarvaMeat","幼虫肉"),
             new(1646,"GoldenLarvaMeat","金色の幼虫肉"),
             new(5500,"Mushroom","きのこ"),
@@ -99,6 +108,64 @@ namespace CKFoodMaker.Resource
             new(9741,"PinkhornPico","ピンク角のピコ"),
             new(9742,"GreenhornPico","緑角のピコ"),
             new(9743,"RiftianLampfish","亀裂のランプフィッシュ"),
+        ];
+
+        public static IReadOnlyDictionary<(PetType petType, PetColor color), string> PetColorDict
+            = new Dictionary<(PetType petType, PetColor color), string>
+        {
+            { (PetType.PetDog,PetColor.Color_1) ,"茶" },
+            { (PetType.PetDog,PetColor.Color_2) ,"白" },
+            { (PetType.PetDog,PetColor.Color_3) ,"暗灰" },
+            { (PetType.PetDog,PetColor.Color_4) ,"黄" },
+            { (PetType.PetDog,PetColor.Color_5) ,"橙" },
+            { (PetType.PetDog,PetColor.Color_6) ,"灰" },
+            { (PetType.PetDog,PetColor.Color_7) ,"黒" },
+            { (PetType.PetDog,PetColor.Color_8) ,"桃" },
+            { (PetType.PetCat,PetColor.Color_1) ,"白" },
+            { (PetType.PetCat,PetColor.Color_2) ,"黄" },
+            { (PetType.PetCat,PetColor.Color_3) ,"桃" },
+            { (PetType.PetCat,PetColor.Color_4) ,"橙" },
+            { (PetType.PetCat,PetColor.Color_5) ,"紫" },
+            { (PetType.PetCat,PetColor.Color_6) ,"灰" },
+            { (PetType.PetCat,PetColor.Color_7) ,"青" },
+            { (PetType.PetCat,PetColor.Color_8) ,"茶" },
+            { (PetType.PetBird,PetColor.Color_1) ,"緑" },
+            { (PetType.PetBird,PetColor.Color_2) ,"橙" },
+            { (PetType.PetBird,PetColor.Color_3) ,"白" },
+            { (PetType.PetBird,PetColor.Color_4) ,"紫" },
+            { (PetType.PetBird,PetColor.Color_5) ,"青" },
+            { (PetType.PetBird,PetColor.Color_6) ,"桃" },
+            { (PetType.PetBird,PetColor.Color_7) ,"灰" },
+            { (PetType.PetBird,PetColor.Color_8) ,"黄" },
+            { (PetType.PetBunny,PetColor.Color_1) ,"白" },
+            { (PetType.PetBunny,PetColor.Color_2) ,"卵" },
+            { (PetType.PetBunny,PetColor.Color_3) ,"黄" },
+            { (PetType.PetBunny,PetColor.Color_4) ,"灰" },
+            { (PetType.PetBunny,PetColor.Color_5) ,"桃" },
+            { (PetType.PetBunny,PetColor.Color_6) ,"黒" },
+            { (PetType.PetBunny,PetColor.Color_7) ,"茶" },
+            { (PetType.PetBunny,PetColor.Color_8) ,"橙" },
+            { (PetType.PetMoth,PetColor.Color_1) ,"白" },
+            { (PetType.PetMoth,PetColor.Color_2) ,"灰" },
+            { (PetType.PetMoth,PetColor.Color_3) ,"茶" },
+            { (PetType.PetMoth,PetColor.Color_4) ,"黄" },
+            { (PetType.PetMoth,PetColor.Color_5) ,"青" },
+            { (PetType.PetMoth,PetColor.Color_6) ,"緑" },
+            { (PetType.PetMoth,PetColor.Color_7) ,"桃" },
+            { (PetType.PetMoth,PetColor.Color_8) ,"卵" },
+            { (PetType.PetTardigrade,PetColor.Color_1) ,"緑" },
+            { (PetType.PetTardigrade,PetColor.Color_2) ,"青" },
+            { (PetType.PetTardigrade,PetColor.Color_3) ,"灰" },
+            { (PetType.PetTardigrade,PetColor.Color_4) ,"白" },
+            { (PetType.PetTardigrade,PetColor.Color_5) ,"赤" },
+            { (PetType.PetTardigrade,PetColor.Color_6) ,"黒" },
+            { (PetType.PetTardigrade,PetColor.Color_7) ,"橙" },
+            { (PetType.PetTardigrade,PetColor.Color_8) ,"桃" },
+            { (PetType.PetSlimeBlob,PetColor.Color_1) ,"----" },
+            { (PetType.PetSlipperySlimeBlob,PetColor.Color_1) ,"----" },
+            { (PetType.PetPoisonSlimeBlob,PetColor.Color_1) ,"----" },
+            { (PetType.PetLavaSlimeBlob,PetColor.Color_1) ,"----" },
+            { (PetType.PetPrinceSlimeBlob,PetColor.Color_1) ,"----" },
         };
     }
 }

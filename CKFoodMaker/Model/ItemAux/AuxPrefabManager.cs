@@ -23,6 +23,7 @@ namespace CKFoodMaker.Model.ItemAux
             Prefabs = new List<AuxPrefab>();
         }
 
+        //todo Addメソッドを利用した無からのペット作成。要：aux.data.indexのルールについて調査
         public void AddPrefab(AuxPrefab prefab)
         {
             Prefabs?.Add(prefab);
@@ -54,13 +55,26 @@ namespace CKFoodMaker.Model.ItemAux
                 }
                 else
                 {
-                    throw new InvalidOperationException("StableType not found");
+                    throw new InvalidOperationException($"StableType:{stableTypeHash} not found");
                 }
             }
             else
             {
-                throw new InvalidOperationException("Prefab not found");
+                throw new InvalidOperationException($"Prefab:{prefabHash} not found");
             }
+        }
+
+        public void UpdatePet(string petName, PetColor petColor, IEnumerable<PetTalent> petTalents)
+        {
+            UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)petColor).ToString()]);
+            UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash, petTalents.Select(t => t.ToJsonString()));
+            UpdateData(AuxHash.PetNameGroupHash, AuxHash.PetNameHash, [petName]);
+        }
+
+        public void UpdateCattle()
+        {
+            // 家畜も補助データをもつので、必要に応じて実装する。
+            throw new NotImplementedException();
         }
 
         public IEnumerable<string> GetData(ulong prefabHash, ulong stableTypeHash)

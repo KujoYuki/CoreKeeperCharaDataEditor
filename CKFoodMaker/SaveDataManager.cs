@@ -13,20 +13,10 @@ namespace CKFoodMaker
     /// </summary>
     public class SaveDataManager
     {
-        public static readonly JsonSerializerOptions SerializerOptionWrite = new JsonSerializerOptions
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        };
-
-        static readonly JsonSerializerOptions _durationOption = new JsonSerializerOptions
-        {
-            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
-        };
-
-        public static int LoadItemLimit = 0;
+        public static int LoadItemLimit;
 
         public string SaveDataPath { get; private set; } = String.Empty;
-        public List<(ItemBase item, string objectName, ItemAuxData auxData)> Items { get; private set; } = new();
+        public List<(ItemBase item, string objectName, ItemAuxData auxData)> Items { get; private set; } = [];
         private JsonObject SaveData { get; set; }
         public SaveDataManager()
         {
@@ -67,7 +57,7 @@ namespace CKFoodMaker
                 .Zip(inventoryName, inventoryAuxData)
                 .Take(LoadItemLimit)
                 .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
-            items = new();
+            items = [];
             foreach (var (item, objectName, auxData) in limitedItems)
             {
                 var itemBase = new ItemBase(
@@ -83,71 +73,44 @@ namespace CKFoodMaker
             return SaveData;
         }
 
-        /// <summary>
-        /// 変更したアイテムを書き込む
-        /// </summary>
-        /// <param name="insertIndex"></param>
-        /// <param name="newItem">変更後アイテム</param>
-        /// <param name="internalName">変更後アイテムのInternalName</param>
-        public void WriteItemData(int insertIndex, ItemBase newItem, string internalName)
+        public ItemAuxData GetAuxData(int insertIndex)
         {
-            SaveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(newItem));
-            SaveData["inventoryObjectNames"]![insertIndex] = internalName;
-            //hack 家畜のようなペットではないが補助データを含むレコードの取り扱いを考慮する（元の値を保持させる）
-            SaveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(ItemAuxData.Default));
-
-            string changedJson = SaveData.ToJsonString(SerializerOptionWrite);
-#if DEBUG
-            // 確認用に別名ファイルで作成
-            MessageBox.Show($"insertIndex = {insertIndex}\n{JsonSerializer.Serialize(newItem)}\n{internalName}", "書き込み内容確認");
-            SaveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
-#endif
-            // 書き込む前に元jsonの構文に戻す
-            changedJson = RestoreJsonString(changedJson);
-
-            File.WriteAllText(SaveDataPath, changedJson);
+            var auxData = SaveData["inventoryAuxData"]![insertIndex]!;
+            return new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
         }
 
-        // ペットを含んだ書き込みをする
-        public bool WriteItemData(int insertIndex, ItemBase newItem, string internalName, string petName, PetColor petColor, IEnumerable<PetTalent> petTalents)
+        // 補助データ込みの書き込みメソッド
+        public bool WriteItemData(int insertIndex, ItemBase itemBase, string objectName, ItemAuxData? auxData = null)
         {
-            SaveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(newItem));
-            SaveData["inventoryObjectNames"]![insertIndex] = internalName;
+            auxData ??= ItemAuxData.Default;
+            auxData.GetPetData(out _, out _, out var tempTalent);
+            var success = false;
+            SaveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
+            SaveData["inventoryObjectNames"]![insertIndex] = objectName;
+            SaveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
+            
+            string changedJson = JsonSerializer.Serialize(SaveData, StaticResource.SerializerOption);
 
-            // リソース指定の固定ハッシュ値があるためManger経由で変更する
-            var auxLawData = SaveData["inventoryAuxData"]![insertIndex]!["data"]!.GetValue<string>();
-            if (string.IsNullOrEmpty(auxLawData))
-            {
-                MessageBox.Show("選択中のアイテムがペットではありません。\n編集を中断します。");
-                return false;
-            }
-            var auxManager = new AuxPrefabManager(JsonNode.Parse(auxLawData)!.AsObject());
-            auxManager.UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash,
-                new[] { ((int)petColor).ToString() });
-            auxManager.UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash,
-                petTalents.Select(t => t.ToJsonString()));
-            auxManager.UpdateData(AuxHash.PetNameGroupHash, AuxHash.PetNameHash,
-                new[] { petName });
-            SaveData["inventoryAuxData"]![insertIndex]!["data"] = auxManager.ToInnerJsonString(SerializerOptionWrite);
-
-            string changedJson = JsonSerializer.Serialize(SaveData, SerializerOptionWrite);
 #if DEBUG
             // 確認用に別名ファイルで作成
-            MessageBox.Show($"insertIndex = {insertIndex}\n{JsonSerializer.Serialize(newItem)}\n{internalName}", "書き込み内容確認");
-            if (Enum.GetValues<PetType>().Cast<int>().Contains(newItem.objectID))
+            var verifyBuilder = new StringBuilder();
+            verifyBuilder.AppendLine($"insertIndex = {insertIndex}");
+            verifyBuilder.AppendLine($"objectName = {objectName}");
+            verifyBuilder.AppendLine($"itemBase = {JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption)}");
+            if (auxData != ItemAuxData.Default)
             {
-                var insertedAuxData = JsonNode.Parse(changedJson)?.AsObject()
-                    ["inventoryAuxData"]![insertIndex]!["data"]!.GetValue<string>();
-                MessageBox.Show(insertedAuxData);
-                Clipboard.SetText(insertedAuxData!);
+                verifyBuilder.AppendLine($"auxData = {JsonSerializer.Serialize(auxData, StaticResource.SerializerOption)}");
             }
+            MessageBox.Show($"{verifyBuilder.ToString()}", "書き込み内容確認");
             SaveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
 #endif
+
             // 書き込む前に元jsonの構文に戻す
             changedJson = RestoreJsonString(changedJson);
 
             File.WriteAllText(SaveDataPath, changedJson);
-            return true;
+            success = true;
+            return success;
         }
 
         public bool IsClearData()
@@ -165,7 +128,7 @@ namespace CKFoodMaker
         public bool HasOveredHealth(out int increasedHealth)
         {
             int? increasedHealthNullable = SaveData["conditionsList"]?.AsArray()
-                .Select(x => JsonSerializer.Deserialize<Condition>(x, _durationOption))
+                .Select(x => JsonSerializer.Deserialize<Condition>(x, StaticResource.SerializerOption))
                 .SingleOrDefault(c => c?.Id == 16)?.Value;
             if (increasedHealthNullable is null)
             {
@@ -178,12 +141,12 @@ namespace CKFoodMaker
             return true;
         }
 
-        internal void UnlockAllResipe()
+        public void UnlockAllRecipe()
         {
-            var result = MessageBox.Show("全レシピ解放機能は未実装です。\n代わりに未作成の料理の組み合わせを出力します。");
+            var result = MessageBox.Show("未作成の料理の組み合わせを出力します。");
 
-            var allCookedCategory = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + 50})
+            var allCookedCategoryId = StaticResource.AllCookedBaseCategories
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
                 .ToList();
             List<int> allFoodID = StaticResource.AllFoodMaterials.Select(c => c.objectID).ToList();
@@ -192,16 +155,17 @@ namespace CKFoodMaker
                 .ToList();
 
             var allDiscoverdVariation = SaveData["discoveredObjects2"]!.AsArray()
-                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj))
-                .Where(obj => allCookedCategory.Contains(obj!.objectID))
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Where(obj => allCookedCategoryId.Contains(obj.objectID))
                 .Select(c => c!.variation)
                 .Distinct()
                 .ToList();
             var intersectRecipeVariation = allVariations.Intersect(allDiscoverdVariation).ToList();
             double cookRate = (double)intersectRecipeVariation.Count / allVariations.Count;
-            var outputResult = MessageBox.Show($"現在の正規レシピ網羅率は {cookRate.ToString("P2")} %です。" +
+            var outputResult = MessageBox.Show($"現在の正規レシピ網羅率は {cookRate:P2} %です。" +
                 $"（{intersectRecipeVariation.Count} / {allVariations.Count}）\n" +
-                $"まだ調理していない組み合わせを出力しますか？", "", MessageBoxButtons.YesNo);
+                $"※ゲーム内レシピブックとカウントが異なる場合があります。\n\n" +
+                $"一度も調理していない組み合わせを出力しますか？", "", MessageBoxButtons.YesNo);
             if (outputResult is DialogResult.Yes)
             {
                 var exceptRecipe = allVariations.Except(allDiscoverdVariation).ToArray();
@@ -215,24 +179,28 @@ namespace CKFoodMaker
                 }
                 string path = Path.Combine(Directory.GetCurrentDirectory(), $"UncreatedRecipe.txt");
                 File.WriteAllText(path, foodBuilder.ToString());
-                MessageBox.Show($"{exceptRecipe.Count()} 通りのレシピを{path}に出力しました。");
+                MessageBox.Show($"{exceptRecipe.Length} 通りのレシピを出力しました。\n{path}");
 
             }
-            //// 全レシピ削除
-            //var countBefore = SaveData["discoveredObjects2"]!.AsArray().Count();
-            //SaveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(allDiscoverdObjectWithoutRecipe, SerializerOptionWrite));
-            //var countAfter = SaveData["discoveredObjects2"]!.AsArray().Count();
-            //var deletedRecipe = countAfter-countBefore; //確認
-
+            
             //todo 全レシピ追加
-            //全組み合わせの勝敗表からカテゴリを自動で決定させる
+            //全組み合わせの勝敗表からカテゴリを自動で決定させる:要食材勝敗テーブルの解明
+        }
 
-            //todo データ書き込み
-            string changedJson = JsonSerializer.Serialize(SaveData, SerializerOptionWrite);
+        public void DeleteAllRecipe()
+        {
+            var allCookedCategoryId = StaticResource.AllCookedBaseCategories
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare + (int)CookRarity.Epic })
+                .OrderBy(id => id)
+                .ToList();
+            var discoveredObjectWithoutRecipe = SaveData["discoveredObjects2"]!.AsArray()
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Where(obj => !allCookedCategoryId.Contains(obj.objectID))
+                .ToList();
+            SaveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(discoveredObjectWithoutRecipe, StaticResource.SerializerOption));
+            // データ書き込み
+            string changedJson = JsonSerializer.Serialize(SaveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
-#if DEBUG
-            SaveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
-#endif
             File.WriteAllText(SaveDataPath, changedJson);
         }
     }

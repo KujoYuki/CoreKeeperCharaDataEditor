@@ -11,10 +11,10 @@
         #endregion
 
         #region 家畜データで使うリソース識別用ハッシュ
-        public const ulong LiveStockStomackGroupHash = 97913750;
-        public const ulong LiveStockStomackHash = 18362501804100791937;
-        public const ulong LiveStockNameGroupHash = 2811915185;
-        public const ulong LiveStockNameHash = 9923282613123898873;
+        public const ulong CattleStomackGroupHash = 97913750;
+        public const ulong CattleStomackHash = 18362501804100791937;
+        public const ulong CattleNameGroupHash = 2811915185;
+        public const ulong CattleNameHash = 9923282613123898873;
         #endregion
     }
 }

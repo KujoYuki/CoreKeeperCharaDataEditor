@@ -83,7 +83,6 @@ namespace CKFoodMaker
         public bool WriteItemData(int insertIndex, ItemBase itemBase, string objectName, ItemAuxData? auxData = null)
         {
             auxData ??= ItemAuxData.Default;
-            auxData.GetPetData(out _, out _, out var tempTalent);
             var success = false;
             SaveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
             SaveData["inventoryObjectNames"]![insertIndex] = objectName;

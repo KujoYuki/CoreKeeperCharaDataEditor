@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Drawing;
 using System.Text.RegularExpressions;
 using CKFoodMaker.Model;
 using CKFoodMaker.Model.ItemAux;
@@ -12,9 +11,9 @@ namespace CKFoodMaker
 
         static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
 
-        private SaveDataManager _saveDataManager = new();
+        private SaveDataManager _saveDataManager = SaveDataManager.Instance;
         private List<InternalItemInfo> _materialCategories = [];
-        private List<InternalItemInfo> _cookedCategories = [];
+        private List<InternalItemInfo> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
 
         private string _saveDataFolderPath = string.Empty;
 
@@ -46,6 +45,7 @@ namespace CKFoodMaker
                 variationUpdateCountTextBox.ReadOnly = false;
                 auxDataTextBox.ReadOnly = false;
                 toMinusOneButton.Visible = true;
+                createdNumericNo.Maximum = 869779;
             }
         }
 
@@ -74,28 +74,37 @@ namespace CKFoodMaker
 
         private void SetMaterialCategory()
         {
-            // hack StaticResource.AllFoodMaterialsからの読み込みを使い、csvからは本来調理しない追加料理だけを読み込むようにする
-            string materialCatergoryDefineFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "MaterialCategory.csv")
-                ?? throw new FileNotFoundException($"MaterialCategory.csvが見つかりません。");
-            var materialCategories = File.ReadAllLines(materialCatergoryDefineFilePath).ToArray();
-            foreach (var line in materialCategories)
-            {
-                string[] words = line.Split(',');
-                if (!Enum.TryParse(words[3], out MaterialSubCategory subCategory))
+            var defaultMaterials = StaticResource.AllFoodMaterials
+                .Select(c => new InternalItemInfo(c.objectID, c.InternalName, c.DisplayName))
+                .ToArray();
+            
+            string additionalFoodMaterialFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "AdditionalFoodMaterial.csv")
+                ?? throw new FileNotFoundException($"AdditionalFoodMaterial.csvが見つかりません。");
+            var materialCategories = File.ReadAllLines(additionalFoodMaterialFilePath)
+                .Select(line => 
                 {
-                    throw new ArgumentException($"無効なMaterialSubCategory:{words[3]}");
-                }
-
-                _materialCategories.Add(new(objectID: int.Parse(words[0]),
-                                          internalName: words[1],
-                                          displayName: words[2],
-                                          subCategory: subCategory));
+                    string[] words = line.Split(',');
+                    return new InternalItemInfo(int.Parse(words[0]), words[1], words[2]);
+                })
+                .ToArray();
+            var allMaterials = defaultMaterials.Concat(materialCategories)
+                .OrderBy(c => c.ObjectID)
+                .ToList();
+            // 開発者モードの場合は非推奨食材も表示
+            if (Program.IsDeveloper)
+            {
+                var obsoleteFood = StaticResource.ObsoleteFoodMaterials
+                    .Select(c => new InternalItemInfo(c.objectID, c.InternalName, c.DisplayName))
+                    .ToArray();
+                allMaterials.AddRange(obsoleteFood);
             }
+            _materialCategories.AddRange(allMaterials);
 
-            //hack 視認性向上のサブカテゴリネームを追加するか検討
-            var sortedMaterialCategories = _materialCategories.OrderBy(c => c.SubCategory).Select(c => c.DisplayName).ToArray();
-            materialComboBoxA.Items.AddRange(sortedMaterialCategories);
-            materialComboBoxB.Items.AddRange(sortedMaterialCategories);
+            var sortedMaterialNames = _materialCategories
+                .Select(c => c.DisplayName)
+                .ToArray();
+            materialComboBoxA.Items.AddRange(sortedMaterialNames);
+            materialComboBoxB.Items.AddRange(sortedMaterialNames);
 
             materialComboBoxA.SelectedIndex = 0;
             materialComboBoxB.SelectedIndex = 0;
@@ -103,11 +112,10 @@ namespace CKFoodMaker
 
         private void SetCookedCategory()
         {
-            foreach (var category in StaticResource.AllCookedBaseCategories)
-            {
-                _cookedCategories.Add(new(category.objectID, category.InternalName, category.JapaneseResource));
-                cookedCategoryComboBox.Items.Add(category.JapaneseResource);
-            }
+            var cookedCategoryNames = StaticResource.AllCookedBaseCategories
+                .Select(c => c.DisplayName)
+                .ToArray();
+            cookedCategoryComboBox.Items.AddRange(cookedCategoryNames);
             cookedCategoryComboBox.SelectedIndex = 0;
         }
 
@@ -118,12 +126,9 @@ namespace CKFoodMaker
             var petColors = Enum.GetNames<PetColor>();
             petColorComboBox.Items.AddRange(petColors);
 
-            //hack StaticResource化
-            string TalentFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "PetTalent.csv");
-            var TalentIds = File.ReadAllLines(TalentFilePath)
-                .Select(line => line.Split(",").Take(2))
-                .Select(info => string.Join(":", info))
-                .ToArray();    // Idと効果確認だけの暫定処理
+            var TalentIds = StaticResource.PetTalents
+                .Select(t => string.Join(":", t.TalentId, t.Name))
+                .ToArray();
             petTalent1ComboBox.Items.AddRange(TalentIds);
             petTalent2ComboBox.Items.AddRange(TalentIds);
             petTalent3ComboBox.Items.AddRange(TalentIds);
@@ -201,19 +206,19 @@ namespace CKFoodMaker
 
             // 選択されたセーブデータのファイルのアイテム読み込み
             string selecetedSaveDataPath = Path.Combine(SaveDataFolderPath, saveSlotNoComboBox.SelectedItem?.ToString() + ".json");
-            _saveDataManager = new(selecetedSaveDataPath);
+            _saveDataManager.SaveDataPath = selecetedSaveDataPath;
 
             // 選択中のセーブデータのアイテム情報をinventoryIndexComboBoxに反映する
             int indexNo = 1;
-            foreach (var itemInfo in _saveDataManager.Items)
+            foreach (var (item, objectName, auxData) in _saveDataManager.Items)
             {
-                if (itemInfo.item == ItemBase.Default)
+                if (item == ItemBase.Default)
                 {
                     inventoryIndexComboBox.Items.Add($"{indexNo,2} : ----");
                 }
                 else
                 {
-                    inventoryIndexComboBox.Items.Add($"{indexNo,2} : {itemInfo.objectName}");
+                    inventoryIndexComboBox.Items.Add($"{indexNo,2} : {objectName}");
                 }
                 indexNo++;
             }
@@ -273,7 +278,7 @@ namespace CKFoodMaker
 
         private void toMaxButton_Click(object sender, EventArgs e)
         {
-            createdNumericNo.Value = 9999;
+            createdNumericNo.Value = Program.IsDeveloper ? 869779 : 9999;
         }
 
         private void toMinusOneButton_Click(object sender, EventArgs e)
@@ -371,7 +376,7 @@ namespace CKFoodMaker
 
         private void objectIdsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("explorer", "https://core-keeper.fandom.com/wiki/Object_IDs");
+            Process.Start(new ProcessStartInfo("https://core-keeper.fandom.com/wiki/Object_IDs") { UseShellExecute = true });
         }
 
         private void createButton_Click(object sender, EventArgs e)
@@ -383,9 +388,9 @@ namespace CKFoodMaker
                     MessageBox.Show("クリア済みでない場合は機能を制限します。\n通常クリア後にお楽しみください。");
                     return;
                 }
-                if (_saveDataManager.HasOveredHealth(out int overedHealth))
+                if (_saveDataManager.HasOveredHealth(out _))
                 {
-                    MessageBox.Show($"Code : {overedHealth}", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("体力過剰のため、利用を制限します。", "注意");
                     return;
                 }
             }
@@ -395,53 +400,57 @@ namespace CKFoodMaker
             string objectName;
             try
             {
-                if (itemEditTabControl.SelectedIndex is 0)
+                switch (itemEditTabControl.SelectedTab?.Name)
                 {
-                    int materialAId = _materialCategories
+                    case "foodTab":
+                        int materialAId = _materialCategories
                         .Single(c => c.DisplayName == materialComboBoxA
                         .SelectedItem?.ToString()).ObjectID;
-                    int materialBId = _materialCategories
-                        .Single(c => c.DisplayName == materialComboBoxB
-                        .SelectedItem?.ToString()).ObjectID;
-                    int calculatedVariation = CalculateVariation(materialAId, materialBId);
+                        int materialBId = _materialCategories
+                            .Single(c => c.DisplayName == materialComboBoxB
+                            .SelectedItem?.ToString()).ObjectID;
+                        int calculatedVariation = CalculateVariation(materialAId, materialBId);
 
-                    // レア度反映
-                    int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).ObjectID;
-                    DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out objectName);
-                    item = new(objectID: fixedObjectId,
-                               amount: Convert.ToInt32(createdNumericNo.Value),
-                               variation: calculatedVariation);
-                    _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
-                    result = true;
-                }
-                else if (itemEditTabControl.SelectedIndex is 1)
-                {
-                    // ペットTabの処理
-                    if (!Enum.GetValues(typeof(PetType)).Cast<int>().Contains(int.Parse(objectIdTextBox.Text)))
-                    {
-                        MessageBox.Show("選択中のアイテムがペットではありません。\nインベントリ枠でペットアイテムを選択して編集してください。");
-                        return;
-                    }
-                    var allPetTypes = (PetType[])Enum.GetValues(typeof(PetType));
-                    var allPetColors = (PetColor[])Enum.GetValues(typeof(PetColor));
-                    var auxData = _saveDataManager.GetAuxData(inventoryIndexComboBox.SelectedIndex);
-                    auxData.AuxPrefabManager?.UpdatePet(
-                        petNameTextBox.Text,
-                        allPetColors[petColorComboBox.SelectedIndex],
-                        GeneratePetTalentLists());
-                    item = new(objectID: (int)allPetTypes[petKindComboBox.SelectedIndex],
-                        amount: (int)petExpNumeric.Value,
-                        variation: 0);
-                    objectName = Enum.GetNames(typeof(PetType))[petKindComboBox.SelectedIndex];
+                        // レア度反映
+                        int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).ObjectID;
+                        DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out objectName);
+                        item = new(objectID: fixedObjectId,
+                                   amount: Convert.ToInt32(createdNumericNo.Value),
+                                   variation: calculatedVariation);
+                        _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
+                        result = true;
+                        break;
 
-                    // ItemAuxDataを込みで書きこむ
-                    result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName, auxData);
-                }
-                else
-                {
-                    item = GenerateItemBase();
-                    objectName = objectNameTextBox.Text;
-                    result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
+                    case "petTab":
+                        if (!Enum.GetValues(typeof(PetType)).Cast<int>().Contains(int.Parse(objectIdTextBox.Text)))
+                        {
+                            MessageBox.Show("選択中のアイテムがペットではありません。\nインベントリ枠でペットアイテムを選択して編集してください。");
+                            return;
+                        }
+                        var allPetTypes = (PetType[])Enum.GetValues(typeof(PetType));
+                        var allPetColors = (PetColor[])Enum.GetValues(typeof(PetColor));
+                        var auxData = _saveDataManager.GetAuxData(inventoryIndexComboBox.SelectedIndex);
+                        auxData.AuxPrefabManager?.UpdatePet(
+                            petNameTextBox.Text,
+                            allPetColors[petColorComboBox.SelectedIndex],
+                            GeneratePetTalentLists());
+                        item = new(objectID: (int)allPetTypes[petKindComboBox.SelectedIndex],
+                            amount: (int)petExpNumeric.Value,
+                            variation: 0);
+                        objectName = Enum.GetNames(typeof(PetType))[petKindComboBox.SelectedIndex];
+
+                        // ItemAuxDataを込みで書きこむ
+                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName, auxData);
+                        break;
+
+                    case "advancedTab":
+                        item = GenerateItemBase();
+                        objectName = objectNameTextBox.Text;
+                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
+                        break;
+
+                    default:
+                        throw new InvalidOperationException();
                 }
 
                 if (result)
@@ -503,7 +512,7 @@ namespace CKFoodMaker
                 "エピック" => baseObjectId + (int)CookRarity.Epic,
                 _ => throw new ArgumentException(null, nameof(rarity)),
             };
-            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.objectID == baseObjectId).InternalName;
+            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == baseObjectId).InternalName;
             fixedInternalName = rarity switch
             {
                 "コモン" => baseInternalName,
@@ -559,7 +568,7 @@ namespace CKFoodMaker
         private static bool IsCookedItem(int objectID, out CookRarity rarity, out int indexBaseOffset)
         {
             int[] cookedCategoryAllIds = StaticResource.AllCookedBaseCategories
-                .Select(c => c.objectID)
+                .Select(c => c.ObjectID)
                 .SelectMany(id => new[] { id, id + (int)CookRarity.Rare, id + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToArray();
@@ -592,7 +601,7 @@ namespace CKFoodMaker
             createButton.Enabled = true;
             previousItemButton.Enabled = true;
             nextItemButton.Enabled = true;
-            unlockAllRecipeButton.Enabled = true;
+            listUncreatedRecipesButton.Enabled = true;
         }
         private void DisabeleUI()
         {
@@ -601,7 +610,7 @@ namespace CKFoodMaker
             createButton.Enabled = false;
             previousItemButton.Enabled = false;
             nextItemButton.Enabled = false;
-            unlockAllRecipeButton.Enabled = false;
+            listUncreatedRecipesButton.Enabled = false;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -610,11 +619,10 @@ namespace CKFoodMaker
             Properties.Settings.Default.Save();
         }
 
-        private void savePathTextBox_TextChanged(object sender, EventArgs e)
+        private void savePathTextBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             SaveDataFolderPath = savePathTextBox.Text;
         }
-
         private void previousItemButton_Click(object sender, EventArgs e)
         {
             if (inventoryIndexComboBox.SelectedIndex > 0)
@@ -631,16 +639,10 @@ namespace CKFoodMaker
             }
         }
 
-        private void unlockAllRecipeButton_Click(object sender, EventArgs e)
+        private void listUncreatedRecipesButton_Click(object sender, EventArgs e)
         {
-            _saveDataManager.UnlockAllRecipe();
-
-            // todo レシピ全追加が実現したらこちらを有効化する。
-            //var result = MessageBox.Show("この操作は元に戻せません。実行しますか？", "確認", MessageBoxButtons.YesNo);
-            //if (result is DialogResult.Yes)
-            //{
-            //    _saveDataManager.UnlockAllResipe();
-            //}
+            MessageBox.Show("未作成の料理の組み合わせを出力します。");
+            _saveDataManager.ListUncreatedRecipes();
         }
 
         private void petKindComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -668,6 +670,17 @@ namespace CKFoodMaker
                 petColorComboBox.Items.Add(StaticResource.PetColorDict[(allPetType[petKindComboBox.SelectedIndex], PetColor.Color_1)]);
             }
             petColorComboBox.SelectedIndex = 0;
+        }
+
+        private void openConditionsButton_Click(object sender, EventArgs e)
+        {
+            if (_saveDataManager.HasOveredHealth(out _) && !Program.IsDeveloper)
+            {
+                MessageBox.Show("体力過剰のため、利用を制限します。", "注意");
+                return;
+            }
+            var conditionForm = new ConditionForm();
+            conditionForm.ShowDialog();
         }
     }
 }

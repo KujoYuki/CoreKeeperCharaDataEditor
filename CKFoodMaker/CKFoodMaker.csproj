@@ -28,10 +28,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Update="Resource\MaterialCategory.csv">
+    <None Update="Resource\ConditionDescription.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resource\PetTalent.csv">
+    <None Update="Resource\AdditionalFoodMaterial.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

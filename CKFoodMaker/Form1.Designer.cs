@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             foodTab = new TabPage();
-            unlockAllRecipeButton = new Button();
+            listUncreatedRecipesButton = new Button();
             rarityComboBox = new ComboBox();
             cookedCategoryComboBox = new ComboBox();
             label12 = new Label();
@@ -102,6 +102,7 @@
             resultLabel = new Label();
             previousItemButton = new Button();
             nextItemButton = new Button();
+            openConditionsButton = new Button();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
@@ -124,7 +125,7 @@
             // 
             // foodTab
             // 
-            foodTab.Controls.Add(unlockAllRecipeButton);
+            foodTab.Controls.Add(listUncreatedRecipesButton);
             foodTab.Controls.Add(rarityComboBox);
             foodTab.Controls.Add(cookedCategoryComboBox);
             foodTab.Controls.Add(label12);
@@ -145,15 +146,15 @@
             foodTab.Text = "料理作成";
             foodTab.UseVisualStyleBackColor = true;
             // 
-            // unlockAllRecipeButton
+            // listUncreatedRecipesButton
             // 
-            unlockAllRecipeButton.Location = new Point(274, 124);
-            unlockAllRecipeButton.Name = "unlockAllRecipeButton";
-            unlockAllRecipeButton.Size = new Size(203, 23);
-            unlockAllRecipeButton.TabIndex = 18;
-            unlockAllRecipeButton.Text = "未作成の正規レシピ調査";
-            unlockAllRecipeButton.UseVisualStyleBackColor = true;
-            unlockAllRecipeButton.Click += unlockAllRecipeButton_Click;
+            listUncreatedRecipesButton.Location = new Point(274, 124);
+            listUncreatedRecipesButton.Name = "listUncreatedRecipesButton";
+            listUncreatedRecipesButton.Size = new Size(203, 23);
+            listUncreatedRecipesButton.TabIndex = 18;
+            listUncreatedRecipesButton.Text = "未作成の食材組み合わせ調査";
+            listUncreatedRecipesButton.UseVisualStyleBackColor = true;
+            listUncreatedRecipesButton.Click += listUncreatedRecipesButton_Click;
             // 
             // rarityComboBox
             // 
@@ -225,7 +226,7 @@
             // createdNumericNo
             // 
             createdNumericNo.Location = new Point(7, 126);
-            createdNumericNo.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            createdNumericNo.Maximum = new decimal(new int[] { 869778, 0, 0, 0 });
             createdNumericNo.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             createdNumericNo.Name = "createdNumericNo";
             createdNumericNo.Size = new Size(120, 23);
@@ -771,7 +772,7 @@
             savePathTextBox.Name = "savePathTextBox";
             savePathTextBox.Size = new Size(551, 23);
             savePathTextBox.TabIndex = 4;
-            savePathTextBox.TextChanged += savePathTextBox_TextChanged;
+            savePathTextBox.Validating += savePathTextBox_Validating;
             // 
             // saveFolderBrowserDialog
             // 
@@ -846,11 +847,23 @@
             nextItemButton.UseVisualStyleBackColor = true;
             nextItemButton.Click += nextItemButton_Click;
             // 
+            // openConditionsButton
+            // 
+            openConditionsButton.BackColor = Color.Cyan;
+            openConditionsButton.Location = new Point(529, 81);
+            openConditionsButton.Name = "openConditionsButton";
+            openConditionsButton.Size = new Size(104, 23);
+            openConditionsButton.TabIndex = 17;
+            openConditionsButton.Text = "コンディション値";
+            openConditionsButton.UseVisualStyleBackColor = false;
+            openConditionsButton.Click += openConditionsButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(660, 374);
+            Controls.Add(openConditionsButton);
             Controls.Add(nextItemButton);
             Controls.Add(previousItemButton);
             Controls.Add(resultLabel);
@@ -865,6 +878,7 @@
             Controls.Add(itemEditTabControl);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "Form1";
             Text = "CKFoodMaker";
             FormClosing += Form1_FormClosing;
@@ -952,10 +966,11 @@
         private CheckBox petTalent2ValidCheckBox;
         private TextBox petNameTextBox;
         private Label label16;
-        private Button unlockAllRecipeButton;
+        private Button listUncreatedRecipesButton;
         private TextBox auxDataTextBox;
         private Label label18;
         private TextBox auxIndexTextBox;
         private Label label17;
+        private Button openConditionsButton;
     }
 }

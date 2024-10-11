@@ -1,7 +1,7 @@
 ﻿using CKFoodMaker.Model;
-using System.Collections.ObjectModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CKFoodMaker.Resource
 {
@@ -10,10 +10,10 @@ namespace CKFoodMaker.Resource
         public static readonly JsonSerializerOptions SerializerOption = new()
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals,
+            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
 
-        public static IReadOnlyCollection<CookedCategory> AllCookedBaseCategories { get; } =
+        public static IReadOnlyCollection<InternalItemInfo> AllCookedBaseCategories { get; } =
         [
             new(9500, "CookedSoup", "スープ"),
             new(9501, "CookedPudding", "プリン"),
@@ -108,6 +108,39 @@ namespace CKFoodMaker.Resource
             new(9741,"PinkhornPico","ピンク角のピコ"),
             new(9742,"GreenhornPico","緑角のピコ"),
             new(9743,"RiftianLampfish","亀裂のランプフィッシュ"),
+        ];
+
+        public static IReadOnlyCollection<FoodMaterial> ObsoleteFoodMaterials { get; } =
+        [
+            new(5501,"GiantMushroom2","ジャンボマッシュルーム(古)"),
+            new(5607,"AmberLarva2","幼虫の琥珀(古)")
+        ];
+
+        public static IReadOnlyCollection<(int TalentId, string Name)> PetTalents =
+        [
+            (0, "近接攻撃スピード"),
+            (1, "遠距離攻撃スピード"),
+            (2, "クリティカルヒット確率"),
+            (3, "クリティカルヒットダメージ"),
+            (4, "物理近接ダメージ"),
+            (5, "物理遠距離ダメージ"),
+            (6, "ボスへの与ダメージ"),
+            (7, "ヒット時にダメージが3倍になる確率"),
+            (8, "ヒット時に燃焼ダメージ"),
+            (9, "ヒットで敵の回復力を75%減少させる毒を与える確率"),
+            (10, "近接ヒットで相手を気絶させる確率"),
+            (11, "相手の移動スピードを4秒間8.0%低下させる"),
+            (12, "光度"),
+            (13, "青色の光度"),
+            (14, "相手の気絶時間が増加"),
+            (15, "気絶している相手へのダメージ"),
+            (16, "移動スピード"),
+            (17, "ヒット時に敵がすべりやすくなる確率"),
+            (18, "相手の残り体力に応じてダメージが最大"),
+            (19, "ヒット時に相手の燃焼効果を消費し即座に合計燃焼ダメージを与える確率"),
+            (20, "1体の敵を発射物が貫通"),
+            (21, "移動不可および気絶時間減少"),
+            (22, "ヒット時にマナを得られる確率"),
         ];
 
         public static IReadOnlyDictionary<(PetType petType, PetColor color), string> PetColorDict

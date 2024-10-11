@@ -18,11 +18,14 @@
   - スキルの変更と有効/無効の切り替えができます。
   - 未実装のペットスキルを対象に含みます。
 - 通常手段で入手不可の未実装アイテムの取得ができます。
-- 負数個の料理の作成
+- 任意のバフ/食事効果/装備効果などを任意効果量/効果時間で付与できます。
 - ゲームやmodのバージョンに殆ど関係なく使えます。
+
 
 ![CKFoodMaker Overview](Document/images/imageSample.png)  
 ![EditPet OverView](Document/images/imageEditPet.png)
+![EditCondition Overview](Document/images/imageCondition.png)
+
 ## 免責事項
 本ソフトはキャラクターデータのインベントリを直接編集します。  
 また、上級者向けの機能として料理に限らない全てのアイテムの編集機能を持ちます。  
@@ -39,7 +42,7 @@
 ## 動作環境
 .NET 8.0以降のランタイムパッケージがインストールされていること。
 
-## Explain
+## Summary
 This is an external extension editor for manipulating the inventory content of [Core Keeper](https://store.steampowered.com/app/1621690/Core_Keeper/).  
 It is designed for purposes such as creating dishes that cannot be made by normal means.  
 
@@ -58,6 +61,7 @@ It is designed for purposes such as creating dishes that cannot be made by norma
   - Includes unimplemented pet skills.
 - Obtain unimplemented items that cannot be acquired through normal means.
 - Create dishes with negative quantities.
+- You can add any buff/meal effect/equipment effect, etc. with any amount/duration.
 - Can be used regardless of the game or mod version in most cases.
 
 ## Disclaimer
@@ -80,6 +84,4 @@ In short, this is a tool aimed at post-game completionists.
 Explanation is in Japanese only  
 [セーブデータ編集について](Document/analysis.md)  
 [パラメータについて](Document/parameter.md)  
-
-## 今後の更新予定
-- 任意のスキルやバフの付与と編集機能
+[コンディション値について](Document/conditions)

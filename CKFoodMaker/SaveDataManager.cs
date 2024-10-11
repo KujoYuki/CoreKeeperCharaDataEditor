@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using CKFoodMaker.Model;
@@ -11,23 +10,31 @@ namespace CKFoodMaker
     /// <summary>
     /// 単一のセーブデータに対する読み書きモジュール
     /// </summary>
-    public class SaveDataManager
+    public sealed class SaveDataManager
     {
         public static int LoadItemLimit;
 
-        public string SaveDataPath { get; private set; } = String.Empty;
-        public List<(ItemBase item, string objectName, ItemAuxData auxData)> Items { get; private set; } = [];
-        private JsonObject SaveData { get; set; }
-        public SaveDataManager()
+        private static SaveDataManager? _instance;
+        public static SaveDataManager Instance => _instance ??= new();
+
+        private string _saveDataPath = string.Empty;
+        public string SaveDataPath
         {
+            get => _saveDataPath;
+            set
+            {
+                _saveDataPath = value;
+                LoadItemLimit = Program.IsDeveloper ? 86 : 50;
+                _saveData = LoadInventory(out var items);
+                Items = items;
+            }
         }
 
-        public SaveDataManager(string saveDataPath)
+        public List<(ItemBase item, string objectName, ItemAuxData auxData)> Items { get; private set; } = [];
+        private JsonObject _saveData = [];
+
+        private SaveDataManager()
         {
-            SaveDataPath = saveDataPath;
-            LoadItemLimit = Program.IsDeveloper ? 86 : 50;
-            SaveData = LoadInventory(out var items);
-            Items = items;
         }
 
         private static string SanitizeJsonString(string origin)
@@ -42,40 +49,46 @@ namespace CKFoodMaker
 
         private JsonObject LoadInventory(out List<(ItemBase item, string objectName, ItemAuxData auxData)> items)
         {
-
-            string saveDataContents = File.ReadAllText(SaveDataPath);
-            // conditionsList中のInfinity文字列により例外が出るのを回避する
-            saveDataContents = SanitizeJsonString(saveDataContents);
-
-            SaveData = JsonNode.Parse(saveDataContents)!.AsObject();
-
-            var inventoryBase = SaveData["inventory"]!.AsArray();
-            var inventoryName = SaveData["inventoryObjectNames"]!.AsArray();
-            var inventoryAuxData = SaveData["inventoryAuxData"]!.AsArray();
-
-            var limitedItems = inventoryBase
-                .Zip(inventoryName, inventoryAuxData)
-                .Take(LoadItemLimit)
-                .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
-            items = [];
-            foreach (var (item, objectName, auxData) in limitedItems)
+            try
             {
-                var itemBase = new ItemBase(
-                    objectID: item["objectID"]!.GetValue<int>(),
-                    amount: item["amount"]!.GetValue<int>(),
-                    variation: item["variation"]!.GetValue<int>(),
-                    variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
-                string objectInternalName = objectName!.GetValue<string>()!;
-                var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
-                items.Add((itemBase, objectInternalName, itemAux));
-            }
+                string saveDataContents = File.ReadAllText(SaveDataPath);
+                // conditionsList中のInfinity文字列により例外が出るのを回避する
+                saveDataContents = SanitizeJsonString(saveDataContents);
 
-            return SaveData;
+                _saveData = JsonNode.Parse(saveDataContents)!.AsObject();
+
+                var inventoryBase = _saveData["inventory"]!.AsArray();
+                var inventoryName = _saveData["inventoryObjectNames"]!.AsArray();
+                var inventoryAuxData = _saveData["inventoryAuxData"]!.AsArray();
+
+                var limitedItems = inventoryBase
+                    .Zip(inventoryName, inventoryAuxData)
+                    .Take(LoadItemLimit)
+                    .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
+                items = [];
+                foreach (var (item, objectName, auxData) in limitedItems)
+                {
+                    var itemBase = new ItemBase(
+                        objectID: item["objectID"]!.GetValue<int>(),
+                        amount: item["amount"]!.GetValue<int>(),
+                        variation: item["variation"]!.GetValue<int>(),
+                        variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
+                    string objectInternalName = objectName!.GetValue<string>()!;
+                    var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
+                    items.Add((itemBase, objectInternalName, itemAux));
+                }
+
+                return _saveData;
+            }
+            catch(Exception ex)
+            {
+                throw new InvalidOperationException("セーブデータの読み込みに失敗しました。", ex);
+            }
         }
 
         public ItemAuxData GetAuxData(int insertIndex)
         {
-            var auxData = SaveData["inventoryAuxData"]![insertIndex]!;
+            var auxData = _saveData["inventoryAuxData"]![insertIndex]!;
             return new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
         }
 
@@ -84,11 +97,11 @@ namespace CKFoodMaker
         {
             auxData ??= ItemAuxData.Default;
             var success = false;
-            SaveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
-            SaveData["inventoryObjectNames"]![insertIndex] = objectName;
-            SaveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
-            
-            string changedJson = JsonSerializer.Serialize(SaveData, StaticResource.SerializerOption);
+            _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
+            _saveData["inventoryObjectNames"]![insertIndex] = objectName;
+            _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
+
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
 #if DEBUG
             // 確認用に別名ファイルで作成
@@ -100,8 +113,8 @@ namespace CKFoodMaker
             {
                 verifyBuilder.AppendLine($"auxData = {JsonSerializer.Serialize(auxData, StaticResource.SerializerOption)}");
             }
-            MessageBox.Show($"{verifyBuilder.ToString()}", "書き込み内容確認");
-            SaveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
+            MessageBox.Show($"{verifyBuilder}", "書き込み内容確認");
+            _saveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
 #endif
 
             // 書き込む前に元jsonの構文に戻す
@@ -114,19 +127,19 @@ namespace CKFoodMaker
 
         public bool IsClearData()
         {
-            if (SaveData["hasUnlockedSouls"]?.GetValue<bool>() is true &&
-                SaveData["collectedSouls"]?.AsArray().Count is 6 &&
-                SaveData["hasPlayedOutro"]?.GetValue<bool>() is true)
-            {
-                return true;
-            }
-            return false;
+            return _saveData["hasUnlockedSouls"]?.GetValue<bool>() is true
+                   && _saveData["collectedSouls"]?.AsArray().Count is 6
+                   && _saveData["hasPlayedOutro"]?.GetValue<bool>() is true;
         }
 
-        // IncreasedMaxHealthPermanentの増分検知
+        /// <summary>
+        /// IncreasedMaxHealthPermanentの増分検知
+        /// </summary>
+        /// <param name="increasedHealth"></param>
+        /// <returns></returns>
         public bool HasOveredHealth(out int increasedHealth)
         {
-            int? increasedHealthNullable = SaveData["conditionsList"]?.AsArray()
+            int? increasedHealthNullable = _saveData["conditionsList"]?.AsArray()
                 .Select(x => JsonSerializer.Deserialize<Condition>(x, StaticResource.SerializerOption))
                 .SingleOrDefault(c => c?.Id == 16)?.Value;
             if (increasedHealthNullable is null)
@@ -140,29 +153,28 @@ namespace CKFoodMaker
             return true;
         }
 
-        public void UnlockAllRecipe()
+        public void ListUncreatedRecipes()
         {
-            var result = MessageBox.Show("未作成の料理の組み合わせを出力します。");
-
             var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
+                .SelectMany(c => new[] { c.ObjectID, c.ObjectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
-                .ToList();
-            List<int> allFoodID = StaticResource.AllFoodMaterials.Select(c => c.objectID).ToList();
-            List<int> allVariations = allFoodID
-                .SelectMany((ID, index) => allFoodID.Skip(index), (IdA, IdB) => Form1.CalculateVariation(IdA, IdB))
-                .ToList();
+                .ToArray();
+            int[] allFoodID = StaticResource.AllFoodMaterials.Select(c => c.objectID).ToArray();
+            int[] allVariations = allFoodID
+                .SelectMany((ID, index) => allFoodID.Skip(index), Form1.CalculateVariation)
+                .ToArray();
 
-            var allDiscoverdVariation = SaveData["discoveredObjects2"]!.AsArray()
+            int[] allDiscoverdVariation = _saveData["discoveredObjects2"]!.AsArray()
                 .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
                 .Where(obj => allCookedCategoryId.Contains(obj.objectID))
                 .Select(c => c!.variation)
                 .Distinct()
-                .ToList();
+                .ToArray();
             var intersectRecipeVariation = allVariations.Intersect(allDiscoverdVariation).ToList();
-            double cookRate = (double)intersectRecipeVariation.Count / allVariations.Count;
-            var outputResult = MessageBox.Show($"現在の正規レシピ網羅率は {cookRate:P2} %です。" +
-                $"（{intersectRecipeVariation.Count} / {allVariations.Count}）\n" +
+            double cookRate = (double)intersectRecipeVariation.Count / allVariations.Length;
+
+            DialogResult outputResult = MessageBox.Show($"現在のレシピ網羅率は {cookRate:P2} %です。" +
+                $"（{intersectRecipeVariation.Count} / {allVariations.Length}）\n" +
                 $"※ゲーム内レシピブックとカウントが異なる場合があります。\n\n" +
                 $"一度も調理していない組み合わせを出力しますか？", "", MessageBoxButtons.YesNo);
             if (outputResult is DialogResult.Yes)
@@ -174,33 +186,147 @@ namespace CKFoodMaker
                     Form1.ReverseCalcurateVariation(variation, out int materialIdA, out int materialIdB);
                     string FoodA = StaticResource.AllFoodMaterials.Single(f => f.objectID == materialIdA).DisplayName;
                     string FoodB = StaticResource.AllFoodMaterials.Single(f => f.objectID == materialIdB).DisplayName;
-                    foodBuilder.AppendLine(FoodA + " + " + FoodB);
+                    foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
-                string path = Path.Combine(Directory.GetCurrentDirectory(), $"UncreatedRecipe.txt");
-                File.WriteAllText(path, foodBuilder.ToString());
-                MessageBox.Show($"{exceptRecipe.Length} 通りのレシピを出力しました。\n{path}");
 
+                using SaveFileDialog saveFileDialog = new();
+                saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+                saveFileDialog.DefaultExt = "txt";
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.FileName = "UncreatedRecipe.txt";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string path = saveFileDialog.FileName;
+                    File.WriteAllText(path, foodBuilder.ToString());
+                    MessageBox.Show($"{exceptRecipe.Length} 通りのレシピを出力しました。");
+                }
             }
-            
-            //todo 全レシピ追加
-            //全組み合わせの勝敗表からカテゴリを自動で決定させる:要食材勝敗テーブルの解明
+            //todo 全レシピ追加 全組み合わせの勝敗表からカテゴリを自動で決定させる:要食材勝敗テーブルのアルゴリズム解明
         }
 
-        public void DeleteAllRecipe()
+        public void DeleteAllRecipes()
         {
             var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare + (int)CookRarity.Epic })
+                .SelectMany(c => new[] { c.ObjectID, c.ObjectID + (int)CookRarity.Rare + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToList();
-            var discoveredObjectWithoutRecipe = SaveData["discoveredObjects2"]!.AsArray()
+            var discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()
                 .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
                 .Where(obj => !allCookedCategoryId.Contains(obj.objectID))
                 .ToList();
-            SaveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(discoveredObjectWithoutRecipe, StaticResource.SerializerOption));
+            _saveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(discoveredObjectWithoutRecipe, StaticResource.SerializerOption));
             // データ書き込み
-            string changedJson = JsonSerializer.Serialize(SaveData, StaticResource.SerializerOption);
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
+        }
+
+        public List<Condition> GetConditions()
+        {
+            var conditions = _saveData["conditionsList"]?.AsArray()
+                .Select(c => JsonSerializer.Deserialize<Condition>(c, StaticResource.SerializerOption)!)
+                .ToList()!;
+            return conditions;
+        }
+
+        public static void BackUpConditions(IEnumerable<Condition> conditions, string filePath)
+        {
+            conditions = conditions.OrderBy(c => c.Id).ToList();
+            // 必要あらば例外処理
+
+            var conditionsNode = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
+            string changedJson = JsonSerializer.Serialize(conditionsNode, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+            File.WriteAllText(filePath, changedJson);
+        }
+
+        /// <summary>
+        /// Conditionsのみのバックアップファイルから読み込む
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static List<Condition> LoadConditions(string filePath)
+        {
+            string jsonString = SanitizeJsonString(File.ReadAllText(filePath));
+            var conditions = JsonSerializer.Deserialize<List<Condition>>(jsonString, StaticResource.SerializerOption)?
+                .OrderBy(c => c.Id)
+                .ToList();
+            return conditions ??= [];
+        }
+
+        public void OverrideConditions(IEnumerable<Condition> conditions)
+        {
+            _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+#if DEBUG
+            _saveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
+#endif
+            File.WriteAllText(SaveDataPath, changedJson);
+        }
+
+        // 既にレシピがおかしいデータへの解析処理
+        private void AnalyzeRecepe()
+        {
+            var resultFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"AnalyzeRecipe.txt");
+            var allCookedCategoryId = StaticResource.AllCookedBaseCategories
+                .SelectMany(c => new[] { c.ObjectID, c.ObjectID + (int)CookRarity.Rare + (int)CookRarity.Epic })
+                .OrderBy(id => id)
+                .ToList();
+            var CookedCategoryCommon = StaticResource.AllCookedBaseCategories
+                .Select(c => c.ObjectID)
+                .ToArray();
+            var CookedCategoryRare = CookedCategoryCommon.Select(id => id + (int)CookRarity.Rare).ToArray();
+            var CookedCategoryEpic = CookedCategoryCommon.Select(id => id + (int)CookRarity.Epic).ToArray();
+
+            List<DiscoveredObjects> discoveredAllRecipe = _saveData["discoveredObjects2"]!.AsArray()
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Where(obj => allCookedCategoryId.Contains(obj.objectID))
+                .ToList();
+
+            var dicoveredCommonRecipe = discoveredAllRecipe
+                .Where(recipe => CookedCategoryCommon.Contains(recipe.objectID))
+                .Select(recipe =>
+                {
+                    var catergoryDisplayName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == recipe.objectID).DisplayName;
+                    Form1.ReverseCalcurateVariation(recipe.variation, out int materialIdA, out int materialIdB);
+                    string foodA = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
+                    .Single(f => f.objectID == materialIdA)?.DisplayName ?? string.Empty;
+                    string foodB = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
+                    .Single(f => f.objectID == materialIdB)?.DisplayName ?? string.Empty;
+                    return $"C:{catergoryDisplayName:10} = {foodA:10} + {foodB:10}";
+                }).ToArray();
+            var dicoveredRareRecipe = discoveredAllRecipe
+                .Where(recipe => CookedCategoryRare.Contains(recipe.objectID))
+                .Select(recipe =>
+                {
+                    var catergoryDisplayName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == recipe.objectID).DisplayName;
+                    Form1.ReverseCalcurateVariation(recipe.variation, out int materialIdA, out int materialIdB);
+                    string foodA = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
+                    .Single(f => f.objectID == materialIdA)?.DisplayName ?? string.Empty;
+                    string foodB = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
+                    .Single(f => f.objectID == materialIdB)?.DisplayName ?? string.Empty;
+                    return $"R:{catergoryDisplayName:10} = {foodA:10} + {foodB:10}";
+                }).ToArray();
+            var dicoveredEpicRecipe = discoveredAllRecipe
+                .Where(recipe => CookedCategoryEpic.Contains(recipe.objectID))
+                .Select(recipe =>
+                {
+                    var catergoryDisplayName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == recipe.objectID).DisplayName;
+                    Form1.ReverseCalcurateVariation(recipe.variation, out int materialIdA, out int materialIdB);
+                    string foodA = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
+                    .Single(f => f.objectID == materialIdA)?.DisplayName ?? string.Empty;
+                    string foodB = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
+                    .Single(f => f.objectID == materialIdB)?.DisplayName ?? string.Empty;
+                    return $"E{catergoryDisplayName:10} = {foodA:10} + {foodB:10}";
+                }).ToArray();
+            var sb = new StringBuilder();
+            foreach (var item in dicoveredCommonRecipe.Concat(dicoveredRareRecipe).Concat(dicoveredEpicRecipe))
+            {
+                sb.AppendLine(item.ToString());
+            }
+            File.WriteAllText(resultFilePath, sb.ToString());
         }
     }
 }

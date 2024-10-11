@@ -47,7 +47,7 @@ namespace CKFoodMakerTest
             var talents = manager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)
                 .Select(str => new PetTalent(str))
                 .ToList();
-            Assert.AreEqual(9, talents.Count());
+            Assert.AreEqual(9, talents.Count);
             Assert.AreEqual(5, talents.Count(t => t.Points == 1));
         }
 
@@ -67,7 +67,7 @@ namespace CKFoodMakerTest
             manager.AddStableType(AuxHash.PetGroupHash, petTalent);
             manager.AddStableType(AuxHash.PetNameGroupHash, petName);
             
-            JsonSerializerOptions serializerOptionWrite = new JsonSerializerOptions
+            JsonSerializerOptions serializerOptionWrite = new()
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };

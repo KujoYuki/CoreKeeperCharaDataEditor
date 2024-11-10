@@ -235,12 +235,14 @@
             // 
             // materialComboBoxB
             // 
+            materialComboBoxB.DrawMode = DrawMode.OwnerDrawFixed;
             materialComboBoxB.DropDownStyle = ComboBoxStyle.DropDownList;
             materialComboBoxB.FormattingEnabled = true;
             materialComboBoxB.Location = new Point(6, 72);
             materialComboBoxB.Name = "materialComboBoxB";
-            materialComboBoxB.Size = new Size(221, 23);
+            materialComboBoxB.Size = new Size(221, 24);
             materialComboBoxB.TabIndex = 9;
+            materialComboBoxB.DrawItem += materialComboBoxB_DrawItem;
             // 
             // label5
             // 
@@ -253,12 +255,14 @@
             // 
             // materialComboBoxA
             // 
+            materialComboBoxA.DrawMode = DrawMode.OwnerDrawFixed;
             materialComboBoxA.DropDownStyle = ComboBoxStyle.DropDownList;
             materialComboBoxA.FormattingEnabled = true;
             materialComboBoxA.Location = new Point(6, 21);
             materialComboBoxA.Name = "materialComboBoxA";
-            materialComboBoxA.Size = new Size(221, 23);
+            materialComboBoxA.Size = new Size(221, 24);
             materialComboBoxA.TabIndex = 8;
+            materialComboBoxA.DrawItem += materialComboBoxA_DrawItem;
             // 
             // label4
             // 

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConditionForm));
             dataGridView = new DataGridView();
             ConditionId = new DataGridViewTextBoxColumn();
@@ -45,7 +45,7 @@
             saveFileDialog = new SaveFileDialog();
             aboudConditionIdLinkLabel = new LinkLabel();
             DataGridErrorTextLabel = new Label();
-            resultLabel = new Label();
+            updateConditionsLabel = new Label();
             deleteSelectedRowButton = new Button();
             addNewRowButton = new Button();
             conditionListLinkLabel = new LinkLabel();
@@ -55,8 +55,8 @@
             // dataGridView
             // 
             dataGridView.AllowUserToAddRows = false;
-            dataGridViewCellStyle1.BackColor = Color.Cyan;
-            dataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle.BackColor = Color.Cyan;
+            dataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle;
             dataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
@@ -66,6 +66,7 @@
             dataGridView.Location = new Point(12, 27);
             dataGridView.Name = "dataGridView";
             dataGridView.RowHeadersVisible = false;
+            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView.Size = new Size(744, 389);
             dataGridView.TabIndex = 0;
             dataGridView.CellValidating += dataGridView_CellValidating;
@@ -199,16 +200,16 @@
             DataGridErrorTextLabel.Text = "DataGridErrorTextLabel";
             DataGridErrorTextLabel.Visible = false;
             // 
-            // resultLabel
+            // updateConditionsLabel
             // 
-            resultLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            resultLabel.AutoSize = true;
-            resultLabel.Location = new Point(762, 362);
-            resultLabel.Name = "resultLabel";
-            resultLabel.Size = new Size(152, 15);
-            resultLabel.TabIndex = 7;
-            resultLabel.Text = "ConditionListを更新しました。";
-            resultLabel.Visible = false;
+            updateConditionsLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            updateConditionsLabel.AutoSize = true;
+            updateConditionsLabel.Location = new Point(762, 362);
+            updateConditionsLabel.Name = "updateConditionsLabel";
+            updateConditionsLabel.Size = new Size(129, 15);
+            updateConditionsLabel.TabIndex = 7;
+            updateConditionsLabel.Text = "updateConditionsLabel";
+            updateConditionsLabel.Visible = false;
             // 
             // deleteSelectedRowButton
             // 
@@ -252,7 +253,7 @@
             Controls.Add(conditionListLinkLabel);
             Controls.Add(addNewRowButton);
             Controls.Add(deleteSelectedRowButton);
-            Controls.Add(resultLabel);
+            Controls.Add(updateConditionsLabel);
             Controls.Add(DataGridErrorTextLabel);
             Controls.Add(aboudConditionIdLinkLabel);
             Controls.Add(loadBackupButton);
@@ -280,7 +281,7 @@
         private SaveFileDialog saveFileDialog;
         private LinkLabel aboudConditionIdLinkLabel;
         private Label DataGridErrorTextLabel;
-        private Label resultLabel;
+        private Label updateConditionsLabel;
         private Button deleteSelectedRowButton;
         private Button addNewRowButton;
         private DataGridViewTextBoxColumn ConditionId;

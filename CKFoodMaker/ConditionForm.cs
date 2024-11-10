@@ -172,7 +172,8 @@ namespace CKFoodMaker
             var newConditions = RetrieveConditionsFromGrid();
             _saveDataManager.OverrideConditions(newConditions);
 
-            resultLabel.Text = $"ConditionListを更新しました。{Conditions.Count} -> {newConditions.Count}";
+            updateConditionsLabel.Text = $"ConditionListを更新しました。\n" +
+                $"{Conditions.Count} -> {newConditions.Count}";
             Conditions = newConditions;
             ShowResultLabel();
 
@@ -189,14 +190,15 @@ namespace CKFoodMaker
         {
             return dataGridView.Rows
                 .Cast<DataGridViewRow>()
-                .Take(dataGridView.Rows.Count - 1)
+                .Take(dataGridView.Rows.Count)
                 .Select(r =>
                 {
                     try
                     {
                         int id = int.Parse(r.Cells["ConditionId"].Value?.ToString()!);
                         int value = int.Parse(r.Cells["Value"].Value?.ToString()!);
-                        double duration = (bool)(r.Cells["Infinity"].Value ?? false) ? double.PositiveInfinity : double.Parse(r.Cells["Duration"].Value.ToString()!);
+                        double duration = (bool)(r.Cells["Infinity"].Value ?? false) ? double.PositiveInfinity
+                        : double.Parse(r.Cells["Duration"].Value.ToString()!);
                         double timer = double.Parse(r.Cells["Timer"].Value?.ToString()!);
                         return new Condition(id, value, duration, timer);
                     }
@@ -211,26 +213,23 @@ namespace CKFoodMaker
 
         private async void ShowResultLabel()
         {
-            resultLabel.Visible = true;
+            updateConditionsLabel.Visible = true;
             await Task.Delay(3000);
-            resultLabel.Visible = false;
+            updateConditionsLabel.Visible = false;
         }
 
         /// <summary>
-        /// 現在編集中のセルが含まれる行を削除
+        /// 現在編集中の行を削除
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void deleteSelectedRowButton_Click(object sender, EventArgs e)
         {
-
-            if (dataGridView.CurrentCell is not null)
+            if (dataGridView.SelectedRows.Count > 0)
             {
-                int rowIndex = dataGridView.CurrentCell.RowIndex;
-                if (rowIndex >= 0 && rowIndex < dataGridView.Rows.Count &&
-                    rowIndex != dataGridView.NewRowIndex)
+                foreach (DataGridViewRow row in dataGridView.SelectedRows)
                 {
-                    dataGridView.Rows.RemoveAt(rowIndex);
+                    dataGridView.Rows.Remove(row);
                 }
             }
         }

@@ -77,11 +77,11 @@ namespace CKFoodMaker
             var defaultMaterials = StaticResource.AllFoodMaterials
                 .Select(c => new InternalItemInfo(c.objectID, c.InternalName, c.DisplayName))
                 .ToArray();
-            
+
             string additionalFoodMaterialFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "AdditionalFoodMaterial.csv")
                 ?? throw new FileNotFoundException($"AdditionalFoodMaterial.csvが見つかりません。");
             var materialCategories = File.ReadAllLines(additionalFoodMaterialFilePath)
-                .Select(line => 
+                .Select(line =>
                 {
                     string[] words = line.Split(',');
                     return new InternalItemInfo(int.Parse(words[0]), words[1], words[2]);
@@ -155,7 +155,16 @@ namespace CKFoodMaker
                     SaveDataFolderPath = generalPath;
                     return;
                 }
-                SaveDataFolderPath = Path.Combine(Directory.GetDirectories(generalPath).SingleOrDefault()!, "saves");
+                try
+                {
+                    SaveDataFolderPath = Path.Combine(Directory.GetDirectories(generalPath).FirstOrDefault()!, "saves");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("セーブデータフォルダが見つかりませんでした。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    throw;
+                }
+
                 if (!Directory.Exists(SaveDataFolderPath))
                 {
                     SaveDataFolderPath = appDataPath;
@@ -681,6 +690,43 @@ namespace CKFoodMaker
             }
             var conditionForm = new ConditionForm();
             conditionForm.ShowDialog();
+        }
+
+        private void materialComboBoxA_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            materialComboBox_DrawItem(sender, e);
+        }
+
+        private void materialComboBoxB_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            materialComboBox_DrawItem(sender, e);
+        }
+
+        private void materialComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            ComboBox combo = (ComboBox)sender;
+            string selectedText = (string)combo.Items[e.Index]!;
+
+            var displayNames = StaticResource.AllFoodMaterials.Select(c => c.DisplayName);
+            var goldernNames = displayNames.Where(name => name.StartsWith("金色の")).SkipLast(1);
+            // 背景色を設定
+            if (goldernNames.Contains(selectedText))
+            {
+                e.Graphics.FillRectangle(Brushes.Yellow, e.Bounds);
+            }
+            else if (displayNames.Contains(selectedText))
+            {
+                e.DrawBackground();
+            }
+            else
+            {
+                e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
+            }
+
+            e.Graphics.DrawString(selectedText, e.Font!, Brushes.Black, e.Bounds);
+            e.DrawFocusRectangle();
         }
     }
 }

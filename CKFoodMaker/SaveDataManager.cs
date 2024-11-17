@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Resources.Tools;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using CKFoodMaker.Model;
@@ -18,6 +19,8 @@ namespace CKFoodMaker
         public static SaveDataManager Instance => _instance ??= new();
 
         private string _saveDataPath = string.Empty;
+
+        private (ItemBase itemBase, string objectName, ItemAuxData auxData) _copiedItem;
         public string SaveDataPath
         {
             get => _saveDataPath;
@@ -327,6 +330,16 @@ namespace CKFoodMaker
                 sb.AppendLine(item.ToString());
             }
             File.WriteAllText(resultFilePath, sb.ToString());
+        }
+
+        internal void CopyItem(ItemBase itemBase, string objectName, ItemAuxData auxData)
+        {
+            _copiedItem = (itemBase, objectName, auxData);
+        }
+
+        internal (ItemBase itemBase, string objectName, ItemAuxData auxData) PasteItem()
+        {
+            return (_copiedItem.itemBase, _copiedItem.objectName, _copiedItem.auxData);
         }
     }
 }

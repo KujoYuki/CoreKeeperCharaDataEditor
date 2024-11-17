@@ -25,5 +25,7 @@ namespace CKFoodMaker.Model
         {
             AuxData = auxData;
         }
+
+        public static InternalItemInfo Default = new(0, "", "");
     }
 }

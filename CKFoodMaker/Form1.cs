@@ -388,6 +388,11 @@ namespace CKFoodMaker
             Process.Start(new ProcessStartInfo("https://core-keeper.fandom.com/wiki/Object_IDs") { UseShellExecute = true });
         }
 
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperFoodEditor/blob/main/Document/parameter.md") { UseShellExecute = true });
+        }
+
         private void createButton_Click(object sender, EventArgs e)
         {
             if (!Program.IsDeveloper)
@@ -727,6 +732,42 @@ namespace CKFoodMaker
 
             e.Graphics.DrawString(selectedText, e.Font!, Brushes.Black, e.Bounds);
             e.DrawFocusRectangle();
+        }
+
+        private void CopyButton_Click(object sender, EventArgs e)
+        {
+            var baseItem = ItemBase.Default;
+            string objectName = string.Empty;
+            var auxData = ItemAuxData.Default;
+            try
+            {
+                baseItem = new(int.Parse(objectIdTextBox.Text),
+                    int.Parse(amoutTextBox.Text),
+                    int.Parse(variationTextBox.Text),
+                    int.Parse(variationUpdateCountTextBox.Text));
+                objectName = objectNameTextBox.Text;
+                auxData = new(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("コピーできない値が含まれています。");
+                return;
+            }
+            _saveDataManager.CopyItem(baseItem, objectName, auxData);
+            EnableResultMessage($"{objectNameTextBox.Text}をコピーしました。");
+        }
+
+        private void PaeteButton_Click(object sender, EventArgs e)
+        {
+            (ItemBase itemBase, string objectName, ItemAuxData auxData) item = _saveDataManager.PasteItem();
+            objectIdTextBox.Text = item.itemBase.objectID.ToString();
+            amoutTextBox.Text = item.itemBase.amount.ToString();
+            variationTextBox.Text = item.itemBase.variation.ToString();
+            variationUpdateCountTextBox.Text = item.itemBase.variationUpdateCount.ToString();
+            objectNameTextBox.Text = item.objectName;
+            auxIndexTextBox.Text = item.auxData.index.ToString();
+            auxDataTextBox.Text = item.auxData.data;
+            EnableResultMessage($"{item.objectName}をペーストしました。");
         }
     }
 }

@@ -72,6 +72,8 @@
             petColorComboBox = new ComboBox();
             label13 = new Label();
             advancedTab = new TabPage();
+            PaeteButton = new Button();
+            CopyButton = new Button();
             auxDataTextBox = new TextBox();
             label18 = new Label();
             auxIndexTextBox = new TextBox();
@@ -103,6 +105,7 @@
             previousItemButton = new Button();
             nextItemButton = new Button();
             openConditionsButton = new Button();
+            linkLabel1 = new LinkLabel();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
@@ -561,6 +564,9 @@
             // 
             // advancedTab
             // 
+            advancedTab.Controls.Add(linkLabel1);
+            advancedTab.Controls.Add(PaeteButton);
+            advancedTab.Controls.Add(CopyButton);
             advancedTab.Controls.Add(auxDataTextBox);
             advancedTab.Controls.Add(label18);
             advancedTab.Controls.Add(auxIndexTextBox);
@@ -586,6 +592,26 @@
             advancedTab.TabIndex = 1;
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
+            // 
+            // PaeteButton
+            // 
+            PaeteButton.Location = new Point(452, 119);
+            PaeteButton.Name = "PaeteButton";
+            PaeteButton.Size = new Size(79, 23);
+            PaeteButton.TabIndex = 27;
+            PaeteButton.Text = "ペースト";
+            PaeteButton.UseVisualStyleBackColor = true;
+            PaeteButton.Click += PaeteButton_Click;
+            // 
+            // CopyButton
+            // 
+            CopyButton.Location = new Point(316, 119);
+            CopyButton.Name = "CopyButton";
+            CopyButton.Size = new Size(130, 23);
+            CopyButton.TabIndex = 26;
+            CopyButton.Text = "アイテム情報のコピー";
+            CopyButton.UseVisualStyleBackColor = true;
+            CopyButton.Click += CopyButton_Click;
             // 
             // auxDataTextBox
             // 
@@ -669,7 +695,7 @@
             // objectIdsLinkLabel
             // 
             objectIdsLinkLabel.AutoSize = true;
-            objectIdsLinkLabel.Location = new Point(9, 123);
+            objectIdsLinkLabel.Location = new Point(9, 127);
             objectIdsLinkLabel.Name = "objectIdsLinkLabel";
             objectIdsLinkLabel.Size = new Size(87, 15);
             objectIdsLinkLabel.TabIndex = 14;
@@ -862,6 +888,17 @@
             openConditionsButton.UseVisualStyleBackColor = false;
             openConditionsButton.Click += openConditionsButton_Click;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(9, 108);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(87, 15);
+            linkLabel1.TabIndex = 28;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "パラメータについて";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -976,5 +1013,8 @@
         private TextBox auxIndexTextBox;
         private Label label17;
         private Button openConditionsButton;
+        private Button PaeteButton;
+        private Button CopyButton;
+        private LinkLabel linkLabel1;
     }
 }

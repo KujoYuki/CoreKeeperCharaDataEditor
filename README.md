@@ -84,4 +84,4 @@ In short, this is a tool aimed at post-game completionists.
 Explanation is in Japanese only  
 [セーブデータ編集について](Document/analysis.md)  
 [パラメータについて](Document/parameter.md)  
-[コンディション値について](Document/conditions)
+[コンディション値について](Document/conditions.md)

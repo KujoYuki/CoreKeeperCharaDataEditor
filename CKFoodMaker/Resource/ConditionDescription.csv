@@ -2,7 +2,7 @@
 1,BlueGlow,青色の光度 x
 2,SlowedBySlime,スライムからの移動スピード x%
 3,HealthAddition,体力 x
-4,MovementSpeedIncrease,移動スピード x%
+4,MovementSpeedIncrease,移動スピード x/10%
 5,HealOverTime,体力が毎秒x回復する。
 6,IncreasedMaxHealth,最大体力 x
 7,StarvingMovementSpeedDecrease,空腹による移動速度 x%
@@ -13,14 +13,14 @@
 12,CritChance,攻撃時にx%の確率で50%の追加ダメージを与える。
 13,ChanceToApplyPoisoned,ヒットで敵の回復力を75%減少させる毒を与える確率 x%
 14,Poisoned,回復力が75%低下した
-15,DodgeChance,x%の確率であらゆる攻撃を回避する。最大回避確率は90%。
+15,DodgeChance,x/10%の確率であらゆる攻撃を回避する。最大回避確率は90%。
 16,IncreasedMaxHealthPermanent,最大体力 x
 17,AcidDamage,毎秒酸ダメージ x。防具を無視。
 18,ApplySlowedBySlime,目標の移動スピードを4秒間x%低下させる
 19,LifeOnHit,敵への近接攻撃で体力がx回復する。
 20,ImmuneToSlimeSlow,スライムによる移動速度低下に耐性
 21,ThornsDamage,近接攻撃を行う側がxダメージを受ける。
-22,PhysicalRangeDamageIncrease,物理遠距離ダメージ x%
+22,PhysicalRangeDamageIncrease,物理遠距離ダメージ x/10%
 23,ExtraHarvestChance,収穫量増加率 x/10%
 24,Suffocating,窒息している
 25,ChanceOnHitToKnockback,近接攻撃が敵をノックバックする確率がx%となる。
@@ -49,12 +49,12 @@
 48,ArmorPercentageIncrease,防具 x%
 49,MiningPercentageIncrease,採掘ダメージ x%
 50,MiningSpeedIncrease,採掘スピード x/10%
-51,MeleeAttackSpeedIncrease,近接攻撃スピード x%
+51,MeleeAttackSpeedIncrease,近接攻撃スピード x/10%
 52,RangeAttackSpeedIncrease,遠距離攻撃スピード x%
 53,VisibleOreDistanceIncrease,鉱石を視認できるマス数 x
 54,PercentageOfMiningAsMelee,採掘ダメージのx%が近接ダメージに追加
 55,PercentageOfFishingAsRange,釣りのx%が遠距離ダメージに追加
-56,ChanceForAdditionalOre,鉱石が埋まった壁から追加鉱石を獲得する確率 x%
+56,ChanceForAdditionalOre,鉱石が埋まった壁から追加鉱石を獲得する確率 x/10%
 57,IncreasedExplosivesDamage,爆発ダメージ x%
 58,MovementSpeedBoostAfterMining,壁採掘後に短時間移動スピードブースト x%
 59,ShortMovementSpeedBoost,短時間移動スピード x%

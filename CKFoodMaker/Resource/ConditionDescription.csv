@@ -148,7 +148,7 @@
 147,AuraHealingOverTime,x health every sec
 148,CriticalDamagePercentageIncreaseFromGardening,x% critical hit damage
 149,CriticalDamagePercentageIncreaseFromRange,x% critical hit damage
-150,AllDamageIncrease,ダメージ x%
+150,AllDamageIncrease,ダメージ x/10%
 151,GainDamageIncreaseAfterMining,壁の採掘でダメージが短時間 x%
 152,DamageIncreaseAfterMining,x% damage
 153,GainCriticalHitChanceFromStandingStill,直立不動でクリティカルヒット確率が短時間 x%

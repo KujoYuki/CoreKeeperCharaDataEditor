@@ -1,5 +1,4 @@
-﻿using System.Resources.Tools;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using CKFoodMaker.Model;
@@ -20,7 +19,9 @@ namespace CKFoodMaker
 
         private string _saveDataPath = string.Empty;
 
-        private (ItemBase itemBase, string objectName, ItemAuxData auxData) _copiedItem;
+        private Item? _copiedItem;
+
+        private Item[]? _copiedInventory;
         public string SaveDataPath
         {
             get => _saveDataPath;
@@ -33,24 +34,24 @@ namespace CKFoodMaker
             }
         }
 
-        public List<(ItemBase item, string objectName, ItemAuxData auxData)> Items { get; private set; } = [];
+        public List<Item> Items { get; private set; } = [];
         private JsonObject _saveData = [];
 
         private SaveDataManager()
         {
         }
 
-        private static string SanitizeJsonString(string origin)
+        public static string SanitizeJsonString(string origin)
         {
             return origin.Replace("Infinity", "\"Infinity\"");
         }
 
-        private static string RestoreJsonString(string processed)
+        public static string RestoreJsonString(string processed)
         {
             return processed.Replace("\"Infinity\"", "Infinity");
         }
 
-        private JsonObject LoadInventory(out List<(ItemBase item, string objectName, ItemAuxData auxData)> items)
+        private JsonObject LoadInventory(out List<Item> items)
         {
             try
             {
@@ -71,14 +72,14 @@ namespace CKFoodMaker
                 items = [];
                 foreach (var (item, objectName, auxData) in limitedItems)
                 {
-                    var itemBase = new ItemBase(
+                    var itemBase = new ItemInfo(
                         objectID: item["objectID"]!.GetValue<int>(),
                         amount: item["amount"]!.GetValue<int>(),
                         variation: item["variation"]!.GetValue<int>(),
                         variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
                     string objectInternalName = objectName!.GetValue<string>()!;
                     var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
-                    items.Add((itemBase, objectInternalName, itemAux));
+                    items.Add(new(itemBase, objectInternalName, itemAux));
                 }
 
                 return _saveData;
@@ -96,7 +97,7 @@ namespace CKFoodMaker
         }
 
         // 補助データ込みの書き込みメソッド
-        public bool WriteItemData(int insertIndex, ItemBase itemBase, string objectName, ItemAuxData? auxData = null)
+        public bool WriteItemData(int insertIndex, ItemInfo itemBase, string objectName, ItemAuxData? auxData = null)
         {
             auxData ??= ItemAuxData.Default;
             var success = false;
@@ -128,11 +129,34 @@ namespace CKFoodMaker
             return success;
         }
 
+        public void RewriteAllItemData()
+        {
+            _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Info), StaticResource.SerializerOption));
+            _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.objectName), StaticResource.SerializerOption));
+            _saveData["inventoryAuxData"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Aux), StaticResource.SerializerOption));
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+            File.WriteAllText(SaveDataPath, changedJson);
+        }
+
         public bool IsClearData()
         {
             return _saveData["hasUnlockedSouls"]?.GetValue<bool>() is true
                    && _saveData["collectedSouls"]?.AsArray().Count is 6
                    && _saveData["hasPlayedOutro"]?.GetValue<bool>() is true;
+        }
+
+        public bool IsCreativeData()
+        {
+            string charaSlotString = Path.GetFileNameWithoutExtension(SaveDataPath);
+            if (int.TryParse(charaSlotString, out int charaSlotNo))
+            {
+                if (charaSlotNo >= 30)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -159,10 +183,10 @@ namespace CKFoodMaker
         public void ListUncreatedRecipes()
         {
             var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.ObjectID, c.ObjectID + (int)CookRarity.Rare })
+                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
                 .ToArray();
-            int[] allFoodID = StaticResource.AllFoodMaterials.Select(c => c.objectID).ToArray();
+            int[] allFoodID = StaticResource.AllFoodMaterials.Select(c => c.Info.objectID).ToArray();
             int[] allVariations = allFoodID
                 .SelectMany((ID, index) => allFoodID.Skip(index), Form1.CalculateVariation)
                 .ToArray();
@@ -187,8 +211,8 @@ namespace CKFoodMaker
                 foreach (var variation in exceptRecipe)
                 {
                     Form1.ReverseCalcurateVariation(variation, out int materialIdA, out int materialIdB);
-                    string FoodA = StaticResource.AllFoodMaterials.Single(f => f.objectID == materialIdA).DisplayName;
-                    string FoodB = StaticResource.AllFoodMaterials.Single(f => f.objectID == materialIdB).DisplayName;
+                    string FoodA = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == materialIdA).DisplayName;
+                    string FoodB = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == materialIdB).DisplayName;
                     foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
 
@@ -211,7 +235,7 @@ namespace CKFoodMaker
         public void DeleteAllRecipes()
         {
             var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.ObjectID, c.ObjectID + (int)CookRarity.Rare + (int)CookRarity.Epic })
+                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare, c.Info.objectID + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToList();
             var discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()
@@ -269,77 +293,50 @@ namespace CKFoodMaker
             File.WriteAllText(SaveDataPath, changedJson);
         }
 
-        // 既にレシピがおかしいデータへの解析処理
-        private void AnalyzeRecepe()
+        internal void CopyItem(Item item)
         {
-            var resultFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"AnalyzeRecipe.txt");
-            var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.ObjectID, c.ObjectID + (int)CookRarity.Rare + (int)CookRarity.Epic })
-                .OrderBy(id => id)
-                .ToList();
-            var CookedCategoryCommon = StaticResource.AllCookedBaseCategories
-                .Select(c => c.ObjectID)
-                .ToArray();
-            var CookedCategoryRare = CookedCategoryCommon.Select(id => id + (int)CookRarity.Rare).ToArray();
-            var CookedCategoryEpic = CookedCategoryCommon.Select(id => id + (int)CookRarity.Epic).ToArray();
+            _copiedItem = item;
+        }
 
-            List<DiscoveredObjects> discoveredAllRecipe = _saveData["discoveredObjects2"]!.AsArray()
-                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
-                .Where(obj => allCookedCategoryId.Contains(obj.objectID))
-                .ToList();
+        internal Item PasteItem()
+        {
+            return _copiedItem ?? Item.Default;
+        }
 
-            var dicoveredCommonRecipe = discoveredAllRecipe
-                .Where(recipe => CookedCategoryCommon.Contains(recipe.objectID))
-                .Select(recipe =>
-                {
-                    var catergoryDisplayName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == recipe.objectID).DisplayName;
-                    Form1.ReverseCalcurateVariation(recipe.variation, out int materialIdA, out int materialIdB);
-                    string foodA = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
-                    .Single(f => f.objectID == materialIdA)?.DisplayName ?? string.Empty;
-                    string foodB = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
-                    .Single(f => f.objectID == materialIdB)?.DisplayName ?? string.Empty;
-                    return $"C:{catergoryDisplayName:10} = {foodA:10} + {foodB:10}";
-                }).ToArray();
-            var dicoveredRareRecipe = discoveredAllRecipe
-                .Where(recipe => CookedCategoryRare.Contains(recipe.objectID))
-                .Select(recipe =>
-                {
-                    var catergoryDisplayName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == recipe.objectID).DisplayName;
-                    Form1.ReverseCalcurateVariation(recipe.variation, out int materialIdA, out int materialIdB);
-                    string foodA = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
-                    .Single(f => f.objectID == materialIdA)?.DisplayName ?? string.Empty;
-                    string foodB = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
-                    .Single(f => f.objectID == materialIdB)?.DisplayName ?? string.Empty;
-                    return $"R:{catergoryDisplayName:10} = {foodA:10} + {foodB:10}";
-                }).ToArray();
-            var dicoveredEpicRecipe = discoveredAllRecipe
-                .Where(recipe => CookedCategoryEpic.Contains(recipe.objectID))
-                .Select(recipe =>
-                {
-                    var catergoryDisplayName = StaticResource.AllCookedBaseCategories.Single(c => c.ObjectID == recipe.objectID).DisplayName;
-                    Form1.ReverseCalcurateVariation(recipe.variation, out int materialIdA, out int materialIdB);
-                    string foodA = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
-                    .Single(f => f.objectID == materialIdA)?.DisplayName ?? string.Empty;
-                    string foodB = StaticResource.AllFoodMaterials.Concat(StaticResource.ObsoleteFoodMaterials)
-                    .Single(f => f.objectID == materialIdB)?.DisplayName ?? string.Empty;
-                    return $"E{catergoryDisplayName:10} = {foodA:10} + {foodB:10}";
-                }).ToArray();
-            var sb = new StringBuilder();
-            foreach (var item in dicoveredCommonRecipe.Concat(dicoveredRareRecipe).Concat(dicoveredEpicRecipe))
+        internal void CopyInventory()
+        {
+            _copiedInventory = Items.ToArray();
+        }
+
+        internal void PasteInventory()
+        {
+            if (_copiedInventory is not null)
             {
-                sb.AppendLine(item.ToString());
+                Items = _copiedInventory.ToList();
+                RewriteAllItemData();
             }
-            File.WriteAllText(resultFilePath, sb.ToString());
         }
 
-        internal void CopyItem(ItemBase itemBase, string objectName, ItemAuxData auxData)
+        internal bool HasCopiedInventory()
         {
-            _copiedItem = (itemBase, objectName, auxData);
+            return _copiedInventory is not null;
         }
 
-        internal (ItemBase itemBase, string objectName, ItemAuxData auxData) PasteItem()
+        internal List<Skill> LoadSkillPoint()
         {
-            return (_copiedItem.itemBase, _copiedItem.objectName, _copiedItem.auxData);
+            return _saveData["skills"]!.AsArray()
+                .Select(s => JsonSerializer.Deserialize<Skill>(s, StaticResource.SerializerOption)!)
+                .OrderBy(s => s.skillID)
+                .ToList();
+        }
+
+        internal void WriteSkillPoint(IEnumerable<Skill> skills)
+        {
+            _saveData["skills"] = JsonNode.Parse(JsonSerializer.Serialize(skills, StaticResource.SerializerOption));
+
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+            File.WriteAllText(SaveDataPath, changedJson);
         }
     }
 }

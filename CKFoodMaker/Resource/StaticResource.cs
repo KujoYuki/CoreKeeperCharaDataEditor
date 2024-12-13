@@ -13,7 +13,7 @@ namespace CKFoodMaker.Resource
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
 
-        public static IReadOnlyCollection<InternalItemInfo> AllCookedBaseCategories { get; } =
+        public static IReadOnlyCollection<Item> AllCookedBaseCategories { get; } =
         [
             new(9500, "CookedSoup", "スープ"),
             new(9501, "CookedPudding", "プリン"),
@@ -32,7 +32,7 @@ namespace CKFoodMaker.Resource
             new(9514, "CookedCake", "ケーキ"),
         ];
 
-        public static IReadOnlyCollection<FoodMaterial> AllFoodMaterials { get; } =
+        public static IReadOnlyCollection<Item> AllFoodMaterials { get; } =
         [
             new(1645,"LarvaMeat","幼虫肉"),
             new(1646,"GoldenLarvaMeat","金色の幼虫肉"),
@@ -110,7 +110,7 @@ namespace CKFoodMaker.Resource
             new(9743,"RiftianLampfish","亀裂のランプフィッシュ"),
         ];
 
-        public static IReadOnlyCollection<FoodMaterial> ObsoleteFoodMaterials { get; } =
+        public static IReadOnlyCollection<Item> ObsoleteFoodMaterials { get; } =
         [
             new(5501,"GiantMushroom2","ジャンボマッシュルーム(古)"),
             new(5607,"AmberLarva2","幼虫の琥珀(古)")

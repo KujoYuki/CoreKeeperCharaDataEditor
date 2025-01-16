@@ -34,6 +34,7 @@ namespace CKFoodMaker.Resource
 
         public static IReadOnlyCollection<Item> AllFoodMaterials { get; } =
         [
+            // hack レア化の有無で食材を分ける（ = レシピ用食材クラスの追加,ToItemメソッドの実装）を検討する
             new(1645,"LarvaMeat","幼虫肉"),
             new(1646,"GoldenLarvaMeat","金色の幼虫肉"),
             new(5500,"Mushroom","きのこ"),

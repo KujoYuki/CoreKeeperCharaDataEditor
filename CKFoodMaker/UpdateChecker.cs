@@ -5,7 +5,7 @@ namespace CKFoodMaker
 {
     public static class UpdateChecker
     {
-        private const string _currentVersion = "1.3.0"; //todo 新バージョンリリース時に手動で更新すること
+        private const string _currentVersion = "1.3.1"; // todo 新バージョンリリース時に手動で更新すること
         private const string _repoOwner = "KujoYuki";
         private const string _repoName = "CoreKeeperFoodEditor";
         private const string _uri = $"https://api.github.com/repos/{_repoOwner}/{_repoName}/releases/latest";
@@ -28,19 +28,35 @@ namespace CKFoodMaker
                     string latestVersion = latestRelease["tag_name"]?.GetValue<string>()!;
                     int download_count = latestRelease["assets"]![0]!["download_count"]!.GetValue<int>();
 
-                    bool newerRelease = false;
-                    if (_currentVersion != latestVersion)
-                    {
-                        newerRelease = true;
-                    }
+                    bool newerRelease = IsNewerVersion(_currentVersion, latestVersion);
                     return (newerRelease, latestVersion, download_count);
                 }
                 else
                 {
-                    //todo globalなロギング
-                    throw new HttpRequestException($"バージョンチェックに失敗しました。ステータスコード: {response.StatusCode}");
+                    // todo globalなロギング
+                    return (false, _currentVersion, 0);
+                    //throw new HttpRequestException($"バージョンチェックに失敗しました。ステータスコード: {response.StatusCode}");
                 }
             }
+        }
+
+        private static bool IsNewerVersion(string currentVersion, string latestVersion)
+        {
+            var currentParts = currentVersion.Split('.').Select(int.Parse).ToArray();
+            var latestParts = latestVersion.Split('.').Select(int.Parse).ToArray();
+
+            foreach (var (currentPart, latestPart) in currentParts.Zip(latestParts, (c, l) => (c, l)))
+            {
+                if (latestPart > currentPart)
+                {
+                    return true;
+                }
+                else if (latestPart < currentPart)
+                {
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }

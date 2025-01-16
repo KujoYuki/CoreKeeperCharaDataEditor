@@ -4,42 +4,17 @@ using CKFoodMaker;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json;
+using CKFoodMakerTest.Model;
 
 namespace CKFoodMakerTest
 {
     [TestClass]
     public class AnalyzeTest
     {
-        private static readonly string winUserName = Environment.UserName;
-        private const int id = 449703638;
-        private const int targetSlotNo = 0;
-        private string _saveDataPath = $@"C:\Users\{winUserName}\AppData\LocalLow\Pugstorm\Core Keeper\Steam\{id}\saves\{targetSlotNo}.json";
-        private const string _recipeFile = "analyzedRecipe.csv";
-
-        // 全ての食材と料理の表示名を取得
-        private static readonly List<(int objectID, string DisplayName)> foodMaterials = StaticResource.AllFoodMaterials
-            .Concat(StaticResource.ObsoleteFoodMaterials)   // レシピには載らないが料理は作成できるため含める
-            .Select(item => (objectID: item.Info.objectID, DisplayName: item.DisplayName))
-            .ToList();
-
-        // Id=>DisplayNameの辞書
-        private static readonly Dictionary<int, string> FoodDic = StaticResource.AllCookedBaseCategories
-            .Select(item =>
-            {
-                return new[] { item.Info.objectID, item.Info.objectID + (int)CookRarity.Rare, item.Info.objectID + (int)CookRarity.Epic }
-                .Select(id => (objectID: id, DisplayName: item.DisplayName));
-            })
-            .SelectMany(food => food).ToList()
-            .Concat(foodMaterials)
-            .ToDictionary();
-
-        // 金色食材のIDリスト
-        private static readonly List<int> rareFoodIds = Enumerable.Range(8100, 11).Append(9733).ToList();
-
         [TestMethod]
         public void AnalyzeReipeTest()
         {
-            string saveDataContents = File.ReadAllText(_saveDataPath);
+            string saveDataContents = File.ReadAllText(AnalyzeResource.SaveDataPath);
             // conditionsList中のInfinity文字列により例外が出るのを回避する
             saveDataContents = SaveDataManager.SanitizeJsonString(saveDataContents);
 
@@ -79,7 +54,7 @@ namespace CKFoodMakerTest
                     foreach (var material in materials)
                     {
                         // 食材じゃないものが食材の場合を除外（シーズンアイテム系など）
-                        if (!FoodDic.ContainsKey(material))
+                        if (!AnalyzeResource.FoodDic.ContainsKey(material))
                         {
                             return false;
                         }
@@ -90,60 +65,67 @@ namespace CKFoodMakerTest
                 {
                     // csv用レコードに変換
                     Form1.ReverseCalcurateVariation(r.variation, out int materialA, out int materialB);
-                    return new Recipe(materialA, materialB, r.objectID, FoodDic[materialA], FoodDic[materialB], FoodDic[r.objectID]);
+                    return new Recipe(materialA, materialB, r.objectID);
                 })
                 .OrderBy(r => r.MaterialA)
                 .ThenBy(r => r.MaterialB)
                 .ToList();
 
-            var sb = new StringBuilder();
-            string header = "食材A_Id,食材B_Id,料理_Id,食材A_名前,食材B_名前,料理名";
-            sb.AppendLine(header);
+            var sb = new StringBuilder(Recipe.Header);
             foreach (var recipe in discoveredAllRecipe)
             {
                 sb.AppendLine(recipe.ToString());
             }
-            string currentPath = Path.Combine(Directory.GetCurrentDirectory(), _recipeFile)!;
+            string currentPath = Path.Combine(Directory.GetCurrentDirectory(), AnalyzeResource.RecipeFile)!;
             File.WriteAllText(currentPath, sb.ToString());
         }
 
+        /// <summary>
+        /// 前段のレシピに対して個別の組み合わせを検証する
+        /// </summary>
         [TestMethod]
         public void AnlyzeEachRecipeTest()
         {
-            // 前段の料理一覧から得た全料理組み合わせに対し、個別の料理事の勝敗を検証する
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), _recipeFile)!;
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), AnalyzeResource.RecipeFile)!;
             List<Recipe> receipeRecords =
                 File.ReadAllLines(filePath)
-                .Skip(1)
+                .Skip(1)    // ヘッダー行をスキップ
                 .Select(line =>
                 {
                     var items = line.Split(',');
-                    return new Recipe(int.Parse(items[0]), int.Parse(items[1]), int.Parse(items[2]), items[3], items[4], items[5]);
+                    return new Recipe(int.Parse(items[0]), int.Parse(items[1]), int.Parse(items[2]));
                 })
                 .ToList();
-            string header = File.ReadAllLines(filePath).First();
-
-
-
 
             string eachMaterialDirectoryPath = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "eachMateral")).FullName;
 
-            // 食材ごとに料理になったレシピを修飾子になったレシピで再分類する
-            foreach (var material in foodMaterials)
+            // レシピを任意ルールで再分類する
+            foreach (var material in AnalyzeResource.FoodMaterials)
             {
                 var locatedA = new List<Recipe>();
                 var locatedB = new List<Recipe>();
                 var sb = new StringBuilder();
                 foreach (var recipe in receipeRecords)
                 {
-                    // レア化させる食材を別に扱う場合有効化
-                    //if (rareFoodIds.Contains(recipe.MaterialA) || rareFoodIds.Contains(recipe.MaterialB))
-                    //    continue;
-                    // レア化させない食材
-                    if (recipe.MaterialA == recipe.MaterialB)
-                        continue;
+                    // レア化させる食材を別に扱う場合、true
+                    if (false)
                     {
+                        if (AnalyzeResource.RareFoodIds.Contains(recipe.MaterialA) || AnalyzeResource.RareFoodIds.Contains(recipe.MaterialB))
+                            continue;
                     }
+                    // 同一食材を使った料理は除外する場合、false
+                    if (true)
+                    {
+                        if (recipe.MaterialA == recipe.MaterialB)
+                            continue;
+                    }
+                    // 魚食材を使った料理のみを抽出する場合、true
+                    if (true)
+                    {
+                        if (!(AnalyzeResource.FishFoodIds.Contains(recipe.MaterialA) && AnalyzeResource.FishFoodIds.Contains(recipe.MaterialB)))
+                            continue;
+                    }
+
                     if (material.objectID == recipe.MaterialA)
                     {
                         locatedA.Add(recipe);
@@ -156,15 +138,24 @@ namespace CKFoodMakerTest
                 // 再分類結果の出力
                 string result = $"料理になった数:{locatedA.Count}\n修飾子になった数:{locatedB.Count}";
                 sb.AppendLine(result);
-                sb.AppendLine(header);
+                //sb.AppendLine(Recipe.Header);　// 通常出力用ヘッダー
+                sb.AppendLine(Recipe.HeaderWithBinary);   // バイナリ出力用ヘッダー
                 foreach (var recipe in locatedA)
                 {
-                    sb.AppendLine(recipe.ToString());
+                    sb.AppendLine(recipe.ToStringWithBinary());
                 }
                 sb.AppendLine();   // 空行挿入
                 foreach (var recipe in locatedB)
                 {
-                    sb.AppendLine(recipe.ToString());
+                    // レシピ内の表示順序を逆にする時、true
+                    if (false)
+                    {
+                        sb.AppendLine(new Recipe(recipe.MaterialB, recipe.MaterialA, recipe.RecipeId).ToStringWithBinary());
+                    }
+                    else
+                    {
+                        sb.AppendLine(recipe.ToStringWithBinary());
+                    }
                 }
                 sb.AppendLine();   // 空行挿入
 
@@ -173,30 +164,5 @@ namespace CKFoodMakerTest
                 File.WriteAllText(fileName, sb.ToString());
             }
         }
-    }
-
-    public record Recipe
-    {
-        public Recipe(int materialA, int materialB, int recipeId, string materialNameA, string materialNameB, string recipeCategoryName)
-        {
-            MaterialA = materialA;
-            MaterialB = materialB;
-            RecipeId = recipeId;
-            MaterialNameA = materialNameA;
-            MaterialNameB = materialNameB;
-            RecipeCategoryName = recipeCategoryName;
-        }
-
-        public override string ToString()
-        {
-            return $"{MaterialA},{MaterialB},{RecipeId},{MaterialNameA},{MaterialNameB},{RecipeCategoryName}";
-        }
-
-        public int MaterialA { get; set; }
-        public int MaterialB { get; set; }
-        public int RecipeId { get; set; }
-        public string MaterialNameA { get; set; } = string.Empty;
-        public string MaterialNameB { get; set; } = string.Empty;
-        public string RecipeCategoryName { get; set; } = string.Empty;
     }
 }

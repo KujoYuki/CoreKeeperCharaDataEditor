@@ -32,10 +32,13 @@
 その後のゲーム本体の終了時の保存処理により再上書きされ無効になることがあります。
 
 ## 免責事項
-本ソフトはキャラクターデータのインベントリを直接編集します。  
+### 1. 起動時にお使いのセキュリティソフトやWindowsによりブロックされることがあります。  
+これは、デジタル証明書の無い実行ファイルを動かす際の既定動作であり仕様です。  
+証明書の取得と維持は開発者による有償対応が必要になるため、この規模のプログラムに対して作者は取得していません。
+### 2. 本ソフトはキャラクターデータのインベントリを直接編集します。  
 また、上級者向けの機能として料理に限らない全てのアイテムの編集機能を持ちます。  
 データの破損が紛失が起きても責任は負いかねます。    
-必ずバックアップをとってください。  
+**必ずバックアップをとってください。**  
 
 ## 制限事項
 以下の方は本ツールの機能に制限をかけています。  
@@ -70,10 +73,11 @@ It is designed for purposes such as creating dishes that cannot be made by norma
 - Can be used regardless of the game or mod version in most cases.
 
 ## Disclaimer
-This software directly edits the inventory of character data.  
-As an advanced feature, it allows you to edit all items, not just food.  
-We are not responsible for any data corruption or loss that may occur.  
-Please make sure to back up your data.
+### 1. The software may be blocked by your security software or Windows upon startup.
+This is the default behavior when running an executable file without a digital certificate. Obtaining and maintaining a certificate requires paid support from the developer, which is not feasible for a program of this scale.
+### 2. This software directly edits the inventory of character data.
+Additionally, as an advanced feature, it allows editing of all items, not limited to food. The author is not responsible for any data corruption or loss that may occur.
+**Please make sure to back up your data.**
 
 ## Limitations
 The following users may experience restricted functionality in this tool:

@@ -173,7 +173,7 @@
             listUncreatedRecipesButton.Name = "listUncreatedRecipesButton";
             listUncreatedRecipesButton.Size = new Size(203, 23);
             listUncreatedRecipesButton.TabIndex = 18;
-            listUncreatedRecipesButton.Text = "未作成の食材組み合わせ調査";
+            listUncreatedRecipesButton.Text = "未作成料理の組み合わせ調査";
             listUncreatedRecipesButton.UseVisualStyleBackColor = true;
             listUncreatedRecipesButton.Click += listUncreatedRecipesButton_Click;
             // 

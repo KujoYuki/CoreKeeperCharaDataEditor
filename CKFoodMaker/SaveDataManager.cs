@@ -180,39 +180,53 @@ namespace CKFoodMaker
             return true;
         }
 
-        public void ListUncreatedRecipes()
+        public void CalculateRecepeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
         {
-            var allCookedCategoryId = StaticResource.AllCookedBaseCategories
+            int[] allFoodID = StaticResource.AllFoodMaterials.Select(c => c.Info.objectID).ToArray();
+            List<Tuple<int, int>> allPairs = allFoodID // hack Variation内の順序決定アルゴリズムが不明のため、実際の順番は前後している場合がある
+                .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
+                .ToList();
+            allRecipeTempVariationCount = allPairs.Count;
+
+            // 料理のコモンとレアのカテゴリIDリスト
+            List<int> allCookedCategoryId = StaticResource.AllCookedBaseCategories
                 .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
-                .ToArray();
-            int[] allFoodID = StaticResource.AllFoodMaterials.Select(c => c.Info.objectID).ToArray();
-            int[] allVariations = allFoodID
-                .SelectMany((ID, index) => allFoodID.Skip(index), Form1.CalculateVariation)
-                .ToArray();
-
-            int[] allDiscoverdVariation = _saveData["discoveredObjects2"]!.AsArray()
+                .ToList();
+            List<Tuple<int, int>> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
                 .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
-                .Where(obj => allCookedCategoryId.Contains(obj.objectID))
+                .Where(o => allCookedCategoryId.Contains(o.objectID))   // 非料理アイテムは除外
+                .Where(o => o.variation > 0 && (uint)o.variation <= uint.MaxValue)   // variationが0か32bitで表現できない場合は除外
                 .Select(c => c!.variation)
                 .Distinct()
-                .ToArray();
-            var intersectRecipeVariation = allVariations.Intersect(allDiscoverdVariation).ToList();
-            double cookRate = (double)intersectRecipeVariation.Count / allVariations.Length;
+                .Select(v => 
+                {
+                    Form1.ReverseCalcurateVariation(v, out int materialA, out int materialB);
+                    return Tuple.Create(Math.Min(materialA, materialB), Math.Max(materialA, materialB));
+                })
+                .Where(pair => allFoodID.Contains(pair.Item1) && allFoodID.Contains(pair.Item2))    // 食材以外を食材とするレシピの除外
+                .ToList();
+
+            userRecipeCount = allUserRecipeTempVariation.Count;
+            exceptRecipe = allPairs.Except(allUserRecipeTempVariation).ToList();    //未作成の組み合わせ
+        }
+
+        public void ListUncreatedRecipes()
+        {
+            CalculateRecepeCounts(out int userRecipeCount, out int allRecipeCount, out var exceptRecipes);
+            double cookRate = (double)userRecipeCount / allRecipeCount;
 
             DialogResult outputResult = MessageBox.Show($"現在のレシピ網羅率は {cookRate:P2} %です。" +
-                $"（{intersectRecipeVariation.Count} / {allVariations.Length}）\n" +
+                $"（{userRecipeCount} / {allRecipeCount}）\n" +
                 $"※ゲーム内レシピブックとカウントが異なる場合があります。\n\n" +
                 $"一度も調理していない組み合わせを出力しますか？", "", MessageBoxButtons.YesNo);
             if (outputResult is DialogResult.Yes)
             {
-                var exceptRecipe = allVariations.Except(allDiscoverdVariation).ToArray();
                 var foodBuilder = new StringBuilder();
-                foreach (var variation in exceptRecipe)
+                foreach (var exceptRecipe in exceptRecipes)
                 {
-                    Form1.ReverseCalcurateVariation(variation, out int materialIdA, out int materialIdB);
-                    string FoodA = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == materialIdA).DisplayName;
-                    string FoodB = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == materialIdB).DisplayName;
+                    string FoodA = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == exceptRecipe.Item1).DisplayName;
+                    string FoodB = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == exceptRecipe.Item2).DisplayName;
                     foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
 
@@ -226,7 +240,7 @@ namespace CKFoodMaker
                 {
                     string path = saveFileDialog.FileName;
                     File.WriteAllText(path, foodBuilder.ToString());
-                    MessageBox.Show($"{exceptRecipe.Length} 通りのレシピを出力しました。");
+                    MessageBox.Show($"{exceptRecipes.Count} 通りのレシピを出力しました。");
                 }
             }
             //todo 全レシピ追加 全組み合わせの勝敗表からカテゴリを自動で決定させる:要食材勝敗テーブルのアルゴリズム解明

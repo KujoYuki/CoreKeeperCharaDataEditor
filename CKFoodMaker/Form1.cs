@@ -121,7 +121,7 @@ namespace CKFoodMaker
             var allMaterials = StaticResource.AllFoodMaterials.Concat(materialCategories)
                 .OrderBy(c => c.Info.objectID)
                 .ToList();
-            // 開発者モードの場合は非推奨食材も表示
+            // 開発者モードの場合は非推奨食材も表示する
             if (Program.IsDeveloper)
             {
                 allMaterials.AddRange(StaticResource.ObsoleteFoodMaterials);
@@ -315,7 +315,7 @@ namespace CKFoodMaker
 
         private void toMaxButton_Click(object sender, EventArgs e)
         {
-            createdNumericNo.Value = Program.IsDeveloper ? 869779 : 9999;
+            createdNumericNo.Value = 9999;
         }
 
         private void toMinusOneButton_Click(object sender, EventArgs e)
@@ -500,7 +500,8 @@ namespace CKFoodMaker
                     case "advancedTab":
                         item = GenerateItemBase();
                         objectName = objectNameTextBox.Text;
-                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
+                        var newAuxData = new ItemAuxData(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
+                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName, newAuxData);
                         break;
 
                     default:
@@ -753,10 +754,16 @@ namespace CKFoodMaker
             string selectedText = (string)combo.Items[e.Index]!;
 
             var displayNames = StaticResource.AllFoodMaterials.Select(c => c.DisplayName);
-            var goldernNames = displayNames.Where(name => name.StartsWith("金色の")).SkipLast(1);
-            // 背景色を設定
+            var goldernNames = displayNames
+                .Where(name => name.StartsWith("金色の"))
+                .Where(name => name != "金色のダート")
+                .Where(name => name != "金色の幼虫肉")
+                .Append("スターライトノーチラス");
+
+            // 背景色を設定する
             if (goldernNames.Contains(selectedText))
             {
+                // レア化食材
                 e.Graphics.FillRectangle(Brushes.Yellow, e.Bounds);
             }
             else if (displayNames.Contains(selectedText))
@@ -765,6 +772,7 @@ namespace CKFoodMaker
             }
             else
             {
+                // 非食材もしくは旧食材
                 e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
             }
 

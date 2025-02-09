@@ -1,0 +1,322 @@
+0,None,N/A
+1,BlueGlow,青色の光度 x
+2,SlowedBySlime,スライムからの移動スピード x%
+3,HealthAddition,体力 x
+4,MovementSpeedIncrease,移動スピード x/10%
+5,HealOverTime,体力が毎秒x回復する。
+6,IncreasedMaxHealth,最大体力 x
+7,StarvingMovementSpeedDecrease,空腹による移動速度 x%
+8,HungerAddition,食べ物 x
+9,MiningIncrease,採掘ダメージ x
+10,PhysicalMeleeDamageIncrease,物理近接ダメージ x%
+11,ArmorIncrease,防具 x
+12,CritChance,攻撃時にx%の確率で50%の追加ダメージを与える。
+13,ChanceToApplyPoisoned,ヒットで敵の回復力を75%減少させる毒を与える確率 x%
+14,Poisoned,回復力が75%低下した
+15,DodgeChance,x/10%の確率であらゆる攻撃を回避する。最大回避確率は90%。
+16,IncreasedMaxHealthPermanent,最大体力 x
+17,AcidDamage,毎秒酸ダメージ x。防具を無視。
+18,ApplySlowedBySlime,目標の移動スピードを4秒間x%低下させる
+19,LifeOnHit,敵への近接攻撃で体力がx回復する。
+20,ImmuneToSlimeSlow,スライムによる移動速度低下に耐性
+21,ThornsDamage,近接攻撃を行う側がxダメージを受ける。
+22,PhysicalRangeDamageIncrease,物理遠距離ダメージ x/10%
+23,ExtraHarvestChance,収穫量増加率 x/10%
+24,Suffocating,窒息している
+25,ChanceOnHitToKnockback,近接攻撃が敵をノックバックする確率がx%となる。
+26,ApplySnare,トラップにかける
+27,Snared,移動不可
+28,LarvaDisguise,幼虫に変装中
+29,Burning,2秒毎に燃焼ダメージ x
+30,ApplyBurning,ダメージを与えた敵を燃焼させる。燃焼効果は2秒毎に敵にxダメージを与える。
+31,ChanceOnCritToSpawnThunderBeam,近接クリティカルヒットで雷ビームが発生する確率 x%
+32,WellFedMovementSpeedIncrease,満腹時の移動スピード x%
+33,ReducedDamageFromBosses,ボスから受けるダメージがx%減少する。
+34,ImmuneToPoison,毒に耐性
+35,InfectedWithMold,移動スピードがx%、カビの感染でスピードが徐々に低下
+36,ImmuneToMold,カビの感染に耐性
+37,ImmuneToAcid,酸ダメージに耐性
+38,HealthReduction,体力 x
+39,MovementSpeedDecrease,移動スピード x/10%
+40,StarvingHealthDecrease,空腹による最大体力減少 x%
+41,WellFedHealthIncrease,満腹時の最大体力増加 x%
+42,StarvingDamageDecrease,空腹によるダメージと最大体力減少 x%
+43,WellFedDamageIncrease,満腹時のダメージと最大体力増加 x%
+44,HealthAdditionPercentage,体力 x%
+45,OrangeGlow,光度 x
+46,IncreasedFishing,釣り x
+47,Love,心温まる優しい気持ちになる
+48,ArmorPercentageIncrease,防具 x%
+49,MiningPercentageIncrease,採掘ダメージ x%
+50,MiningSpeedIncrease,採掘スピード x/10%
+51,MeleeAttackSpeedIncrease,近接攻撃スピード x/10%
+52,RangeAttackSpeedIncrease,遠距離攻撃スピード x%
+53,VisibleOreDistanceIncrease,鉱石を視認できるマス数 x
+54,PercentageOfMiningAsMelee,採掘ダメージのx%が近接ダメージに追加
+55,PercentageOfFishingAsRange,釣りのx%が遠距離ダメージに追加
+56,ChanceForAdditionalOre,鉱石が埋まった壁から追加鉱石を獲得する確率 x/10%
+57,IncreasedExplosivesDamage,爆発ダメージ x%
+58,MovementSpeedBoostAfterMining,壁採掘後に短時間移動スピードブースト x%
+59,ShortMovementSpeedBoost,短時間移動スピード x%
+60,ChanceForRandomLootFromWall,採掘した壁から貴重なアイテムがドロップする確率 x/10%
+61,SlipperyMovement,すべりやすくなっている
+62,ImmuneToSlipperyMovement,すべりやすさに耐性
+63,ChanceOnHitToApplySlipperyMovement,ヒット時に敵がすべりやすくなる確率 x%
+64,SlipperyMovementFromGround,地面はすべりやすい
+65,KillsIncreaseCritChance,敵のキルでクリティカルヒット確率が3%増加（5回まで重複）
+66,StackedCritChance,クリティカルヒット確率 x%
+67,DrainLessHunger,走ったときの空腹の消費の減少率 x%
+68,ArmorIncreaseFromMovementSpeed,現在の移動スピードの防具がx%上昇
+69,SnareAndStunDurationReduction,移動不可および気絶時間減少 x%
+70,GainDodgeIncreaseWhileStandingStill,直立不動で回避確率が短時間 x%
+71,DodgeIncreaseFromStandingStill,直立不動時に回避する確率 x%
+72,GainMovementSpeedFromRunningConsistently,短時間走り続けた際の移動スピード x%
+73,MovementSpeedIncreaseFromRunningConsistently,走り続けた後の移動スピード x
+74,MovementSpeedBoostAfterDodge,攻撃回避後に短時間移動スピードブースト x%
+75,GainDamageIncreaseFromRunning,走り続けた後にダメージが短時間 x%
+76,DamageIncreaseFromRunning,走ることによるダメージ x%
+77,AuraApplyMovementSpeedDecrease,周辺の敵全員の移動スピードがx%低下する
+78,AuraMovementSpeedDecrease,周辺のオーラからの移動スピード x%
+79,ChanceToGainExtraCookedFood,調理なべから料理を取り出すと、x/10%の確率で取り出す度に追加料理を獲得する。
+80,ChanceForExtraCookedFoodToBeRare,調理で獲得した追加料理がレアになる確率 x%
+81,ImmuneToDamageAfterRespawn,ダメージに耐性
+82,GainMeleeDamageFromHitting,敵にヒットする毎に近接ダメージが2%増加する。x回まで重複する。
+83,MeleeDamageIncreaseFromHitting,x% physical melee damage
+84,GainRangeDamageFromShooting,敵にヒットする毎に遠距離ダメージが2%増加し、x回まで重複する
+85,RangeDamageIncreaseFromShooting,x% physical range damage
+86,ChanceOnHitToGainMeleeAttackSpeed,近接ヒットで近接攻撃スピードが短時間50%増加する確率 x%
+87,MeleeAttackSpeedFromChanceOnHit,x% melee attack speed
+88,ChanceOnShotToGainCriticalHitChance,遠距離ヒットでクリティカルヒット確率が短時間100%増加する確率 x%
+89,CriticalHitChanceFromShot,x% critical hit chance
+90,ChanceOnHitToIncreaseRangeDamage,近接ヒットで遠距離ダメージが30%増加する確率 x%
+91,IncreasedRangeDamageFromMeleeHit,x% physical range damage
+92,ChanceOnShotToIncreaseMeleeDamage,遠距離ヒットで近接ダメージが30%増加する確率 x%
+93,IncreasedMeleeDamageFromShot,x% physical melee damage
+94,GainMeleeDamageIncreaseFromHittingSameTarget,同じ敵に連続ヒットで近接ダメージがx%増加する
+95,MeleeDamageIncreaseFromHittingSameTarget,x% physical melee damage
+96,IncreasedDamageAgainstBosses,ボスへの与ダメージ x%
+97,ChanceToRestoreHealthOnMeleeHit,近接ヒット時に10%の確率で体力がx%回復する
+98,ChanceOnRangeShotToApplySlowedBySlime,遠距離ヒットで20%の確率で相手のスピードをx%減少させる
+99,CriticalDamagePercentageIncrease,クリティカルヒットダメージ x%
+100,GainRangeDamageIncreaseFromStandingStill,直立不動で遠距離ダメージが短時間 x%
+101,RangeDamageIncreaseFromStandingStill,x% physical range damage
+102,ChanceOnRangeShotToStun,遠距離ヒットで相手を気絶させる確率 x%
+103,ImmuneToStun,気絶に耐性
+104,Stunned,気絶している
+105,IncreasedHealthRegenEffectiveness,時間経過の回復量増加 x%
+106,GainHealthRegenWhileBelowHalfHealth,体力が半分以下の時に毎秒体力がx回復
+107,HealthRegenFromBeingBelowHalfHealth,x health every sec
+108,CheatDeath,致命的なダメージを受けた時に体力が若干回復し、死を回避する確率 x%
+109,GainDamageIncreaseAtMaxHealth,体力最大時にダメージ x%
+110,DamageIncreaseAtMaxHealth,x% damage
+111,GainDamageIncreaseAtLowHealth,低体力時にダメージ x%
+112,DamageIncreaseAtLowHealth,x% damage
+113,HealingPotionAddHealOverTime,回復ポーションが回復した体力のx%も時間経過で回復させる
+114,HealOverTimeFromPotion,x health every sec
+115,GainIncreasedMaxHealthFromAllSkillPoints,全スキルポイントのx%が最大体力に追加
+116,IncreasedMaxHealthFromAllSkillPoints,x max health
+117,ToolDurabilityLastsLonger,道具や武器使用時に耐久が減少しない確率 x%
+118,EquipmentDurabilityLastsLonger,被ダメージ時に装備の耐久が減少しない確率 x%
+119,ChanceToGainExtraItemFromBaseBuilding,壁、床、橋、フェンス製作で追加アイテムを獲得する確率 x%
+120,ChanceToGainExtraItemFromAlchemy,錬金台または蒸留台でのアイテム製作で追加アイテムを獲得する確率 x%
+121,GainExtraIndustryItems,線路レール、ワイヤー、ベルトコンベア製作時にxの追加アイテムを獲得する。
+122,ChanceForPolishedJewelry,宝飾品作業台で上質なアイテムを製作する確率 x%
+123,ReducedAnvilEquipmentCosts,金床でのアイテム製作および修理にかかる素材がx%減少
+124,GainArmorAtLowHealth,低体力時に防具 x%
+125,IncreasedArmorFromLowHealth,x% armor
+126,ChanceToGainRarePlant,植えた植物が金色になる確率 x%
+127,SeedDropChance,植物の収穫で種を獲得する確率 x%
+128,ChanceToNotConsumeWaterCan,じょうろ使用時に水を消費しない確率 x%
+129,GainMoreFoodFromPlants,植物または植物の料理を食べた際に獲得する食べ物 x%
+130,DamageIncreaseAgainstPoisoned,毒を受けた相手へのダメージ x%
+131,IncreasedChanceToGetFish,魚が針にかかる確率 x%
+132,IncreasedRodRange,釣りざおの投下範囲 x%
+133,FishBitesFaster,魚（など）の食いつき速度上昇 x%
+134,GainIncreasedBossDamageFromEatingFish,魚や魚料理を食べた後のボスへの与ダメージ x%
+135,IncreasedBossDamageFromEatingFish,x% damage against bosses
+136,FishStartsCloserToBeReeledIn,魚の巻き上げスタート距離 x%
+137,ReducedImpactOfSlipperyMovement,すべりやすさ減少 x%
+138,LongerCookedFoodBuffs,料理のバフ期間増加 x%
+139,WellFedBuffsThresholdReduction,x%少ない食べ物で満腹バフを獲得
+140,StrongerWellFedBuffs,満腹時のバフ強化 x%
+141,GainMeleeAttackSpeedFromCookedFood,料理を食べた際の近接攻撃スピード x%
+142,MeleeAttackSpeedFromCookedFood,x% melee attack speed
+143,GainMoreFoodFromCookedFood,料理からの獲得する食べ物 x%
+144,AuraApplyDamageIncrease,自分と周辺の味方全員からのダメージ x%
+145,AuraDamageIncrease,x% damage
+146,AuraApplyHealingOverTime,自分と周辺の味方全員の毎秒体力 x
+147,AuraHealingOverTime,x health every sec
+148,CriticalDamagePercentageIncreaseFromGardening,x% critical hit damage
+149,CriticalDamagePercentageIncreaseFromRange,x% critical hit damage
+150,AllDamageIncrease,ダメージ x/10%
+151,GainDamageIncreaseAfterMining,壁の採掘でダメージが短時間 x%
+152,DamageIncreaseAfterMining,x% damage
+153,GainCriticalHitChanceFromStandingStill,直立不動でクリティカルヒット確率が短時間 x%
+154,CriticalHitChanceFromStandingStill,x% critical hit chance
+155,ChanceOnHitToKillTargetWithLowerHealth,ヒット時に自分より体力が低い相手をキルする確率 x%
+156,ChanceToApplyPoisonOnBlock,近接ヒット防御で敵の回復力を75%減少させる毒を与える確率 x%
+157,IncreaseCritChanceAfterPoisonApply,毒を与えた後に短時間クリティカルヒット確率 x%
+158,CritChanceIncreaseFromPoisonApply,x% critical hit chance
+159,ImmuneToBurning,燃焼に耐性
+160,AuraApplyDamageDecrease,周辺の敵全員からのダメージ x%
+161,AuraDamageDecrease,x% damage
+162,AllDamageDecrease,x% damage
+163,AuraApplyBurning,周辺の敵全員が燃焼し2秒毎にダメージxを与える
+164,AuraBurning,x burn damage every other sec
+165,RemovePoison,あらゆる毒を取り除く
+166,MeleeDamageIncreaseFromPotion,x% physical melee damage
+167,RangeDamageIncreaseFromPotion,x% physical range damage
+168,ReducedDamageFromBossesFromPotion,x% reduced damage taken from bosses
+169,ArmorIncreaseFromPotion,x armor
+170,ApplyMovementSpeedReduction,Reduces the target's movement speed by x% for 4 sec
+171,GainAttackSpeedFromMissingHealth,失った体力1%につき0.2%の攻撃スピードが増加
+172,AttackSpeedFromMissingHealth,x% melee and range attack speed
+173,AttackSpeed,近接および遠距離攻撃スピード x%
+174,DiggingIncrease,発掘ダメージ x
+175,ChanceOnKillToSummonGhost,敵キル時にゴーストケイヴリングを召喚する確率x%
+176,IncreasedChanceToGetFishLoot,釣りで貴重または魚以外のアイテムが針にかかる確率 x%
+177,ChanceOnRangeHitToSpawnOctopusBossProjectile,遠距離ヒットで竜巻が発生する確率 x%
+178,ChanceToGetDoubleFish,魚を2匹釣り上げる確率 x%
+179,MovementSpeedIncreaseFromPotion,x% movement speed
+180,IncreasedChanceForHigherRarityFish,高レアの魚がかかる確率 x%
+181,IncreasedPickUpRadius,拾い上げ範囲 x%
+182,IncreasedBoatSpeed,ボートのスピード x%
+183,ApplySlipperyMovementWhenHit,近接攻撃を仕掛けてくる敵がすべりやすくなる
+184,ChanceToShootShockWaveOnBlock,防御時に防御したダメージと同ダメージのエネルギー衝撃波を放つ確率 x%
+185,IncreasedArmorPercentageWhileAdjacentToWater,水に隣接中、防具 x%
+186,IncreasedArmorPercentageFromAdjacentWater,x% armor
+187,ImmuneToDamageAfterLogin,N/A
+188,KingOfSlimes,あなたはスライムの王だ
+189,RedGlowingEyes,あなたの瞳が赤く輝く
+190,LookLikeGhost,あなたの姿はまるで幽霊のよう
+191,AttackSpeedBoostAfterDodge,x% melee and range attack speed
+192,DealAoeFireDamageOnBlock,盾で防御すると周囲の敵全員にxダメージ与える
+193,ChanceForOreOnMiningWall,壁破壊時に現在採掘中の壁で一般的な鉱石を得られる確率 x%
+194,DamageIncreaseAgainstBurning,燃焼している相手へのダメージ x%
+195,CritDamageIncreaseAgainstBurning,燃焼している相手へのクリティカルヒットダメージ x%
+196,ThornsDamageAddedToMeleeAndRange,近接・遠距離ダメージにトゲダメージが可算される
+197,ChanceOnHitToSpawnScarabBossProjectile,近接または遠距離攻撃時にx%の確率で古代の発射物を放ち、ヒットした相手を追跡し衝撃ダメージを与える
+198,GainAttackSpeedBoostAfterDodge,攻撃回避後に短時間近接および遠距離攻撃スピード x%
+199,GiantMushroomBuff,x max health
+200,AmberLarvaBuff,x max health
+201,StarlightNautilusBuff,x max health
+202,AdditionalChanceOnCritToSpawnThunderBeam,アゼオスの魂の力発動の確率がx%追加
+203,AdditionalChanceOnHitToSpawnScarabBossProjectile,ラ・アカールの魂の力発動の確率がx%追加
+204,AdditionalChanceOnRangeHitToSpawnOctopusBossProjectile,オモロスの魂の力発動の確率がx%追加
+205,IncreasedDashDuration,ダッシュの距離がx%増加
+206,AuraApplyRadioactiveDamageOverTime,周辺の敵全員にxの放射線ダメージを2秒毎に与える
+207,AuraRadioactiveDamageOverTime,2秒毎に放射線ダメージ x
+208,Snowing,その身を包む冬の雰囲気が感じられる
+209,AttackSpeedIncreaseFromPotion,x% melee and range attack speed
+210,Sleeping,眠る
+211,HealOverTimePercentage,体力を毎秒x%回復
+212,GoldenChocolateBuff,x max health
+213,ImmuneToCharm,N/A
+214,ChanceToApplyCharmed,20秒間相手を魅了する
+215,Charmed,N/A
+216,IncreasedCharmDuration,魅了効果の継続時間がx%長くなる
+217,PinkGlow,桃色の光度 x
+218,AnniversaryCakeBuff,x max health
+219,ChanceOnMeleeHitToStun,近接ヒットで相手を気絶させる確率 x%
+220,IncreasedAppliedStunDuration,気絶時間がx%増加
+221,DamageIncreaseAgainstStunned,気絶している相手へのダメージ x%
+222,ChanceToDealTripleDamage,ヒット時にダメージが3倍になる確率 x%
+223,IncreasedDamageBasedOnTargetRemainingHealth,相手の残り体力に応じてダメージが最大x%増加
+224,ChanceToConsumeBurning,ヒット時に相手の燃焼効果を消費し、即座に合計燃焼ダメージを与える確率 x%
+225,PiercingProjectiles,x体の敵を発射物が貫通
+226,GodMode,ゴッドモード使用中
+227,ReducedImpactOfSlowedBySlime,スライムによる移動スピード低下の影響がx%減少
+228,PetMeleeDamageIncrease,x% physical melee damage
+229,PetMeleeAttackSpeedIncrease,x% melee attack speed
+230,PetRangeDamageIncrease,x% physical range damage
+231,PetRangeAttackSpeedIncrease,x% range attack speed
+232,PetCritDamageIncrease,x% critical hit damage
+233,PetCritChanceIncrease,x% critical hit chance
+234,PetBuffsIncrease,N/A
+235,ApplyPetDamageIncrease,ペットが与えるダメージ x%
+236,ApplyPetCritDamageIncrease,ペットのクリティカルヒットダメージ x%
+237,ApplyPetCritChanceIncrease,ペットのクリティカルヒット確率 x%
+238,ApplyPetAttackSpeedIncrease,ペットの攻撃スピード x%
+239,ApplyPetBuffsIncrease,ペットの才能効果 x%
+240,GainIncreasedMaxHealthFromPet,ペット装備時の体力 x%
+241,IncreasedMaxHealthFromPet,N/A
+242,AtlantianWormHeartBuff,x max health
+243,ImmuneToRadioactiveDamage,放射線ダメージへの耐性
+244,IncreasedDamageTakenPercentage,被ダメージ x/10%
+245,ReducedDamageTakenPercentage,x% damage taken
+246,ProtectiveArmor,N/A
+247,Vulnerable,N/A
+248,AuraApplyVoidDamagePercentageOverTime,N/A
+249,AuraVoidDamagePercentageOverTime,毎秒体力のx%の空虚ダメージ
+250,AuraApplyImmuneToVoidDamageOverTime,N/A
+251,ImmuneToVoidDamageOverTime,N/A
+252,DurabilityIncreaseAfterMiningOre,鉱石を含むカベの破壊時に道具の耐久値をx獲得
+253,HungerAdditionOnHarvest,植物の収穫時に食べ物をx獲得
+254,ChanceToPreserveBait,魚の捕獲時にx%の確率でエサが消費されない
+255,IncreasedManaRegenEffectiveness,マナの回復速度がx%増加
+256,IncreasedMaxMana,最大マナ x
+257,IncreasedMinionLifespanPercentage,ミニオンの寿命 x%
+258,IncreasedChanceToSpawnMinionOnHit,敵をヒットするとx%の確率でミニオンが出現
+259,IncreasedMaxMinions,最大ミニオン数 x
+260,IncreasedMinionDamagePercentage,ミニオンダメージ x%
+261,IncreasedMagicDamagePercentage,魔法ダメージ x%
+262,ManaBarrier,x%の被ダメージをマナプールで吸収
+263,MagicBarrier,被ダメージの最大xを吸収する。魔法バリアはしばらくダメージを受けなければ再生する。
+264,GainManaPercentageOnCrit,クリティカルヒットで回復するマナ x%
+265,GainManaOnHeal,N/A
+266,WellFedManaRegenerationPercentage,満腹時のマナ回復量 x%
+267,GainManaPercentageOnDamageTaken,被ダメージ時に回復するマナ x%
+268,GainMagicDamagePercentageBoostAfterCrit,クリティカルヒットで魔法ダメージが短時間 x%
+269,ReducedManaRegenDelayPercentage,マナ回復速度の減少 x%
+270,ReducedMagicBarrierRegenDelayPercentage,魔法バリア再生時間の減少 x%
+271,PercentageOfMagicBarrierAsMagicDamage,x%の魔法バリアが魔法ダメージに追加
+272,MagicBarrierAsManaRegen,魔法バリアのx%分のマナを毎秒回復する
+273,GainRemainingManaAsMagicDamagePercentage,残りマナ量に応じて魔法ダメージが最大 x%
+274,MagicDamagePercentageBoostAfterCrit,x% magic damage
+275,GainRangeAttackSpeedPerMinion,活動中のミニオン1体につき遠距離攻撃スピード x%
+276,RangeAttackSpeedPerMinion,N/A
+277,IncreasedMinionAttackSpeed,ミニオン攻撃スピード x%
+278,IncreasedMinionCountAsMagicDamagePercentage,活動中のミニオン1体につき魔法ダメージ x%
+279,IncreasedMagicDamageToMinionDamage,自分の魔法ダメージ増加量のx%分ミニオンのダメージが増加
+280,IncreasedMinionCountAsMagicBarrier,活動中のミニオン1体につき魔法バリア x
+281,MinionCountAsMagicBarrier,N/A
+282,IncreasedHealOnMinionDamage,ミニオンの攻撃ダメージのx%を回復
+283,MinionCountAsMagicDamagePercentage,N/A
+284,LiquidMetalBuff,x max health
+285,HealOnMinionDespawn,ミニオンの消滅時に体力がx%回復
+286,IncreasedManaRegen,xマナ/毎秒
+287,IncreasedMinionCritChance,ミニオンクリティカルヒット確率 x%
+288,IncreaseDamageAsLongAsNotBeingHit,N/A
+289,MeleeDamageIncrease,近接ダメージ x%
+290,RangeDamageIncrease,遠距離ダメージ x%
+291,MagicDamageIncreaseFromPotion,x% magic damage
+292,MinionDamageIncreaseFromPotion,x% minion damage
+293,GainMeleeDamageAsLongAsNotTakenDamage,直接ダメージを受けていない間、近接ダメージ x%
+294,MeleeDamageAsLongAsNotTakenDamage,x% melee damage
+295,IncreasedMinionCountAsArmor,N/A
+296,MinionCountAsArmor,N/A
+297,PetChanceToGainManaOnAttack,ヒット時にマナを得られる確率 x%
+298,SpawnExplosionOnDamageTaken,ダメージを受けると周囲の敵全員にxダメージ与える
+299,ChanceToAddRandomConditionOnHit,ヒット時に高確率でランダムな状態を与える
+300,MitochondrionBuff,x max health
+301,FruitBasketBuff,x max health
+302,SlowedByGroundSlime,x% movement speed from slime
+303,LightningGunChainLightning,敵1体に攻撃すると、近くの敵3体に電撃が連鎖する
+304,IncreasedMaxHealthPercentage,x% health
+305,ChanceToNotConsumeExplosives,爆発物アイテム使用時に消費しない確率 x%
+306,ChanceToDropExplosivesComponents,爆発物が部品をドロップする確率 x%
+307,IncreasedExplosivesRadiusPercentage,爆発範囲 x%
+308,ChanceForAdditionalOreFromExplosives,N/A
+309,ReducedDamageFromExplosions,自分と味方が発生源の爆発によるダメージ減少 x%
+310,GainManaFromExplosion,爆発物が起爆した時xマナを獲得する
+311,ChanceToSpawnMinionOnExplosion,N/A
+312,ExplosionIncreaseMeleeDamage,爆発物の起爆後に短時間近接ダメージ増加 x%
+313,ChanceToSpawnNapalmOnExplosion,爆発物からナパームが生成される確率 x%
+314,IncreasedBurningDamagePercentage,燃焼ダメージ x%
+315,IncreasedMagicDamagePercentageWhileAdjacentToWater,水に隣接中、魔法ダメージ x%
+316,IncreasedMagicDamagePercentageFromAdjacentWater,水と隣接することによる魔法ダメージ x%
+317,MinionsExplodeAsTheyDespawn,ミニオンが消滅した時、ミニオンは自身の攻撃ダメージのx%で爆発する
+318,ChanceOnHitToStun,ヒットで目標を気絶させる確率 x%
+319,Superman,N/A
+320,BiliBiliDodgeChance,#% dodge chance
+321,GreenGlow,N/A

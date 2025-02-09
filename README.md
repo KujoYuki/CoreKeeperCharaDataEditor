@@ -1,13 +1,13 @@
-# CKFoodMaker
+# CKCharaDataEditor
 
 [CoreKeepr](https://store.steampowered.com/app/1621690/Core_Keeper/)のインベントリ内容を操作する外部拡張エディターです。  
-通常の手段では作れない料理の作成などを目的として制作しています。  
-ダウンロードは[こちら](https://github.com/KujoYuki/CoreKeeperFoodEditor/releases/latest/)から。
+通常の手段では作れない料理の作成やアイテムの編集を目的として制作しています。  
+ダウンロードは[こちら](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases/latest/)から。
 
 ## できること
 - 任意の食材の組み合わせによる料理の作成します。  
   - 料理のレア度や個数を調整することが出来ます。  
-- ポーションやシーズン料理を食材とした料理を作成し、料理補正の乗った効果量や効果時間を得ることが出来ます。  
+- ポーションやシーズン料理を食材とした料理を作成し、料理のレア度や効果時間を得ることが出来ます。  
 - ただし一部の作成したアイテムが有効かどうかはゲーム側に判定されます。
 - 料理が未作成の食材の組み合わせをリストアップします。
 - インベントリ内の全てのアイテム個数を変更できます。
@@ -15,7 +15,7 @@
 - インベントリ内の全てのペットスキルを変更できます。
 - 未取得のアイテムや装備をインベントリに作成できます。
 - ペットスキルの編集ができます。
-  - スキルの変更と有効/無効の切り替えができます。
+  - 5つを超えたスキルの変更と有効/無効の切り替えができます。
   - 未実装のペットスキルを対象に含みます。
 - 通常手段で入手不可の未実装アイテムの取得ができます。
 - 任意のバフ/食事効果/装備効果などを任意効果量/効果時間で付与できます。
@@ -25,6 +25,7 @@
 ![CKFoodMaker Overview](Document/images/imageSample.png)  
 ![EditPet OverView](Document/images/imageEditPet.png)
 ![EditCondition Overview](Document/images/imageCondition.png)
+![EditSkillExp Overview](Document/images/imageEditSkill.png)
 
 ## データ編集時のゲーム操作について
 本ツールによってデータを書き換える最中はゲーム本体を終了させてください。  

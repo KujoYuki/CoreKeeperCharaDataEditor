@@ -46,7 +46,7 @@
             materialComboBoxA = new ComboBox();
             label4 = new Label();
             petTab = new TabPage();
-            petEditControl = new Control.PetEditControl();
+            petEditControl = new CKCharaDataEditor.Control.PetEditControl();
             advancedTab = new TabPage();
             inventryPasteButton = new Button();
             inventryCopyButton = new Button();
@@ -685,6 +685,7 @@
             Controls.Add(itemEditTabControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
+            MinimumSize = new Size(690, 574);
             Name = "Form1";
             Text = "CKCharaDataEditor";
             FormClosing += Form1_FormClosing;

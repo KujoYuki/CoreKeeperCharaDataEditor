@@ -69,7 +69,7 @@ namespace CKCharaDataEditor.Model.ItemAux
         {
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)petColor).ToString()]);
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash, petTalents.Select(t => t.ToJsonString()));
-            UpdateData(AuxHash.PetNameGroupHash, AuxHash.PetNameHash, [petName]);
+            UpdateData(AuxHash.PetNameGroupHash, AuxHash.ItemNameHash, [petName]);
         }
 
         public void UpdateCattle()
@@ -92,7 +92,7 @@ namespace CKCharaDataEditor.Model.ItemAux
         public static AuxPrefabManager CreatePet(string petName, int color, IEnumerable<PetTalent> talents)
         {
             var prefabs = new List<AuxPrefab>();
-            var petNameStable = new AuxStableType(AuxHash.PetNameHash, new[] { petName });
+            var petNameStable = new AuxStableType(AuxHash.ItemNameHash, new[] { petName });
             prefabs.Add(new AuxPrefab(AuxHash.ItemNameGroupHash, new[] { petNameStable }));
             var petColorStable = new AuxStableType(AuxHash.PetColorHash, new[] { color.ToString() });
             var petTalentsStable = new AuxStableType(AuxHash.PetTalentsHash, talents.Select(t => t.ToJsonString()));

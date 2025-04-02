@@ -46,7 +46,7 @@ namespace CKFoodMakerTest
 
             AuxPrefabManager manager = new(JsonNode.Parse(LawPetData)!.AsObject());
             var color = int.Parse(manager.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash).Single());
-            var name = manager.GetData(AuxHash.PetNameGroupHash, AuxHash.PetNameHash).Single(); ;
+            var name = manager.GetData(AuxHash.PetNameGroupHash, AuxHash.ItemNameHash).Single(); ;
             var talents = manager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)
                 .Select(str => new PetTalent(str))
                 .ToList();
@@ -65,7 +65,7 @@ namespace CKFoodMakerTest
             manager.AddPrefab([new AuxPrefab(AuxHash.PetNameGroupHash, [])]);
             var petColor = new AuxStableType(AuxHash.PetColorHash, [color.ToString()]);
             var petTalent = new AuxStableType(AuxHash.PetTalentsHash, Talents.Select(t => t.ToJsonString()));
-            var petName = new AuxStableType(AuxHash.PetNameHash, [name]);
+            var petName = new AuxStableType(AuxHash.ItemNameHash, [name]);
             manager.AddStableType(AuxHash.PetGroupHash, petColor);
             manager.AddStableType(AuxHash.PetGroupHash, petTalent);
             manager.AddStableType(AuxHash.PetNameGroupHash, petName);

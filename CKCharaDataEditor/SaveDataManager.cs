@@ -285,7 +285,7 @@ namespace CKCharaDataEditor
         }
 
         /// <summary>
-        /// Conditionsのみのバックアップファイルから読み込む
+        /// Conditionsのみを記述したバックアップファイルを読み込む
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
@@ -306,6 +306,16 @@ namespace CKCharaDataEditor
 #if DEBUG
             _saveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
 #endif
+            File.WriteAllText(SaveDataPath, changedJson);
+        }
+
+        public void SleepWell()
+        {
+            var conditions = GetConditions();
+            conditions.Add(new(210, 2, double.PositiveInfinity, -1));
+            _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
         }
 

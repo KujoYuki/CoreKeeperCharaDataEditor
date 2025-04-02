@@ -85,6 +85,7 @@
             nextItemButton = new Button();
             openConditionsButton = new Button();
             openSkillbutton = new Button();
+            slotReloadbutton = new Button();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
@@ -645,7 +646,7 @@
             // openConditionsButton
             // 
             openConditionsButton.BackColor = Color.Cyan;
-            openConditionsButton.Location = new Point(106, 80);
+            openConditionsButton.Location = new Point(213, 80);
             openConditionsButton.Name = "openConditionsButton";
             openConditionsButton.Size = new Size(138, 23);
             openConditionsButton.TabIndex = 17;
@@ -656,7 +657,7 @@
             // openSkillbutton
             // 
             openSkillbutton.BackColor = Color.Transparent;
-            openSkillbutton.Location = new Point(260, 80);
+            openSkillbutton.Location = new Point(367, 80);
             openSkillbutton.Name = "openSkillbutton";
             openSkillbutton.Size = new Size(138, 23);
             openSkillbutton.TabIndex = 18;
@@ -664,11 +665,22 @@
             openSkillbutton.UseVisualStyleBackColor = false;
             openSkillbutton.Click += openSkillButton_Click;
             // 
+            // slotReloadbutton
+            // 
+            slotReloadbutton.Location = new Point(85, 80);
+            slotReloadbutton.Name = "slotReloadbutton";
+            slotReloadbutton.Size = new Size(75, 23);
+            slotReloadbutton.TabIndex = 19;
+            slotReloadbutton.Text = "再読み込み";
+            slotReloadbutton.UseVisualStyleBackColor = true;
+            slotReloadbutton.Click += slotReloadbutton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(674, 535);
+            Controls.Add(slotReloadbutton);
             Controls.Add(openSkillbutton);
             Controls.Add(openConditionsButton);
             Controls.Add(nextItemButton);
@@ -759,5 +771,6 @@
         private Button openSkillbutton;
         private Button deleteDiscoveredReciepesButton;
         private Control.PetEditControl petEditControl;
+        private Button slotReloadbutton;
     }
 }

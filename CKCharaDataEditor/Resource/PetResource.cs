@@ -67,8 +67,10 @@ namespace CKCharaDataEditor.Resource
                 (20, "ソニッククロウ", "ソニックタロン", "+1体の敵を発射物が貫通", "飼い主へのバフ:+1体の敵を発射物が貫通"),
                 (21, "Missing", "ウィングエスケープ", "移動不可および気絶時間減少+0%", "飼い主へのバフ:移動不可および気絶時間減少+10%"),
                 (22, "エネルギータップ", "Missing", "ヒット時にマナを得られる確率+10%", "飼い主へのバフ:ヒット時にマナを得られる確率"),
-                (23, "Missing", "マナボウル", "+2.0マナ/毎秒", "+2.0マナ/毎秒"),
+                (23, "Missing", "マナボウル", "+2.0マナ/毎秒", "飼い主へのバフ:+2.0マナ/毎秒"),
                 (24, "Missing", "神秘術の野獣", "魔法ダメージ+10.0%", "飼い主へのバフ:魔法ダメージ+3.0%"),
+                // (25, "Don't use", "Don't use", "Explosion", "Explosion"), // 爆発関連？UIが異常停止するのでスキップする
+                (26, "局地的放射性降下物", "放射能汚染の匂い", "周辺の敵全員に20の放射線ダメージを2秒ごとに与える", "飼い主へのバフ:周辺の敵全員に0の放射線ダメージを2秒ごとに与える"),
             };
 
         public static IReadOnlyDictionary<(PetId petType, PetColor color), string> ColorDict
@@ -128,6 +130,7 @@ namespace CKCharaDataEditor.Resource
             { (PetId.PetLavaSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetId.PetPrinceSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetId.PetMagic,PetColor.Color_0) ,"----" },
+            { (PetId.PetElectric,PetColor.Color_0) ,"----" },
         };
 
         public static IReadOnlyDictionary<PetId, PetBattleType> BattleType
@@ -145,6 +148,7 @@ namespace CKCharaDataEditor.Resource
                 { PetId.PetMoth, PetBattleType.Buff},
                 { PetId.PetTardigrade, PetBattleType.Melee},
                 { PetId.PetMagic, PetBattleType.Buff},
+                { PetId.PetElectric, PetBattleType.Melee},
             };
     }
 }

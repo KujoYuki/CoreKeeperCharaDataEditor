@@ -1,8 +1,5 @@
-﻿using CKCharaDataEditor.Model;
-using CKCharaDataEditor.Model.Pet;
+﻿using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CKCharaDataEditor.Control
 {
@@ -37,7 +34,14 @@ namespace CKCharaDataEditor.Control
             set
             {
                 _petTalent = value;
-                petTalentComboBox.SelectedIndex = value.Talent;
+                if (value.Talent > 25)
+                {
+                    petTalentComboBox.SelectedIndex = value.Talent - 1;
+                }
+                else
+                {
+                    petTalentComboBox.SelectedIndex = value.Talent;
+                }   
                 petTalentCheckBox.Checked = value.Points is 1;
             }
         }

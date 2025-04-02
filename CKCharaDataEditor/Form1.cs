@@ -185,10 +185,23 @@ namespace CKCharaDataEditor
             saveSlotNoComboBox.Items.Clear();
             // セーブデータ一覧の取得
             Regex regex = new(@"^\d{1,2}|debug$", RegexOptions.Compiled);
-            string[] savePaths = new DirectoryInfo(SaveDataFolderPath).GetFiles(@"*.json")
+            List<FileInfo> saveFiles = new DirectoryInfo(SaveDataFolderPath).GetFiles(@"*.json")
                 .Where(file => regex.IsMatch(Path.GetFileNameWithoutExtension(file.Name)))
-                .Select(fileInfo => fileInfo.FullName).ToArray();
-            if (savePaths.Length is 0)
+                .OrderBy(file => file.Name)
+                .ToList();
+
+            List<FileInfo> nonNumericFiles = saveFiles
+                .Where(file => !int.TryParse(Path.GetFileNameWithoutExtension(file.Name), out _))
+                .ToList();
+
+            var sortedFiles = saveFiles
+                .Where(file => int.TryParse(Path.GetFileNameWithoutExtension(file.Name), out _))
+                .OrderBy(file => int.Parse(Path.GetFileNameWithoutExtension(file.Name)))
+                .Concat(nonNumericFiles)
+                .Select(fileInfo => fileInfo.FullName)
+                .ToList();
+
+            if (sortedFiles.Count is 0)
             {
                 DisabeleUI();
                 return;
@@ -198,7 +211,7 @@ namespace CKCharaDataEditor
                 EnabeleUI();
             }
 
-            foreach (string savePath in savePaths)
+            foreach (string savePath in sortedFiles)
             {
                 var saveNo = Path.GetFileNameWithoutExtension(savePath);
                 saveSlotNoComboBox.Items.Add(saveNo);
@@ -334,33 +347,43 @@ namespace CKCharaDataEditor
             Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/Document/parameter.md") { UseShellExecute = true });
         }
 
-        private void createButton_Click(object sender, EventArgs e)
+        private bool IsLegalSaveData()
         {
             if (!Program.IsDeveloper)
             {
-                if (_saveDataManager.HasOveredHealth(out _))
+                if (_saveDataManager.HasOveredHealth(out int health))
                 {
-                    MessageBox.Show("体力過剰のため、利用を制限します。", "注意");
-                    return;
+                    MessageBox.Show($"体力過剰のため、利用を制限します。\nCode : {health}", "注意");
+                    _saveDataManager.SleepWell();
+                    return false;
                 }
                 if (!_saveDataManager.IsClearData() && !_saveDataManager.IsCreativeData())
                 {
                     MessageBox.Show("クリア済みでない場合は機能を制限します。\n通常クリア後にお楽しみください。");
-                    return;
+                    return false;
                 }
             }
+            return true;
+        }
 
-            // ゲーム本体のプロセスをチェックして、起動中であれば閉じるように促す
+        private bool IsRunningGame()
+        {
             Process[] processes = Process.GetProcesses();
             foreach (Process process in processes)
             {
                 if (process.ProcessName.Equals("CoreKeeper"))
                 {
-                    // ゲームが起動中の場合、メッセージを表示してユーザーに閉じるよう促す
                     MessageBox.Show("ゲームが起動中です。変更を反映させる前にゲームを終了してください。", "注意", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    return true;
                 }
             }
+            return false;
+        }
+
+        private void createButton_Click(object sender, EventArgs e)
+        {
+            if (!IsLegalSaveData()) return;
+            if (IsRunningGame()) return;
 
             bool result = false;
             ItemInfo item;
@@ -441,7 +464,7 @@ namespace CKCharaDataEditor
             return new(objectID: objectIdTextBox.Text, amount: amoutTextBox.Text, variation: variationTextBox.Text);
         }
 
-        
+
 
         private async void EnableResultMessage(string message)
         {
@@ -593,11 +616,9 @@ namespace CKCharaDataEditor
 
         private void openConditionsButton_Click(object sender, EventArgs e)
         {
-            if (_saveDataManager.HasOveredHealth(out _) && !Program.IsDeveloper)
-            {
-                MessageBox.Show("体力過剰のため、利用を制限します。", "注意");
-                return;
-            }
+            if (!IsLegalSaveData()) return;
+            if (IsRunningGame()) return;
+
             var conditionForm = new ConditionForm();
             conditionForm.ShowDialog();
         }
@@ -720,16 +741,9 @@ namespace CKCharaDataEditor
 
         private void openSkillButton_Click(object sender, EventArgs e)
         {
-            if (!_saveDataManager.IsClearData())
-            {
-                MessageBox.Show("クリア済みでない場合は機能を制限します。\n通常クリア後にお楽しみください。");
-                return;
-            }
-            if (_saveDataManager.HasOveredHealth(out _) && !Program.IsDeveloper)
-            {
-                MessageBox.Show("体力過剰のため、利用を制限します。", "注意");
-                return;
-            }
+            if (!IsLegalSaveData()) return;
+            if (IsRunningGame()) return;
+
             var skillPointForm = new SkillPointForm();
             skillPointForm.ShowDialog();
         }
@@ -738,11 +752,16 @@ namespace CKCharaDataEditor
         {
             string assertion = "発見済みのレシピを削除しますか？\n削除したレシピは戻りません。";
             bool accepet = MessageBox.Show(assertion, "確認", MessageBoxButtons.OKCancel) == DialogResult.OK;
-            if (accepet) 
+            if (accepet)
             {
                 _saveDataManager.DeleteAllRecipes();
                 MessageBox.Show("全てのレシピの削除が完了しました。", "確認", MessageBoxButtons.OKCancel);
             }
+        }
+
+        private void slotReloadbutton_Click(object sender, EventArgs e)
+        {
+            LoadItems();
         }
     }
 }

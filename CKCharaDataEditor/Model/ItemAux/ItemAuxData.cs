@@ -50,7 +50,7 @@ namespace CKCharaDataEditor.Model.ItemAux
                 throw new NullReferenceException("aux data is empty.");
             }
             Color = int.Parse(AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash).Single());
-            Name = AuxPrefabManager.GetData(AuxHash.PetNameGroupHash, AuxHash.PetNameHash).Single(); ;
+            Name = AuxPrefabManager.GetData(AuxHash.PetNameGroupHash, AuxHash.ItemNameHash).Single(); ;
             Talents = AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)
                 .Select(str => new PetTalent(str))
                 .ToList();

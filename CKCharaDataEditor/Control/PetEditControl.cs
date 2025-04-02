@@ -163,7 +163,7 @@ namespace CKCharaDataEditor.Control
                 // スライム系
                 petColorComboBox.Items.Add(PetResource.ColorDict[(allPetType[petKindComboBox.SelectedIndex], PetColor.Color_0)]);
             }
-            petColorComboBox.SelectedIndex = 0; //hack 色がデフォルト選択してしまう
+            petColorComboBox.SelectedIndex = 0;
 
         }
 

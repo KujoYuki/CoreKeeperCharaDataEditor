@@ -69,6 +69,8 @@ namespace CKCharaDataEditor.Resource
                 (22, "エネルギータップ", "Missing", "ヒット時にマナを得られる確率+10%", "飼い主へのバフ:ヒット時にマナを得られる確率"),
                 (23, "Missing", "マナボウル", "+2.0マナ/毎秒", "+2.0マナ/毎秒"),
                 (24, "Missing", "神秘術の野獣", "魔法ダメージ+10.0%", "飼い主へのバフ:魔法ダメージ+3.0%"),
+                (25, "Temp", "Temp", "魔法ダメージ+10.0%", "飼い主へのバフ:魔法ダメージ+3.0%"),
+                (26, "放射線のやつ", "神秘術の野獣", "放射線+10.0%", "飼い主へのバフ:放射線+3.0%"),
             };
 
         public static IReadOnlyDictionary<(PetId petType, PetColor color), string> ColorDict
@@ -128,6 +130,7 @@ namespace CKCharaDataEditor.Resource
             { (PetId.PetLavaSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetId.PetPrinceSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetId.PetMagic,PetColor.Color_0) ,"----" },
+            { (PetId.PetElectric,PetColor.Color_0) ,"----" },
         };
 
         public static IReadOnlyDictionary<PetId, PetBattleType> BattleType
@@ -145,6 +148,7 @@ namespace CKCharaDataEditor.Resource
                 { PetId.PetMoth, PetBattleType.Buff},
                 { PetId.PetTardigrade, PetBattleType.Melee},
                 { PetId.PetMagic, PetBattleType.Buff},
+                { PetId.PetElectric, PetBattleType.Melee},
             };
     }
 }

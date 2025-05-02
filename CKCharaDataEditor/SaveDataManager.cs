@@ -85,7 +85,7 @@ namespace CKCharaDataEditor
 
                 return _saveData;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new InvalidOperationException("セーブデータの読み込みに失敗しました。", ex);
             }
@@ -106,7 +106,7 @@ namespace CKCharaDataEditor
             _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"]![insertIndex] = objectName;
             _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
-            
+
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
 #if DEBUG
@@ -184,7 +184,7 @@ namespace CKCharaDataEditor
 
         public void CalculateRecepeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
         {
-            int[] allFoodID = StaticResource.AllFoodMaterials.Select(c => c.Info.objectID).ToArray();
+            int[] allFoodID = StaticResource.AllIngredients.Select(c => c.Info.objectID).ToArray();
             List<Tuple<int, int>> allPairs = allFoodID // hack Variation内の順序決定アルゴリズムが不明のため、実際の順番は前後している場合がある
                 .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
                 .ToList();
@@ -201,7 +201,7 @@ namespace CKCharaDataEditor
                 .Where(o => o.variation > 0 && (uint)o.variation <= uint.MaxValue)   // variationが0か32bitで表現できない場合は除外
                 .Select(c => c!.variation)
                 .Distinct()
-                .Select(v => 
+                .Select(v =>
                 {
                     Form1.ReverseCalcurateVariation(v, out int materialA, out int materialB);
                     return Tuple.Create(Math.Min(materialA, materialB), Math.Max(materialA, materialB));
@@ -227,8 +227,8 @@ namespace CKCharaDataEditor
                 var foodBuilder = new StringBuilder();
                 foreach (var exceptRecipe in exceptRecipes)
                 {
-                    string FoodA = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == exceptRecipe.Item1).DisplayName;
-                    string FoodB = StaticResource.AllFoodMaterials.Single(f => f.Info.objectID == exceptRecipe.Item2).DisplayName;
+                    string FoodA = StaticResource.AllIngredients.Single(f => f.Info.objectID == exceptRecipe.Item1).DisplayName;
+                    string FoodB = StaticResource.AllIngredients.Single(f => f.Info.objectID == exceptRecipe.Item2).DisplayName;
                     foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
 
@@ -309,10 +309,13 @@ namespace CKCharaDataEditor
             File.WriteAllText(SaveDataPath, changedJson);
         }
 
-        public void SleepWell()
+        public void TsetseWell()
         {
             var conditions = GetConditions();
-            conditions.Add(new(210, 2, double.PositiveInfinity, -1));
+            if (!conditions.Any(c => c.Id == 210))
+            {
+                conditions.Add(new(210, 2, double.PositiveInfinity, -1));
+            }
             _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
@@ -363,6 +366,25 @@ namespace CKCharaDataEditor
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
+        }
+
+        internal string GetCharacterName()
+        {
+            var byteName = _saveData["characterCustomization"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
+            var byteList = new List<byte>();
+            foreach (var byteEntry in byteName)
+            {
+                // 値を取得し、バイトデータに変換
+                if (byteEntry.Value is JsonValue byteValue && byteValue.TryGetValue<byte>(out byte byteData))
+                {
+                    // ASCII値が0の場合は終端とみなして終了
+                    if (byteData == 0) break;
+
+                    byteList.Add(byteData);
+                }
+            }
+            string characterName = Encoding.UTF8.GetString(byteList.ToArray());
+            return characterName;
         }
     }
 }

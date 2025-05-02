@@ -31,7 +31,7 @@
     <None Update="Resource\ConditionDescription.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resource\AdditionalFoodMaterial.csv">
+    <None Update="Resource\AdditionalIngredients.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

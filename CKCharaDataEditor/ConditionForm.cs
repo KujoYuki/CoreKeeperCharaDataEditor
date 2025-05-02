@@ -104,7 +104,7 @@ namespace CKCharaDataEditor
                 case "Value":
                     if (!int.TryParse(formattedValue, out _))
                     {
-                        formatErrorText = "Valueは整数値でなければなりません。";
+                        formatErrorText = "効果量は整数値でなければなりません。";
                     }
                     break;
                 case "Infinity":
@@ -133,14 +133,14 @@ namespace CKCharaDataEditor
                         if (!double.TryParse(formattedValue, out _))
                         {
                             dataGridView.Rows[e.RowIndex].Cells["Duration"].ReadOnly = false;
-                            formatErrorText = "Infinityがfalseの場合、Durationは数値でなければなりません。";
+                            formatErrorText = "永続化が無効の場合、持続時間は数値でなければなりません。";
                         }
                     }
                     break;
                 case "Timer":
                     if (!double.TryParse(formattedValue, out _))
                     {
-                        formatErrorText = "Timerは数値でなければなりません。";
+                        formatErrorText = "残り時間は数値でなければなりません。";
                         e.Cancel = true;
                     }
                     break;

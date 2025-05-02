@@ -41,9 +41,9 @@
             toMaxButton = new Button();
             label10 = new Label();
             createdNumericNo = new NumericUpDown();
-            materialComboBoxB = new ComboBox();
+            ingredientComboBoxB = new ComboBox();
             label5 = new Label();
-            materialComboBoxA = new ComboBox();
+            ingredientComboBoxA = new ComboBox();
             label4 = new Label();
             petTab = new TabPage();
             petEditControl = new CKCharaDataEditor.Control.PetEditControl();
@@ -100,7 +100,7 @@
             itemEditTabControl.Controls.Add(foodTab);
             itemEditTabControl.Controls.Add(petTab);
             itemEditTabControl.Controls.Add(advancedTab);
-            itemEditTabControl.Location = new Point(13, 164);
+            itemEditTabControl.Location = new Point(13, 170);
             itemEditTabControl.MinimumSize = new Size(650, 300);
             itemEditTabControl.Name = "itemEditTabControl";
             itemEditTabControl.SelectedIndex = 0;
@@ -119,9 +119,9 @@
             foodTab.Controls.Add(toMaxButton);
             foodTab.Controls.Add(label10);
             foodTab.Controls.Add(createdNumericNo);
-            foodTab.Controls.Add(materialComboBoxB);
+            foodTab.Controls.Add(ingredientComboBoxB);
             foodTab.Controls.Add(label5);
-            foodTab.Controls.Add(materialComboBoxA);
+            foodTab.Controls.Add(ingredientComboBoxA);
             foodTab.Controls.Add(label4);
             foodTab.Location = new Point(4, 24);
             foodTab.Name = "foodTab";
@@ -133,6 +133,7 @@
             // 
             // deleteDiscoveredReciepesButton
             // 
+            deleteDiscoveredReciepesButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             deleteDiscoveredReciepesButton.Location = new Point(307, 162);
             deleteDiscoveredReciepesButton.Name = "deleteDiscoveredReciepesButton";
             deleteDiscoveredReciepesButton.Size = new Size(223, 23);
@@ -143,6 +144,7 @@
             // 
             // listUncreatedRecipesButton
             // 
+            listUncreatedRecipesButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             listUncreatedRecipesButton.Location = new Point(307, 133);
             listUncreatedRecipesButton.Name = "listUncreatedRecipesButton";
             listUncreatedRecipesButton.Size = new Size(223, 23);
@@ -153,6 +155,7 @@
             // 
             // rarityComboBox
             // 
+            rarityComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             rarityComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             rarityComboBox.FormattingEnabled = true;
             rarityComboBox.Items.AddRange(new object[] { "コモン", "レア", "エピック" });
@@ -163,6 +166,7 @@
             // 
             // cookedCategoryComboBox
             // 
+            cookedCategoryComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             cookedCategoryComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             cookedCategoryComboBox.FormattingEnabled = true;
             cookedCategoryComboBox.Location = new Point(289, 30);
@@ -172,6 +176,7 @@
             // 
             // label12
             // 
+            label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label12.AutoSize = true;
             label12.Location = new Point(289, 63);
             label12.Name = "label12";
@@ -181,6 +186,7 @@
             // 
             // label11
             // 
+            label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label11.AutoSize = true;
             label11.Location = new Point(289, 12);
             label11.Name = "label11";
@@ -190,6 +196,7 @@
             // 
             // toMinusOneButton
             // 
+            toMinusOneButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             toMinusOneButton.Location = new Point(7, 203);
             toMinusOneButton.Name = "toMinusOneButton";
             toMinusOneButton.Size = new Size(86, 23);
@@ -201,6 +208,7 @@
             // 
             // toMaxButton
             // 
+            toMaxButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             toMaxButton.Location = new Point(7, 174);
             toMaxButton.Name = "toMaxButton";
             toMaxButton.Size = new Size(86, 23);
@@ -211,6 +219,7 @@
             // 
             // label10
             // 
+            label10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label10.AutoSize = true;
             label10.Location = new Point(7, 117);
             label10.Name = "label10";
@@ -220,6 +229,7 @@
             // 
             // createdNumericNo
             // 
+            createdNumericNo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             createdNumericNo.Location = new Point(7, 135);
             createdNumericNo.Maximum = new decimal(new int[] { 869778, 0, 0, 0 });
             createdNumericNo.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
@@ -228,16 +238,16 @@
             createdNumericNo.TabIndex = 8;
             createdNumericNo.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
-            // materialComboBoxB
+            // ingredientComboBoxB
             // 
-            materialComboBoxB.DrawMode = DrawMode.OwnerDrawFixed;
-            materialComboBoxB.DropDownStyle = ComboBoxStyle.DropDownList;
-            materialComboBoxB.FormattingEnabled = true;
-            materialComboBoxB.Location = new Point(6, 81);
-            materialComboBoxB.Name = "materialComboBoxB";
-            materialComboBoxB.Size = new Size(252, 24);
-            materialComboBoxB.TabIndex = 9;
-            materialComboBoxB.DrawItem += materialComboBoxB_DrawItem;
+            ingredientComboBoxB.DrawMode = DrawMode.OwnerDrawFixed;
+            ingredientComboBoxB.DropDownStyle = ComboBoxStyle.DropDownList;
+            ingredientComboBoxB.FormattingEnabled = true;
+            ingredientComboBoxB.Location = new Point(6, 81);
+            ingredientComboBoxB.Name = "ingredientComboBoxB";
+            ingredientComboBoxB.Size = new Size(252, 24);
+            ingredientComboBoxB.TabIndex = 9;
+            ingredientComboBoxB.DrawItem += ingredientComboBoxB_DrawItem;
             // 
             // label5
             // 
@@ -248,16 +258,16 @@
             label5.TabIndex = 10;
             label5.Text = "食材その2";
             // 
-            // materialComboBoxA
+            // ingredientComboBoxA
             // 
-            materialComboBoxA.DrawMode = DrawMode.OwnerDrawFixed;
-            materialComboBoxA.DropDownStyle = ComboBoxStyle.DropDownList;
-            materialComboBoxA.FormattingEnabled = true;
-            materialComboBoxA.Location = new Point(6, 30);
-            materialComboBoxA.Name = "materialComboBoxA";
-            materialComboBoxA.Size = new Size(252, 24);
-            materialComboBoxA.TabIndex = 8;
-            materialComboBoxA.DrawItem += materialComboBoxA_DrawItem;
+            ingredientComboBoxA.DrawMode = DrawMode.OwnerDrawFixed;
+            ingredientComboBoxA.DropDownStyle = ComboBoxStyle.DropDownList;
+            ingredientComboBoxA.FormattingEnabled = true;
+            ingredientComboBoxA.Location = new Point(6, 30);
+            ingredientComboBoxA.Name = "ingredientComboBoxA";
+            ingredientComboBoxA.Size = new Size(252, 24);
+            ingredientComboBoxA.TabIndex = 8;
+            ingredientComboBoxA.DrawItem += ingredientComboBoxA_DrawItem;
             // 
             // label4
             // 
@@ -283,6 +293,7 @@
             // 
             petEditControl.Dock = DockStyle.Fill;
             petEditControl.Location = new Point(3, 3);
+            petEditControl.Margin = new Padding(4, 5, 4, 5);
             petEditControl.Name = "petEditControl";
             petEditControl.Size = new Size(636, 266);
             petEditControl.TabIndex = 0;
@@ -540,9 +551,9 @@
             // 
             saveSlotNoComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             saveSlotNoComboBox.FormattingEnabled = true;
-            saveSlotNoComboBox.Location = new Point(12, 81);
+            saveSlotNoComboBox.Location = new Point(12, 87);
             saveSlotNoComboBox.Name = "saveSlotNoComboBox";
-            saveSlotNoComboBox.Size = new Size(60, 23);
+            saveSlotNoComboBox.Size = new Size(148, 23);
             saveSlotNoComboBox.TabIndex = 2;
             saveSlotNoComboBox.SelectedIndexChanged += saveSlotNoComboBox_SelectedIndexChanged;
             // 
@@ -582,7 +593,7 @@
             // itemSlotLabel
             // 
             itemSlotLabel.AutoSize = true;
-            itemSlotLabel.Location = new Point(13, 117);
+            itemSlotLabel.Location = new Point(13, 123);
             itemSlotLabel.Name = "itemSlotLabel";
             itemSlotLabel.Size = new Size(72, 15);
             itemSlotLabel.TabIndex = 6;
@@ -593,7 +604,7 @@
             inventoryIndexComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             inventoryIndexComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             inventoryIndexComboBox.FormattingEnabled = true;
-            inventoryIndexComboBox.Location = new Point(13, 135);
+            inventoryIndexComboBox.Location = new Point(13, 141);
             inventoryIndexComboBox.Name = "inventoryIndexComboBox";
             inventoryIndexComboBox.Size = new Size(253, 23);
             inventoryIndexComboBox.TabIndex = 7;
@@ -602,7 +613,7 @@
             // createButton
             // 
             createButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            createButton.Location = new Point(13, 473);
+            createButton.Location = new Point(13, 479);
             createButton.Name = "createButton";
             createButton.Size = new Size(147, 45);
             createButton.TabIndex = 13;
@@ -614,7 +625,7 @@
             // 
             resultLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             resultLabel.AutoSize = true;
-            resultLabel.Location = new Point(172, 488);
+            resultLabel.Location = new Point(172, 494);
             resultLabel.Name = "resultLabel";
             resultLabel.Size = new Size(64, 15);
             resultLabel.TabIndex = 14;
@@ -624,7 +635,7 @@
             // previousItemButton
             // 
             previousItemButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            previousItemButton.Location = new Point(285, 134);
+            previousItemButton.Location = new Point(285, 140);
             previousItemButton.Name = "previousItemButton";
             previousItemButton.Size = new Size(58, 23);
             previousItemButton.TabIndex = 15;
@@ -635,7 +646,7 @@
             // nextItemButton
             // 
             nextItemButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            nextItemButton.Location = new Point(349, 134);
+            nextItemButton.Location = new Point(349, 140);
             nextItemButton.Name = "nextItemButton";
             nextItemButton.Size = new Size(58, 23);
             nextItemButton.TabIndex = 16;
@@ -646,7 +657,7 @@
             // openConditionsButton
             // 
             openConditionsButton.BackColor = Color.Cyan;
-            openConditionsButton.Location = new Point(213, 80);
+            openConditionsButton.Location = new Point(295, 86);
             openConditionsButton.Name = "openConditionsButton";
             openConditionsButton.Size = new Size(138, 23);
             openConditionsButton.TabIndex = 17;
@@ -657,7 +668,7 @@
             // openSkillbutton
             // 
             openSkillbutton.BackColor = Color.Transparent;
-            openSkillbutton.Location = new Point(367, 80);
+            openSkillbutton.Location = new Point(449, 86);
             openSkillbutton.Name = "openSkillbutton";
             openSkillbutton.Size = new Size(138, 23);
             openSkillbutton.TabIndex = 18;
@@ -667,9 +678,9 @@
             // 
             // slotReloadbutton
             // 
-            slotReloadbutton.Location = new Point(85, 80);
+            slotReloadbutton.Location = new Point(167, 86);
             slotReloadbutton.Name = "slotReloadbutton";
-            slotReloadbutton.Size = new Size(75, 23);
+            slotReloadbutton.Size = new Size(90, 23);
             slotReloadbutton.TabIndex = 19;
             slotReloadbutton.Text = "再読み込み";
             slotReloadbutton.UseVisualStyleBackColor = true;
@@ -677,8 +688,7 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(674, 535);
             Controls.Add(slotReloadbutton);
             Controls.Add(openSkillbutton);
@@ -726,9 +736,9 @@
         private Button openSevePathDialogButton;
         private Label itemSlotLabel;
         private ComboBox inventoryIndexComboBox;
-        private ComboBox materialComboBoxB;
+        private ComboBox ingredientComboBoxB;
         private Label label5;
-        private ComboBox materialComboBoxA;
+        private ComboBox ingredientComboBoxA;
         private Label label4;
         private TextBox objectIdTextBox;
         private Label label6;

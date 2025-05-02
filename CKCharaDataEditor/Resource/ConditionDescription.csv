@@ -50,7 +50,7 @@
 49,MiningPercentageIncrease,採掘ダメージ x%
 50,MiningSpeedIncrease,採掘スピード x/10%
 51,MeleeAttackSpeedIncrease,近接攻撃スピード x/10%
-52,RangeAttackSpeedIncrease,遠距離攻撃スピード x%
+52,RangeAttackSpeedIncrease,遠距離攻撃スピード x/10%
 53,VisibleOreDistanceIncrease,鉱石を視認できるマス数 x
 54,PercentageOfMiningAsMelee,採掘ダメージのx%が近接ダメージに追加
 55,PercentageOfFishingAsRange,釣りのx%が遠距離ダメージに追加
@@ -139,8 +139,8 @@
 138,LongerCookedFoodBuffs,料理のバフ期間増加 x%
 139,WellFedBuffsThresholdReduction,x%少ない食べ物で満腹バフを獲得
 140,StrongerWellFedBuffs,満腹時のバフ強化 x%
-141,GainMeleeAttackSpeedFromCookedFood,料理を食べた際の近接攻撃スピード x%
-142,MeleeAttackSpeedFromCookedFood,x% melee attack speed
+141,GainMeleeAttackSpeedFromCookedFood,料理を食べた際の近接攻撃スピード x/10%
+142,MeleeAttackSpeedFromCookedFood,x/10% melee attack speed
 143,GainMoreFoodFromCookedFood,料理からの獲得する食べ物 x%
 144,AuraApplyDamageIncrease,自分と周辺の味方全員からのダメージ x%
 145,AuraDamageIncrease,x% damage
@@ -171,7 +171,7 @@
 170,ApplyMovementSpeedReduction,Reduces the target's movement speed by x% for 4 sec
 171,GainAttackSpeedFromMissingHealth,失った体力1%につき0.2%の攻撃スピードが増加
 172,AttackSpeedFromMissingHealth,x% melee and range attack speed
-173,AttackSpeed,近接および遠距離攻撃スピード x%
+173,AttackSpeed,近接および遠距離攻撃スピード x/10%
 174,DiggingIncrease,発掘ダメージ x
 175,ChanceOnKillToSummonGhost,敵キル時にゴーストケイヴリングを召喚する確率x%
 176,IncreasedChanceToGetFishLoot,釣りで貴重または魚以外のアイテムが針にかかる確率 x%
@@ -196,7 +196,7 @@
 195,CritDamageIncreaseAgainstBurning,燃焼している相手へのクリティカルヒットダメージ x%
 196,ThornsDamageAddedToMeleeAndRange,近接・遠距離ダメージにトゲダメージが可算される
 197,ChanceOnHitToSpawnScarabBossProjectile,近接または遠距離攻撃時にx%の確率で古代の発射物を放ち、ヒットした相手を追跡し衝撃ダメージを与える
-198,GainAttackSpeedBoostAfterDodge,攻撃回避後に短時間近接および遠距離攻撃スピード x%
+198,GainAttackSpeedBoostAfterDodge,攻撃回避後に短時間近接および遠距離攻撃スピード x/10%
 199,GiantMushroomBuff,x max health
 200,AmberLarvaBuff,x max health
 201,StarlightNautilusBuff,x max health
@@ -318,5 +318,5 @@
 317,MinionsExplodeAsTheyDespawn,ミニオンが消滅した時、ミニオンは自身の攻撃ダメージのx%で爆発する
 318,ChanceOnHitToStun,ヒットで目標を気絶させる確率 x%
 319,Superman,N/A
-320,BiliBiliDodgeChance,#% dodge chance
-321,GreenGlow,N/A
+320,BiliBiliDodgeChance,x% dodge chance
+321,GreenGlow,緑色の光度 x

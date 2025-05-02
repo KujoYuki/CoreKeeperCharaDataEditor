@@ -5,7 +5,7 @@
 ダウンロードは[こちら](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases/latest/)から。
 
 ## できること
-- 任意の食材の組み合わせによる料理の作成します。  
+- 任意の食材の組み合わせによる料理を作成します。  
   - 料理のレア度や個数を調整することが出来ます。  
 - ポーションやシーズン料理を食材とした料理を作成し、料理のレア度や効果時間を得ることが出来ます。  
 - ただし一部の作成したアイテムが有効かどうかはゲーム側に判定されます。
@@ -50,6 +50,7 @@
 
 ## 動作環境
 .NET 8.0以降のランタイムパッケージがインストールされていること。
+使用するディスプレイサイズの拡大率が100%で設定されていること。
 
 ## Summary
 This is an external extension editor for manipulating the inventory content of [Core Keeper](https://store.steampowered.com/app/1621690/Core_Keeper/).  

@@ -18,7 +18,7 @@ namespace CKCharaDataEditor
         static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
 
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
-        private List<Item> _materialCategories = [];
+        private List<Item> _ingredientCategories = [];
         private List<Item> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
 
         private string _saveDataFolderPath = string.Empty;
@@ -59,7 +59,7 @@ namespace CKCharaDataEditor
         {
             try
             {
-                InitMaterialCategory();
+                InitIngredientCategory();
                 InitCookedCategory();
                 rarityComboBox.SelectedIndex = 0;
 
@@ -108,35 +108,35 @@ namespace CKCharaDataEditor
             });
         }
 
-        private void InitMaterialCategory()
+        private void InitIngredientCategory()
         {
-            string additionalFoodMaterialFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "AdditionalFoodMaterial.csv")
-                ?? throw new FileNotFoundException($"AdditionalFoodMaterial.csvが見つかりません。");
-            var materialCategories = File.ReadAllLines(additionalFoodMaterialFilePath)
+            string additionalIngredientsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "AdditionalIngredients.csv")
+                ?? throw new FileNotFoundException($"AdditionalIngredients.csvが見つかりません。");
+            var ingredientCategories = File.ReadAllLines(additionalIngredientsFilePath)
                 .Select(line =>
                 {
                     string[] words = line.Split(',');
                     return new Item(int.Parse(words[0]), words[1], words[2]);
                 })
                 .ToArray();
-            var allMaterials = StaticResource.AllFoodMaterials.Concat(materialCategories)
+            var allingredients = StaticResource.AllIngredients.Concat(ingredientCategories)
                 .OrderBy(c => c.Info.objectID)
                 .ToList();
             // 開発者モードの場合は非推奨食材も表示する
             if (Program.IsDeveloper)
             {
-                allMaterials.AddRange(StaticResource.ObsoleteFoodMaterials);
+                allingredients.AddRange(StaticResource.ObsoleteIngredients);
             }
-            _materialCategories.AddRange(allMaterials);
+            _ingredientCategories.AddRange(allingredients);
 
-            var sortedMaterialNames = _materialCategories
+            var sortedIngredientNames = _ingredientCategories
                 .Select(c => c.DisplayName)
                 .ToArray();
-            materialComboBoxA.Items.AddRange(sortedMaterialNames);
-            materialComboBoxB.Items.AddRange(sortedMaterialNames);
+            ingredientComboBoxA.Items.AddRange(sortedIngredientNames);
+            ingredientComboBoxB.Items.AddRange(sortedIngredientNames);
 
-            materialComboBoxA.SelectedIndex = 0;
-            materialComboBoxB.SelectedIndex = 0;
+            ingredientComboBoxA.SelectedIndex = 0;
+            ingredientComboBoxB.SelectedIndex = 0;
         }
 
         private void InitCookedCategory()
@@ -213,8 +213,19 @@ namespace CKCharaDataEditor
 
             foreach (string savePath in sortedFiles)
             {
-                var saveNo = Path.GetFileNameWithoutExtension(savePath);
-                saveSlotNoComboBox.Items.Add(saveNo);
+                // キャラクター名取得
+                _saveDataManager.SaveDataPath = savePath;
+                string characterName = _saveDataManager.GetCharacterName();
+                var fileName = Path.GetFileNameWithoutExtension(savePath);
+                if (int.TryParse(fileName, out int saveNoInt))
+                {
+                    // ゲーム内でのセーブデータNoは1から始まるため+1
+                    saveSlotNoComboBox.Items.Add((saveNoInt + 1).ToString() + $", {characterName}");
+                }
+                else
+                {
+                    saveSlotNoComboBox.Items.Add(fileName + $", {characterName}");
+                }
             }
             if (saveSlotNoComboBox.Items.Count > 0)
             {
@@ -235,7 +246,13 @@ namespace CKCharaDataEditor
             inventoryIndexComboBox.Items.Clear();
 
             // 選択されたセーブデータのファイルのアイテム読み込み
-            string selecetedSaveDataPath = Path.Combine(SaveDataFolderPath, saveSlotNoComboBox.SelectedItem?.ToString() + ".json");
+            string displayedSaveDataSlot = saveSlotNoComboBox.SelectedItem!.ToString()!.Split(",")[0];
+            if (int.TryParse(displayedSaveDataSlot, out int saveSlotNo))
+            {
+                // ゲーム内でのセーブデータNoは1から始まるため-1
+                displayedSaveDataSlot = (saveSlotNo - 1).ToString();
+            }
+            string selecetedSaveDataPath = Path.Combine(SaveDataFolderPath, displayedSaveDataSlot + ".json");
             _saveDataManager.SaveDataPath = selecetedSaveDataPath;
 
             // 選択中のセーブデータのアイテム情報をinventoryIndexComboBoxに反映する
@@ -274,9 +291,9 @@ namespace CKCharaDataEditor
             // 料理の場合は料理情報をセットする
             if (IsCookedItem(selectedObjectID, out var rarity, out var indexBaseOffset))
             {
-                ReverseCalcurateVariation(variation, out var materialIDA, out var materialIDB);
-                materialComboBoxA.SelectedItem = _materialCategories.SingleOrDefault(c => c.Info.objectID == materialIDA)?.DisplayName;
-                materialComboBoxB.SelectedItem = _materialCategories.SingleOrDefault(c => c.Info.objectID == materialIDB)?.DisplayName;
+                ReverseCalcurateVariation(variation, out var ingredientIdA, out var ingredientIdB);
+                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.Info.objectID == ingredientIdA)?.DisplayName;
+                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.Info.objectID == ingredientIdB)?.DisplayName;
 
                 cookedCategoryComboBox.SelectedIndex = indexBaseOffset;
                 rarityComboBox.SelectedIndex = rarity switch
@@ -354,13 +371,23 @@ namespace CKCharaDataEditor
                 if (_saveDataManager.HasOveredHealth(out int health))
                 {
                     MessageBox.Show($"体力過剰のため、利用を制限します。\nCode : {health}", "注意");
-                    _saveDataManager.SleepWell();
+                    _saveDataManager.TsetseWell();
                     return false;
                 }
                 if (!_saveDataManager.IsClearData() && !_saveDataManager.IsCreativeData())
                 {
                     MessageBox.Show("クリア済みでない場合は機能を制限します。\n通常クリア後にお楽しみください。");
                     return false;
+                }
+                string characterName = _saveDataManager.GetCharacterName();
+                foreach (var name in Forbidden.Users)
+                {
+                    if (characterName.StartsWith(name))
+                    {
+                        MessageBox.Show($"あなたの利用は禁止しています。", "注意");
+                        _saveDataManager.TsetseWell();
+                        return false;
+                    }
                 }
             }
             return true;
@@ -393,13 +420,13 @@ namespace CKCharaDataEditor
                 switch (itemEditTabControl.SelectedTab?.Name)
                 {
                     case "foodTab":
-                        int materialAId = _materialCategories
-                        .Single(c => c.DisplayName == materialComboBoxA
+                        int ingredientAId = _ingredientCategories
+                        .Single(c => c.DisplayName == ingredientComboBoxA
                         .SelectedItem?.ToString()).Info.objectID;
-                        int materialBId = _materialCategories
-                            .Single(c => c.DisplayName == materialComboBoxB
+                        int ingredientBId = _ingredientCategories
+                            .Single(c => c.DisplayName == ingredientComboBoxB
                             .SelectedItem?.ToString()).Info.objectID;
-                        int calculatedVariation = CalculateVariation(materialAId, materialBId);
+                        int calculatedVariation = CalculateVariation(ingredientAId, ingredientBId);
 
                         // レア度反映
                         int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).Info.objectID;
@@ -513,14 +540,14 @@ namespace CKCharaDataEditor
         /// variationからIdへの逆算
         /// </summary>
         /// <param name="variation"></param>
-        /// <param name="materialA">材料の食材A</param>
-        /// <param name="materialB">材料の食材B</param>
-        public static void ReverseCalcurateVariation(int variation, out int materialA, out int materialB)
+        /// <param name="ingredientA">材料の食材A</param>
+        /// <param name="ingredientB">材料の食材B</param>
+        public static void ReverseCalcurateVariation(int variation, out int ingredientA, out int ingredientB)
         {
             // 16ビット右にシフトして上位16ビットを取得
-            materialA = variation >> 16;
+            ingredientA = variation >> 16;
             // 下位16ビットを取得
-            materialB = variation & 0xFFFF;
+            ingredientB = variation & 0xFFFF;
         }
 
         private void SetDefaultButton_Click(object sender, EventArgs e)
@@ -623,24 +650,24 @@ namespace CKCharaDataEditor
             conditionForm.ShowDialog();
         }
 
-        private void materialComboBoxA_DrawItem(object sender, DrawItemEventArgs e)
+        private void ingredientComboBoxA_DrawItem(object sender, DrawItemEventArgs e)
         {
-            materialComboBox_DrawItem(sender, e);
+            ingredientComboBox_DrawItem(sender, e);
         }
 
-        private void materialComboBoxB_DrawItem(object sender, DrawItemEventArgs e)
+        private void ingredientComboBoxB_DrawItem(object sender, DrawItemEventArgs e)
         {
-            materialComboBox_DrawItem(sender, e);
+            ingredientComboBox_DrawItem(sender, e);
         }
 
-        private void materialComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void ingredientComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
 
             ComboBox combo = (ComboBox)sender;
             string selectedText = (string)combo.Items[e.Index]!;
 
-            var displayNames = StaticResource.AllFoodMaterials.Select(c => c.DisplayName);
+            var displayNames = StaticResource.AllIngredients.Select(c => c.DisplayName);
             var goldernNames = displayNames
                 .Where(name => name.StartsWith("金色の"))
                 .Where(name => name != "金色のダート")

@@ -32,7 +32,7 @@ namespace CKCharaDataEditor.Resource
             new(9514, "CookedCake", "ケーキ"),
         ];
 
-        public static IReadOnlyCollection<Item> AllFoodMaterials { get; } =
+        public static IReadOnlyCollection<Item> AllIngredients { get; } =
         [
             // hack レア化の有無で食材を分ける（ = レシピ用食材クラスの追加,ToItemメソッドの実装）を検討する
             new(1645,"LarvaMeat","幼虫肉"),
@@ -111,7 +111,7 @@ namespace CKCharaDataEditor.Resource
             new(9743,"RiftianLampfish","亀裂のランプフィッシュ"),
         ];
 
-        public static IReadOnlyCollection<Item> ObsoleteFoodMaterials { get; } =
+        public static IReadOnlyCollection<Item> ObsoleteIngredients { get; } =
         [
             new(5501,"GiantMushroom2","ジャンボマッシュルーム(古)"),
             new(5607,"AmberLarva2","幼虫の琥珀(古)")

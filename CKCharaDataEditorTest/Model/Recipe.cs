@@ -9,10 +9,10 @@ namespace CKFoodMakerTest.Model
 {
     internal class Recipe
     {
-        public Recipe(int materialA, int materialB, int recipeId)
+        public Recipe(int ingredientA, int ingredientB, int recipeId)
         {
-            MaterialA = materialA;
-            MaterialB = materialB;
+            IngredientA = ingredientA;
+            IngredientB = ingredientB;
             RecipeId = recipeId;
         }
 
@@ -21,21 +21,21 @@ namespace CKFoodMakerTest.Model
 
         public override string ToString()
         {
-            return $"{MaterialA},{MaterialB},{RecipeId},{AnalyzeResource.FoodDic[MaterialA]}, {AnalyzeResource.FoodDic[MaterialB]}, {AnalyzeResource.FoodDic[RecipeId]}";
+            return $"{IngredientA},{IngredientB},{RecipeId},{AnalyzeResource.FoodDic[IngredientA]}, {AnalyzeResource.FoodDic[IngredientB]}, {AnalyzeResource.FoodDic[RecipeId]}";
         }
 
         public string ToStringWithBinary()
         {
-            var binaryA = Convert.ToString(MaterialA, 2).PadLeft(16, '0');
-            var binaryB = Convert.ToString(MaterialB, 2).PadLeft(16, '0');
-            var andResult = Convert.ToString(MaterialA & MaterialB, 2).PadLeft(16, '0');
-            var orResult = Convert.ToString(MaterialA | MaterialB, 2).PadLeft(16, '0');
-            var xorResult = Convert.ToString(MaterialA ^ MaterialB, 2).PadLeft(16, '0');
+            var binaryA = Convert.ToString(IngredientA, 2).PadLeft(16, '0');
+            var binaryB = Convert.ToString(IngredientB, 2).PadLeft(16, '0');
+            var andResult = Convert.ToString(IngredientA & IngredientB, 2).PadLeft(16, '0');
+            var orResult = Convert.ToString(IngredientA | IngredientB, 2).PadLeft(16, '0');
+            var xorResult = Convert.ToString(IngredientA ^ IngredientB, 2).PadLeft(16, '0');
 
-            return $"{MaterialA},{MaterialB},{RecipeId},{SplitUnderbar(binaryA)}, {SplitUnderbar(binaryB)}, " +
+            return $"{IngredientA},{IngredientB},{RecipeId},{SplitUnderbar(binaryA)}, {SplitUnderbar(binaryB)}, " +
                 $"{SplitUnderbar(andResult)}, {SplitUnderbar(orResult)}, {SplitUnderbar(xorResult)}, " +    // 論理積, 論理和, 排他的論理和
                 //$"{CountOneBits(SplitUnderbar(andResult))}, {CountOneBits(SplitUnderbar(orResult))}, {CountOneBits(SplitUnderbar(xorResult))}, " +  // 論理積, 論理和, 排他的論理和のセットビット数
-                $"{AnalyzeResource.FoodDic[MaterialA]}, {AnalyzeResource.FoodDic[MaterialB]}, {AnalyzeResource.FoodDic[RecipeId]}, ";
+                $"{AnalyzeResource.FoodDic[IngredientA]}, {AnalyzeResource.FoodDic[IngredientB]}, {AnalyzeResource.FoodDic[RecipeId]}, ";
         }
 
         private static string SplitUnderbar(string binaryString)
@@ -65,8 +65,8 @@ namespace CKFoodMakerTest.Model
             return count;
         }
 
-        public int MaterialA { get; set; }
-        public int MaterialB { get; set; }
+        public int IngredientA { get; set; }
+        public int IngredientB { get; set; }
         public int RecipeId { get; set; }
     }
 }

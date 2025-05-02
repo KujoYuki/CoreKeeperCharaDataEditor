@@ -13,8 +13,8 @@ namespace CKFoodMakerTest
         internal const string RecipeFile = "analyzedRecipe.csv";
 
         // 全ての食材と料理の表示名を取得
-        internal static readonly List<(int objectID, string DisplayName)> FoodMaterials = StaticResource.AllFoodMaterials
-            .Concat(StaticResource.ObsoleteFoodMaterials)   // レシピには載らないが料理は作成できるため含める
+        internal static readonly List<(int objectID, string DisplayName)> Ingredients = StaticResource.AllIngredients
+            .Concat(StaticResource.ObsoleteIngredients)   // レシピには載らないが料理は作成できるため含める
             .Select(item => (objectID: item.Info.objectID, DisplayName: item.DisplayName))
             .ToList();
 
@@ -26,7 +26,7 @@ namespace CKFoodMakerTest
                 .Select(id => (objectID: id, DisplayName: item.DisplayName));
             })
             .SelectMany(food => food).ToList()
-            .Concat(FoodMaterials)
+            .Concat(Ingredients)
             .ToDictionary();
 
         // 金色食材のIDリスト

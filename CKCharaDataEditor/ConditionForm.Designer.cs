@@ -28,15 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConditionForm));
             dataGridView = new DataGridView();
-            ConditionId = new DataGridViewTextBoxColumn();
-            Value = new DataGridViewTextBoxColumn();
-            Infinity = new DataGridViewCheckBoxColumn();
-            Duration = new DataGridViewTextBoxColumn();
-            Timer = new DataGridViewTextBoxColumn();
-            Description = new DataGridViewComboBoxColumn();
             label1 = new Label();
             createBackupButton = new Button();
             overrideConditionsButton = new Button();
@@ -49,14 +43,20 @@
             deleteSelectedRowButton = new Button();
             addNewRowButton = new Button();
             conditionListLinkLabel = new LinkLabel();
+            ConditionId = new DataGridViewTextBoxColumn();
+            Value = new DataGridViewTextBoxColumn();
+            Infinity = new DataGridViewCheckBoxColumn();
+            Duration = new DataGridViewTextBoxColumn();
+            Timer = new DataGridViewTextBoxColumn();
+            Description = new DataGridViewComboBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
             // dataGridView
             // 
             dataGridView.AllowUserToAddRows = false;
-            dataGridViewCellStyle.BackColor = Color.Cyan;
-            dataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle;
+            dataGridViewCellStyle1.BackColor = Color.Cyan;
+            dataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
@@ -70,59 +70,6 @@
             dataGridView.Size = new Size(744, 389);
             dataGridView.TabIndex = 0;
             dataGridView.CellValidating += dataGridView_CellValidating;
-            // 
-            // ConditionId
-            // 
-            ConditionId.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            ConditionId.FillWeight = 105.964462F;
-            ConditionId.HeaderText = "ConditionId";
-            ConditionId.MaxInputLength = 3;
-            ConditionId.Name = "ConditionId";
-            ConditionId.ReadOnly = true;
-            ConditionId.SortMode = DataGridViewColumnSortMode.NotSortable;
-            ConditionId.Width = 75;
-            // 
-            // Value
-            // 
-            Value.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Value.FillWeight = 105.964462F;
-            Value.HeaderText = "効果量";
-            Value.Name = "Value";
-            Value.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Value.Width = 49;
-            // 
-            // Infinity
-            // 
-            Infinity.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Infinity.FillWeight = 76.1421356F;
-            Infinity.HeaderText = "Infinity";
-            Infinity.Name = "Infinity";
-            Infinity.SortMode = DataGridViewColumnSortMode.Automatic;
-            Infinity.Width = 68;
-            // 
-            // Duration
-            // 
-            Duration.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Duration.FillWeight = 105.964462F;
-            Duration.HeaderText = "Duration";
-            Duration.Name = "Duration";
-            Duration.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Duration.Width = 59;
-            // 
-            // Timer
-            // 
-            Timer.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Timer.FillWeight = 105.964462F;
-            Timer.HeaderText = "効果時間";
-            Timer.Name = "Timer";
-            Timer.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Timer.Width = 61;
-            // 
-            // Description
-            // 
-            Description.HeaderText = "効果内容";
-            Description.Name = "Description";
-            Description.Resizable = DataGridViewTriState.True;
             // 
             // label1
             // 
@@ -245,6 +192,59 @@
             conditionListLinkLabel.Text = "ConditionIdの一覧";
             conditionListLinkLabel.LinkClicked += conditionListLinkLabel_LinkClicked;
             // 
+            // ConditionId
+            // 
+            ConditionId.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            ConditionId.FillWeight = 105.964462F;
+            ConditionId.HeaderText = "Id";
+            ConditionId.MaxInputLength = 3;
+            ConditionId.Name = "ConditionId";
+            ConditionId.ReadOnly = true;
+            ConditionId.SortMode = DataGridViewColumnSortMode.NotSortable;
+            ConditionId.Width = 23;
+            // 
+            // Value
+            // 
+            Value.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Value.FillWeight = 105.964462F;
+            Value.HeaderText = "効果量";
+            Value.Name = "Value";
+            Value.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Value.Width = 49;
+            // 
+            // Infinity
+            // 
+            Infinity.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Infinity.FillWeight = 76.1421356F;
+            Infinity.HeaderText = "永続化";
+            Infinity.Name = "Infinity";
+            Infinity.SortMode = DataGridViewColumnSortMode.Automatic;
+            Infinity.Width = 68;
+            // 
+            // Duration
+            // 
+            Duration.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Duration.FillWeight = 105.964462F;
+            Duration.HeaderText = "持続時間";
+            Duration.Name = "Duration";
+            Duration.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Duration.Width = 61;
+            // 
+            // Timer
+            // 
+            Timer.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Timer.FillWeight = 105.964462F;
+            Timer.HeaderText = "残り時間";
+            Timer.Name = "Timer";
+            Timer.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Timer.Width = 57;
+            // 
+            // Description
+            // 
+            Description.HeaderText = "効果内容";
+            Description.Name = "Description";
+            Description.Resizable = DataGridViewTriState.True;
+            // 
             // ConditionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -284,12 +284,12 @@
         private Label updateConditionsLabel;
         private Button deleteSelectedRowButton;
         private Button addNewRowButton;
+        private LinkLabel conditionListLinkLabel;
         private DataGridViewTextBoxColumn ConditionId;
         private DataGridViewTextBoxColumn Value;
         private DataGridViewCheckBoxColumn Infinity;
         private DataGridViewTextBoxColumn Duration;
         private DataGridViewTextBoxColumn Timer;
         private DataGridViewComboBoxColumn Description;
-        private LinkLabel conditionListLinkLabel;
     }
 }

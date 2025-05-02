@@ -69,8 +69,13 @@ namespace CKCharaDataEditor.Resource
                 (22, "エネルギータップ", "Missing", "ヒット時にマナを得られる確率+10%", "飼い主へのバフ:ヒット時にマナを得られる確率"),
                 (23, "Missing", "マナボウル", "+2.0マナ/毎秒", "飼い主へのバフ:+2.0マナ/毎秒"),
                 (24, "Missing", "神秘術の野獣", "魔法ダメージ+10.0%", "飼い主へのバフ:魔法ダメージ+3.0%"),
-                // (25, "Don't use", "Don't use", "Explosion", "Explosion"), // 爆発関連？UIが異常停止するのでスキップする
-                (26, "局地的放射性降下物", "放射能汚染の匂い", "周辺の敵全員に20の放射線ダメージを2秒ごとに与える", "飼い主へのバフ:周辺の敵全員に0の放射線ダメージを2秒ごとに与える"),
+                (25, "局地的放射性降下物", "放射能汚染の匂い", "周辺の敵全員に20の放射線ダメージを2秒ごとに与える", "飼い主へのバフ:周辺の敵全員に0の放射線ダメージを2秒ごとに与える"),
+                (26, "Missing", "怒れる群体", "ミニオン攻撃スピード+0.0%", "飼い主へのバフ:ミニオン攻撃スピード+12.0%"),
+                (27, "Missing", "レーザーポインター遊び", "ミニオンクリティカルヒット確率+0%", "飼い主へのバフ:ミニオンクリティカルヒット確率+3%"),
+                (28, "Missing", "スキンブレイク", "ミニオンのクリティカルヒットダメージ+0%", "飼い主へのバフ:ミニオンのクリティカルヒットダメージ+30%"),
+                (29, "Missing", "戦闘狂", "ミニオンダメージ+0.0%", "飼い主へのバフ:ミニオンダメージ+8.0%"),
+                (30, "Missing", "穀潰しの威圧", "ボスへのミニオンの与ダメージ+0%", "飼い主へのバフ:ボスへのミニオンの与ダメージ+15%"),
+                (31, "Missing", "長命", "ミニオンの寿命+0%", "飼い主へのバフ:ミニオンの寿命+15%"),
             };
 
         public static IReadOnlyDictionary<(PetId petType, PetColor color), string> ColorDict
@@ -124,6 +129,14 @@ namespace CKCharaDataEditor.Resource
             { (PetId.PetTardigrade,PetColor.Color_5) ,"黒(Shadow)" },
             { (PetId.PetTardigrade,PetColor.Color_6) ,"橙(Tangerine)" },
             { (PetId.PetTardigrade,PetColor.Color_7) ,"桃(Bubblegum)" },
+            { (PetId.PetWarlock,PetColor.Color_0) ,"灰黒(Default)" },
+            { (PetId.PetWarlock,PetColor.Color_1) ,"黒" },
+            { (PetId.PetWarlock,PetColor.Color_2) ,"青" },
+            { (PetId.PetWarlock,PetColor.Color_3) ,"灰" },
+            { (PetId.PetWarlock,PetColor.Color_4) ,"緑" },
+            { (PetId.PetWarlock,PetColor.Color_5) ,"紫" },
+            { (PetId.PetWarlock,PetColor.Color_6) ,"赤" },
+            { (PetId.PetWarlock,PetColor.Color_7) ,"黄" },
             { (PetId.PetSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetId.PetSlipperySlimeBlob,PetColor.Color_0) ,"----" },
             { (PetId.PetPoisonSlimeBlob,PetColor.Color_0) ,"----" },
@@ -149,6 +162,7 @@ namespace CKCharaDataEditor.Resource
                 { PetId.PetTardigrade, PetBattleType.Melee},
                 { PetId.PetMagic, PetBattleType.Buff},
                 { PetId.PetElectric, PetBattleType.Melee},
+                { PetId.PetWarlock, PetBattleType.Buff},
             };
     }
 }

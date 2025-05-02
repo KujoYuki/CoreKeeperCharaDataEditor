@@ -34,14 +34,7 @@ namespace CKCharaDataEditor.Control
             set
             {
                 _petTalent = value;
-                if (value.Talent > 25)
-                {
-                    petTalentComboBox.SelectedIndex = value.Talent - 1;
-                }
-                else
-                {
-                    petTalentComboBox.SelectedIndex = value.Talent;
-                }   
+                petTalentComboBox.SelectedIndex = value.Talent;
                 petTalentCheckBox.Checked = value.Points is 1;
             }
         }
@@ -59,13 +52,9 @@ namespace CKCharaDataEditor.Control
 
         public void LoadTalentList()
         {
-            int selectedIndex = petTalentComboBox.SelectedIndex;
-            petTalentComboBox.Items.Clear();
             List<string> validTalentIds = [];
             switch (_battleType)
             {
-                case PetBattleType.Undefined:
-                    break;
                 case PetBattleType.Melee or PetBattleType.Range:
                     validTalentIds.AddRange(
                         PetResource.TalentDescriptionDict
@@ -89,6 +78,8 @@ namespace CKCharaDataEditor.Control
                 default:
                     break;
             }
+            int selectedIndex = petTalentComboBox.SelectedIndex;
+            petTalentComboBox.Items.Clear();
             petTalentComboBox.Items.AddRange(validTalentIds.ToArray());
             petTalentComboBox.SelectedIndex = selectedIndex;
         }

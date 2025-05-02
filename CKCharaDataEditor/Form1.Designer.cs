@@ -86,6 +86,7 @@
             openConditionsButton = new Button();
             openSkillbutton = new Button();
             slotReloadbutton = new Button();
+            label13 = new Label();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
@@ -686,10 +687,20 @@
             slotReloadbutton.UseVisualStyleBackColor = true;
             slotReloadbutton.Click += slotReloadbutton_Click;
             // 
+            // label13
+            // 
+            label13.ForeColor = Color.Red;
+            label13.Location = new Point(328, 479);
+            label13.Name = "label13";
+            label13.Size = new Size(334, 45);
+            label13.TabIndex = 20;
+            label13.Text = "編集が無効化される可能性があります。作成後のゲーム起動時は毎回新規ワールドを作成して入り、編集内容を確定させてください。詳しくはreadmeへ。";
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(674, 535);
+            Controls.Add(label13);
             Controls.Add(slotReloadbutton);
             Controls.Add(openSkillbutton);
             Controls.Add(openConditionsButton);
@@ -782,5 +793,6 @@
         private Button deleteDiscoveredReciepesButton;
         private Control.PetEditControl petEditControl;
         private Button slotReloadbutton;
+        private Label label13;
     }
 }

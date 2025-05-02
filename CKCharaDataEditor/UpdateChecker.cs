@@ -5,7 +5,7 @@ namespace CKCharaDataEditor
 {
     public static class UpdateChecker
     {
-        private const string _currentVersion = "1.4.3"; // todo 新バージョンリリース時に手動で更新すること
+        private const string _currentVersion = "1.4.4"; // todo 新バージョンリリース時に手動で更新すること
         private const string _repoOwner = "KujoYuki";
         private const string _repoName = "CoreKeeperCharaDataEditor";
         private const string _uri = $"https://api.github.com/repos/{_repoOwner}/{_repoName}/releases/latest";

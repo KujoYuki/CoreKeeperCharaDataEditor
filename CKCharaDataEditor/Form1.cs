@@ -246,7 +246,7 @@ namespace CKCharaDataEditor
             inventoryIndexComboBox.Items.Clear();
 
             // 選択されたセーブデータのファイルのアイテム読み込み
-            string displayedSaveDataSlot = saveSlotNoComboBox.SelectedItem!.ToString()!.Split(",")[0];
+            string displayedSaveDataSlot = saveSlotNoComboBox.SelectedItem!.ToString()!.Split(",").First();
             if (int.TryParse(displayedSaveDataSlot, out int saveSlotNo))
             {
                 // ゲーム内でのセーブデータNoは1から始まるため-1

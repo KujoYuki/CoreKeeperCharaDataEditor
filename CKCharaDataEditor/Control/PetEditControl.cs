@@ -11,7 +11,7 @@ namespace CKCharaDataEditor.Control
 {
     public partial class PetEditControl : UserControl, INotifyPropertyChanged
     {
-        static readonly List<PetId> _colorSelectablePets = [PetId.PetDog, PetId.PetCat, PetId.PetBird, PetId.PetBunny, PetId.PetMoth, PetId.PetTardigrade];
+        static readonly List<PetId> _colorSelectablePets = [PetId.PetDog, PetId.PetCat, PetId.PetBird, PetId.PetBunny, PetId.PetMoth, PetId.PetTardigrade, PetId.PetWarlock];
 
         public PetEditControl()
         {

@@ -15,5 +15,6 @@
         PetTardigrade = 1252,
         PetMagic = 1253,
         PetElectric = 1258,
+        PetWarlock = 1261,
     }
 }

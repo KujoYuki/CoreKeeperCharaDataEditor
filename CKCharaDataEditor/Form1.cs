@@ -231,7 +231,7 @@ namespace CKCharaDataEditor
             {
                 saveSlotNoComboBox.SelectedItem = saveSlotNoComboBox.Items[0];
             }
-
+            dataFormatLabel.Text = _saveDataManager.GetCharacterDataVersion().ToString();
             LoadItems();
         }
 

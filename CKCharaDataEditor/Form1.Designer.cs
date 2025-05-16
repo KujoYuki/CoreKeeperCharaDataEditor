@@ -87,6 +87,7 @@
             openSkillbutton = new Button();
             slotReloadbutton = new Button();
             label13 = new Label();
+            dataFormatLabel = new Label();
             itemEditTabControl.SuspendLayout();
             foodTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
@@ -689,17 +690,28 @@
             // 
             // label13
             // 
-            label13.ForeColor = Color.Red;
-            label13.Location = new Point(328, 479);
+            label13.AutoSize = true;
+            label13.Location = new Point(509, 494);
             label13.Name = "label13";
-            label13.Size = new Size(334, 45);
+            label13.Size = new Size(107, 15);
             label13.TabIndex = 20;
-            label13.Text = "編集が無効化される可能性があります。作成後のゲーム起動時は毎回新規ワールドを作成して入り、編集内容を確定させてください。詳しくはreadmeへ。";
+            label13.Text = "データ書式バージョン :";
+            // 
+            // dataFormatLabel
+            // 
+            dataFormatLabel.AutoSize = true;
+            dataFormatLabel.ForeColor = Color.Purple;
+            dataFormatLabel.Location = new Point(611, 494);
+            dataFormatLabel.Name = "dataFormatLabel";
+            dataFormatLabel.Size = new Size(45, 15);
+            dataFormatLabel.TabIndex = 21;
+            dataFormatLabel.Text = "version";
             // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(674, 535);
+            Controls.Add(dataFormatLabel);
             Controls.Add(label13);
             Controls.Add(slotReloadbutton);
             Controls.Add(openSkillbutton);
@@ -794,5 +806,6 @@
         private Control.PetEditControl petEditControl;
         private Button slotReloadbutton;
         private Label label13;
+        private Label dataFormatLabel;
     }
 }

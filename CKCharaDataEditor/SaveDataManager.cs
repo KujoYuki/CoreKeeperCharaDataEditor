@@ -12,18 +12,13 @@ namespace CKCharaDataEditor
     /// </summary>
     public sealed class SaveDataManager
     {
-        private const int CharaDataFormatVersion = 11;
-
         public const int LoadItemLimit = 130;
-
         private static SaveDataManager? _instance;
         public static SaveDataManager Instance => _instance ??= new();
-
-        private string _saveDataPath = string.Empty;
-
+        private int CharaDataFormatVersion;
         private Item? _copiedItem;
-
         private Item[]? _copiedInventory;
+        private string _saveDataPath = string.Empty;
         public string SaveDataPath
         {
             get => _saveDataPath;
@@ -62,6 +57,7 @@ namespace CKCharaDataEditor
 
                 _saveData = JsonNode.Parse(saveDataContents)!.AsObject();
 
+                CharaDataFormatVersion = GetCharacterDataVersion();
                 var inventoryBase = _saveData["inventory"]!.AsArray();
                 var inventoryName = _saveData["inventoryObjectNames"]!.AsArray();
                 var inventoryAuxData = _saveData["inventoryAuxData"]!.AsArray();
@@ -106,7 +102,7 @@ namespace CKCharaDataEditor
             _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"]![insertIndex] = objectName;
             _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
-
+            BreakLastConnectedServerId();
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
 #if DEBUG
@@ -136,6 +132,7 @@ namespace CKCharaDataEditor
             _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Info), StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.objectName), StaticResource.SerializerOption));
             _saveData["inventoryAuxData"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Aux), StaticResource.SerializerOption));
+            BreakLastConnectedServerId();
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
@@ -385,6 +382,59 @@ namespace CKCharaDataEditor
             }
             string characterName = Encoding.UTF8.GetString(byteList.ToArray());
             return characterName;
+        }
+
+        internal int GetCharacterDataVersion()
+        {
+            var version = _saveData["version"]!.GetValue<int>();
+            return version;
+        }
+
+        internal Guid GetLastConnnectedServerId()
+        {
+            var changedOrderWorldId = _saveData["lastConnectedServerGuid"]!["Value"]!.AsObject()
+                .Select(fourbyte =>
+                {
+                    byte[] bytes = new byte[4];
+                    uint values =(fourbyte.Value as JsonValue)!.GetValue<uint>();
+                    return BitConverter.GetBytes(values).ToArray();
+                })
+                .SelectMany(bytes => bytes)
+                .Select(bytes =>
+                {
+                    byte upper = (byte)((bytes & 0xF0) >> 4);
+                    byte lower = (byte)((bytes & 0x0F) << 4);
+                    return (byte)(upper | lower);
+                })
+                .ToArray();
+
+            byte[] originalId = RestoreByteOrder(changedOrderWorldId); 
+            return new Guid(originalId);
+        }
+
+        private static byte[] RestoreByteOrder(byte[] changedbytes)
+        {
+            byte[] originalId = new byte[16];
+            int[] map = 
+            [
+                3, 2, 1, 0,    // reverse first 4 bytes
+                5, 4,          // reverse next 2 bytes
+                7, 6,          // reverse next 2 bytes
+                8, 9, 10, 11, 12, 13, 14, 15 // keep as is
+            ];
+            for (int i = 0; i < map.Length; i++)
+            {
+                originalId[i] = changedbytes[map[i]];
+            }
+            return originalId;
+        }
+
+        private void BreakLastConnectedServerId()
+        {
+            JsonObject valueObj = _saveData["lastConnectedServerGuid"]!["Value"]!.AsObject();
+            uint x = valueObj["x"]!.GetValue<uint>();
+            valueObj["x"] = x + 1;
+            _saveData["lastConnectedServerGuid"]!["Value"] = valueObj;
         }
     }
 }

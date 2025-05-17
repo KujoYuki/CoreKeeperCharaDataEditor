@@ -12,7 +12,6 @@ namespace CKCharaDataEditor
     /// </summary>
     public sealed class SaveDataManager
     {
-        public const int LoadItemLimit = 130;
         private static SaveDataManager? _instance;
         public static SaveDataManager Instance => _instance ??= new();
         private int CharaDataFormatVersion;
@@ -24,9 +23,22 @@ namespace CKCharaDataEditor
             get => _saveDataPath;
             set
             {
-                _saveDataPath = value;
-                _saveData = LoadInventory(out var items);
-                Items = items;
+                if (Path.Exists(value))
+                {
+                    _saveDataPath = value;
+                    _saveData = LoadInventory(out var items);
+                    Items = items;
+                }
+            }
+        }
+
+        private string _installFolderPath = string.Empty;
+        public string InstallFolderPath
+        {
+            get => _installFolderPath;
+            set
+            {
+                _installFolderPath = value;
             }
         }
 
@@ -35,6 +47,7 @@ namespace CKCharaDataEditor
 
         private SaveDataManager()
         {
+            // Singleton pattern
         }
 
         public static string SanitizeJsonString(string origin)
@@ -62,24 +75,50 @@ namespace CKCharaDataEditor
                 var inventoryName = _saveData["inventoryObjectNames"]!.AsArray();
                 var inventoryAuxData = _saveData["inventoryAuxData"]!.AsArray();
 
-                var limitedItems = inventoryBase
-                    .Zip(inventoryName, inventoryAuxData)
-                    .Take(LoadItemLimit)
-                    .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
-                items = [];
-                foreach (var (item, objectName, auxData) in limitedItems)
+                if (CharaDataFormatVersion < 12)
                 {
-                    var itemBase = new ItemInfo(
-                        objectID: item["objectID"]!.GetValue<int>(),
-                        amount: item["amount"]!.GetValue<int>(),
-                        variation: item["variation"]!.GetValue<int>(),
-                        variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
-                    string objectInternalName = objectName!.GetValue<string>()!;
-                    var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
-                    items.Add(new(itemBase, objectInternalName, itemAux));
-                }
+                    var limitedItems = inventoryBase
+                    .Zip(inventoryName, inventoryAuxData)
+                    .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
 
-                return _saveData;
+                    items = [];
+                    foreach (var (item, objectName, auxData) in limitedItems)
+                    {
+                        var itemBase = new ItemInfo(
+                            objectID: item["objectID"]!.GetValue<int>(),
+                            amount: item["amount"]!.GetValue<int>(),
+                            variation: item["variation"]!.GetValue<int>(),
+                            variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
+                        string objectInternalName = objectName!.GetValue<string>()!;
+                        var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
+                        items.Add(new(itemBase, objectInternalName, itemAux));
+                    }
+                    return _saveData;
+                }
+                else
+                {
+                    var inventoryLocked = _saveData["lockedObjects"]!.AsArray();
+
+                    var limitedItems = inventoryBase
+                    .Zip(inventoryName, inventoryAuxData)
+                    .Zip(inventoryLocked)
+                    .Select(x => (item: x.First.First!, objectName: x.First.Second!, auxData: x.First.Third!, locked: x.Second!));
+
+                    items = [];
+                    foreach (var (item, objectName, auxData, locked) in limitedItems)
+                    {
+                        var itemBase = new ItemInfo(
+                            objectID: item["objectID"]!.GetValue<int>(),
+                            amount: item["amount"]!.GetValue<int>(),
+                            variation: item["variation"]!.GetValue<int>(),
+                            variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
+                        string objectInternalName = objectName!.GetValue<string>()!;
+                        var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
+                        bool objectLocked = locked!.GetValue<bool>()!;
+                        items.Add(new(itemBase, objectInternalName, itemAux, objectLocked));
+                    }
+                    return _saveData;
+                }
             }
             catch (Exception ex)
             {
@@ -94,14 +133,14 @@ namespace CKCharaDataEditor
         }
 
         // 補助データ込みの書き込みメソッド
-        public bool WriteItemData(int insertIndex, ItemInfo itemBase, string objectName, ItemAuxData? auxData = null)
+        public bool WriteItemData(int insertIndex, ItemInfo itemBase, string objectName, ItemAuxData? auxData = null, bool locked = false)
         {
             auxData ??= ItemAuxData.Default;
             var success = false;
-            _saveData["version"] = CharaDataFormatVersion;  // データフォーマットが大きく変わった場合の保険
             _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"]![insertIndex] = objectName;
             _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
+            _saveData["lockedObjects"]![insertIndex] = locked;
             BreakLastConnectedServerId();
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
@@ -431,10 +470,16 @@ namespace CKCharaDataEditor
 
         private void BreakLastConnectedServerId()
         {
+            if (CharaDataFormatVersion < 12)
+            {
+                // 12未満のバージョンではlastConnectedServerGuidが存在しないため、何もしない
+                return;
+            }
             JsonObject valueObj = _saveData["lastConnectedServerGuid"]!["Value"]!.AsObject();
             uint x = valueObj["x"]!.GetValue<uint>();
             valueObj["x"] = x + 1;
             _saveData["lastConnectedServerGuid"]!["Value"] = valueObj;
+
         }
     }
 }

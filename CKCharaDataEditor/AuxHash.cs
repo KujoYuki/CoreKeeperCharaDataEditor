@@ -17,6 +17,8 @@
         #region 家畜データで使うリソース識別用ハッシュ
         public const ulong CattleStomackGroupHash = 97913750;
         public const ulong CattleStomackHash = 18362501804100791937;
+        public const ulong CattleBreedingGroupHash = 1023625683;
+        public const ulong CattleBreedingHash = 3386982922340789878;
         #endregion
     }
 }

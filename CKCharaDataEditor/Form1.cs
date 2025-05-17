@@ -1,14 +1,17 @@
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using CKCharaDataEditor.Properties;
 using CKCharaDataEditor.Model;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
+using System.Text;
 
 // todo 経験値テーブルの解析とNumericをポイントからLvに
 // todo ペットも上記同様
-// todo ペットのAuxDataのindexを0にして表示可能にする
+// todo 家畜の編集機能追加
+// ゲームインストールフォルダを指定して、日本語リソースを取得する
+// todo Itemクラスを継承して食材用のクラスを作って、金色化、非食材プロパティを生やす
+// todo IteminfoをItemの親クラスとして分離する
 
 namespace CKCharaDataEditor
 {
@@ -17,35 +20,19 @@ namespace CKCharaDataEditor
 
         static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
 
+        private FileManager _fileManager = FileManager.Instance;
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
         private List<Item> _ingredientCategories = [];
         private List<Item> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
 
         private string _saveDataFolderPath = string.Empty;
 
-        public string SaveDataFolderPath
-        {
-            get { return _saveDataFolderPath; }
-            set
-            {
-                savePathTextBox.Text = value;
-                _saveDataFolderPath = value;
-                if (Directory.Exists(_saveDataFolderPath))
-                {
-                    EnabeleUI();
-                }
-                else
-                {
-                    DisabeleUI();
-                }
-            }
-        }
-
         public Form1()
         {
             InitializeComponent();
             CheckUpdate();
             Initialize();
+            SetToolTips();
             if (Program.IsDeveloper)
             {
                 variationUpdateCountTextBox.ReadOnly = false;
@@ -63,10 +50,11 @@ namespace CKCharaDataEditor
                 InitCookedCategory();
                 rarityComboBox.SelectedIndex = 0;
 
-                InitilizeFolderPath();
-                if (Directory.Exists(SaveDataFolderPath))
+                _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
+                if (_fileManager.SaveFilePaths.Count > 0)
                 {
-                    LoadSlots();
+                    string firstSaveDataPath = _fileManager.SaveFilePaths.First().FullName;
+                    LoadSlots(firstSaveDataPath);
                 }
             }
             catch (Exception ex)
@@ -106,6 +94,17 @@ namespace CKCharaDataEditor
                     }));
                 }
             });
+        }
+
+        private void SetToolTips()
+        {
+            toolTipDataFormatVersion.SetToolTip(dataFormatLabel, "セーブデータのバージョンを表示します。\nバージョンが古い場合は、ゲーム中のキャラ読み込みにより自動的に更新されます。");
+            toolTipVariation.SetToolTip(variationTextBox, "同一IDのオブジェクトに用意されたバリエーションを設定します。\n料理の場合は食材の組み合わせを表します。\nアップグレード済み装備ではアイテムLvを表します。\n色塗りできるアイテムでは色を表します。\n方向が設定できるアイテムでは方向を表します。");
+            toolTipConstAmount.SetToolTip(amountConstCheckBox, "作成時に対象のアイテムのamountを設定した数で固定します。\n複数のスロットを同一個数で連続作成したい時に使います。");
+            toolTipObjectName.SetToolTip(objectNameTextBox, "アイテムの内部名称を表示します\n空欄の場合はゲーム起動時にobjectIdから適切なものがセットされます。");
+            toolTipAmount.SetToolTip(labelAmount, "スタック可能アイテムの場合は個数を、スタック不可のアイテムの場合は耐久値を意味します。");
+            toolTipAuxData.SetToolTip(labelAuxData, "アイテムの補助データです。\nペットや家畜の情報を設定する場合は、ペットタブや家畜タブを利用してください。");
+            toolTipLockedObject.SetToolTip(objectLockedCheckBox, "ゲーム内でのアイテムのロック状態を設定します。");
         }
 
         private void InitIngredientCategory()
@@ -148,78 +147,17 @@ namespace CKCharaDataEditor
             cookedCategoryComboBox.SelectedIndex = 0;
         }
 
-        private void InitilizeFolderPath()
+        private void LoadSlots(string filePath)
         {
-            if (!string.IsNullOrEmpty(Settings.Default.LastSaveFolderPath))
-            {
-                SaveDataFolderPath = Settings.Default.LastSaveFolderPath;
-            }
-            else
-            {
-                string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
-                string generalPath = Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper\Steam");
-                if (Directory.GetDirectories(generalPath).Length is 0)
-                {
-                    SaveDataFolderPath = generalPath;
-                    return;
-                }
-                try
-                {
-                    SaveDataFolderPath = Path.Combine(Directory.GetDirectories(generalPath).FirstOrDefault()!, "saves");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("セーブデータフォルダが見つかりませんでした。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    throw;
-                }
-
-                if (!Directory.Exists(SaveDataFolderPath))
-                {
-                    SaveDataFolderPath = appDataPath;
-                }
-            }
-        }
-
-        private void LoadSlots()
-        {
-            saveSlotNoComboBox.Items.Clear();
-            // セーブデータ一覧の取得
-            Regex regex = new(@"^\d{1,2}|debug$", RegexOptions.Compiled);
-            List<FileInfo> saveFiles = new DirectoryInfo(SaveDataFolderPath).GetFiles(@"*.json")
-                .Where(file => regex.IsMatch(Path.GetFileNameWithoutExtension(file.Name)))
-                .OrderBy(file => file.Name)
-                .ToList();
-
-            List<FileInfo> nonNumericFiles = saveFiles
-                .Where(file => !int.TryParse(Path.GetFileNameWithoutExtension(file.Name), out _))
-                .ToList();
-
-            var sortedFiles = saveFiles
-                .Where(file => int.TryParse(Path.GetFileNameWithoutExtension(file.Name), out _))
-                .OrderBy(file => int.Parse(Path.GetFileNameWithoutExtension(file.Name)))
-                .Concat(nonNumericFiles)
-                .Select(fileInfo => fileInfo.FullName)
-                .ToList();
-
-            if (sortedFiles.Count is 0)
-            {
-                DisabeleUI();
-                return;
-            }
-            else
-            {
-                EnabeleUI();
-            }
-
-            foreach (string savePath in sortedFiles)
+            foreach (FileInfo savePath in _fileManager.SaveFilePaths)
             {
                 // キャラクター名取得
-                _saveDataManager.SaveDataPath = savePath;
+                _saveDataManager.SaveDataPath = savePath.FullName;
                 string characterName = _saveDataManager.GetCharacterName();
-                var fileName = Path.GetFileNameWithoutExtension(savePath);
+                var fileName = Path.GetFileNameWithoutExtension(savePath.FullName);
                 if (int.TryParse(fileName, out int saveNoInt))
                 {
-                    // ゲーム内でのセーブデータNoは1から始まるため+1
+                    // ゲーム内でのセーブデータNoは1から始まるため +1
                     saveSlotNoComboBox.Items.Add((saveNoInt + 1).ToString() + $", {characterName}");
                 }
                 else
@@ -231,57 +169,67 @@ namespace CKCharaDataEditor
             {
                 saveSlotNoComboBox.SelectedItem = saveSlotNoComboBox.Items[0];
             }
-            dataFormatLabel.Text = _saveDataManager.GetCharacterDataVersion().ToString();
-            LoadItems();
+
+            if (!Path.Exists(filePath))
+            {
+                DisabeleUI();
+                itemListBox.Items.Clear();
+                return;
+            }
+            else
+            {
+                EnabeleUI();
+                LoadItems();
+            }
         }
 
         private void LoadItems()
         {
             // リロード時のindex保持とクリア
             int selectedInventoryIndex = 0;
-            if (inventoryIndexComboBox.Items.Count > 0)
+            int topIndex = itemListBox.TopIndex;
+            if (itemListBox.Items.Count > 0)
             {
-                selectedInventoryIndex = inventoryIndexComboBox.SelectedIndex;
+                selectedInventoryIndex = itemListBox.SelectedIndex;
             }
-            inventoryIndexComboBox.Items.Clear();
+            itemListBox.Items.Clear();
 
-            // 選択されたセーブデータのファイルのアイテム読み込み
-            string displayedSaveDataSlot = saveSlotNoComboBox.SelectedItem!.ToString()!.Split(",").First();
-            if (int.TryParse(displayedSaveDataSlot, out int saveSlotNo))
-            {
-                // ゲーム内でのセーブデータNoは1から始まるため-1
-                displayedSaveDataSlot = (saveSlotNo - 1).ToString();
-            }
-            string selecetedSaveDataPath = Path.Combine(SaveDataFolderPath, displayedSaveDataSlot + ".json");
-            _saveDataManager.SaveDataPath = selecetedSaveDataPath;
+            if (_fileManager.SaveFilePaths.Count is 0) return;
+            _saveDataManager.SaveDataPath = _fileManager.SaveFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
-            // 選択中のセーブデータのアイテム情報をinventoryIndexComboBoxに反映する
+            // 選択中のセーブデータのアイテム情報をitemListBoxに反映する
             for (int i = 0; i < _saveDataManager.Items.Count; i++)
             {
-                string indexText = StaticResource.ExtendSlotName.TryGetValue(i + 1, out var rimName) ?
-                    (i + 1) + "," + rimName : (i + 1).ToString();
+                string indexText = StaticResource.ExtendSlotName.TryGetValue(i + 1, out var rim) ?
+                    (i + 1) + "," + rim.Segment : (i + 1).ToString();
                 if (_saveDataManager.Items[i].Info == ItemInfo.Default)
                 {
-                    inventoryIndexComboBox.Items.Add($"{indexText} : ----");
+                    itemListBox.Items.Add($"{indexText} : ----");
                 }
                 else
                 {
-                    inventoryIndexComboBox.Items.Add($"{indexText} : {_saveDataManager.Items[i].objectName}");
+                    string objectId = _saveDataManager.Items[i].Info.objectID.ToString();
+                    _fileManager.LocalizationData.TryGetValue(objectId, out var displayResource);
+                    string displayName = displayResource is null ? _saveDataManager.Items[i].objectName : displayResource[1];
+                    itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
-            inventoryIndexComboBox.SelectedIndex = selectedInventoryIndex;
+            
+            itemListBox.SelectedIndex = selectedInventoryIndex < itemListBox.Items.Count? selectedInventoryIndex : itemListBox.Items.Count - 1;
+            itemListBox.TopIndex = topIndex < itemListBox.Items.Count ? topIndex : itemListBox.Items.Count - 1;
 
             LoadPanel();
         }
 
         private void LoadPanel()
         {
-            var selectedItem = _saveDataManager.Items[inventoryIndexComboBox.SelectedIndex];
+            var selectedItem = _saveDataManager.Items[itemListBox.SelectedIndex];
             int selectedObjectID = selectedItem.Info.objectID;
             int variation = selectedItem.Info.variation;
 
             objectIdTextBox.Text = selectedObjectID.ToString();
             amoutTextBox.Text = selectedItem.Info.amount.ToString();
+            objectLockedCheckBox.Checked = selectedItem.Locked;
             variationTextBox.Text = variation.ToString();
             variationUpdateCountTextBox.Text = selectedItem.Info.variationUpdateCount.ToString();
             objectNameTextBox.Text = selectedItem.objectName;
@@ -312,6 +260,8 @@ namespace CKCharaDataEditor
         private void saveSlotNoComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadItems();
+            dataFormatLabel.Text = _saveDataManager.GetCharacterDataVersion().ToString();
+            clearedFlagLabel.Text = _saveDataManager.IsClearData() ? "クリア済み" : "未クリア";
         }
 
         private void toMaxButton_Click(object sender, EventArgs e)
@@ -324,32 +274,7 @@ namespace CKCharaDataEditor
             createdNumericNo.Value = -1;
         }
 
-        private void openSevePathDialogButton_Click(object sender, EventArgs e)
-        {
-            string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
-            string generalPath = Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper\Steam");
-            if (Directory.GetDirectories(generalPath).Length is 0)
-            {
-                // ユーザーIDフォルダ見つからない場合はSteamフォルダで留め置く
-                saveFolderBrowserDialog.SelectedPath = generalPath;
-            }
-            else
-            {
-                saveFolderBrowserDialog.SelectedPath = Path.Combine(Directory.GetDirectories(generalPath).FirstOrDefault()!, "saves");
-            }
-
-            var result = saveFolderBrowserDialog.ShowDialog();
-            if (result is DialogResult.OK)
-            {
-                SaveDataFolderPath = saveFolderBrowserDialog.SelectedPath;
-            }
-            if (Directory.Exists(SaveDataFolderPath))
-            {
-                LoadSlots();
-            }
-        }
-
-        private void inventoryIndexComboBox_TextChanged(object sender, EventArgs e)
+        private void itemListBox_TextChanged(object sender, EventArgs e)
         {
             LoadPanel();
         }
@@ -414,7 +339,7 @@ namespace CKCharaDataEditor
 
             bool result = false;
             ItemInfo item;
-            string objectName;
+            string objectName = string.Empty;
             try
             {
                 switch (itemEditTabControl.SelectedTab?.Name)
@@ -434,7 +359,7 @@ namespace CKCharaDataEditor
                         item = new(objectID: fixedObjectId,
                                    amount: Convert.ToInt32(createdNumericNo.Value),
                                    variation: calculatedVariation);
-                        _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
+                        _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item, objectName);
                         result = true;
                         break;
 
@@ -453,14 +378,19 @@ namespace CKCharaDataEditor
                         }
                         objectName = petItem.objectName;
                         // ItemAuxDataを込みで書きこむ
-                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, petItem.Info, objectName, petItem.Aux);
+                        result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, petItem.Info, objectName, petItem.Aux);
                         break;
 
                     case "advancedTab":
                         item = GenerateItemBase();
                         objectName = objectNameTextBox.Text;
                         var newAuxData = new ItemAuxData(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
-                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName, newAuxData);
+                        result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item, objectName, newAuxData, objectLockedCheckBox.Checked);
+                        break;
+
+                    case "cattleTab":
+                        // todo 家畜の書き込み処理
+
                         break;
 
                     default:
@@ -593,46 +523,27 @@ namespace CKCharaDataEditor
         private void EnabeleUI()
         {
             saveSlotNoComboBox.Enabled = true;
-            inventoryIndexComboBox.Enabled = true;
+            itemListBox.Enabled = true;
             createButton.Enabled = true;
-            previousItemButton.Enabled = true;
-            nextItemButton.Enabled = true;
             listUncreatedRecipesButton.Enabled = true;
+            slotReloadbutton.Enabled = true;
+            openConditionsButton.Enabled = true;
+            openSkillbutton.Enabled = true;
         }
         private void DisabeleUI()
         {
             saveSlotNoComboBox.Enabled = false;
-            inventoryIndexComboBox.Enabled = false;
+            itemListBox.Enabled = false;
             createButton.Enabled = false;
-            previousItemButton.Enabled = false;
-            nextItemButton.Enabled = false;
             listUncreatedRecipesButton.Enabled = false;
+            slotReloadbutton.Enabled = false;
+            openConditionsButton.Enabled = false;
+            openSkillbutton.Enabled = false;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.Default.LastSaveFolderPath = SaveDataFolderPath;
-            Settings.Default.Save();
-        }
-
-        private void savePathTextBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            SaveDataFolderPath = savePathTextBox.Text;
-        }
-        private void previousItemButton_Click(object sender, EventArgs e)
-        {
-            if (inventoryIndexComboBox.SelectedIndex > 0)
-            {
-                inventoryIndexComboBox.SelectedIndex--;
-            }
-        }
-
-        private void nextItemButton_Click(object sender, EventArgs e)
-        {
-            if (inventoryIndexComboBox.SelectedIndex < SaveDataManager.LoadItemLimit - 1)
-            {
-                inventoryIndexComboBox.SelectedIndex++;
-            }
+            _fileManager.Dispose();
         }
 
         private void listUncreatedRecipesButton_Click(object sender, EventArgs e)
@@ -665,7 +576,7 @@ namespace CKCharaDataEditor
             if (e.Index < 0) return;
 
             ComboBox combo = (ComboBox)sender;
-            string selectedText = (string)combo.Items[e.Index]!;
+            string itemText = (string)combo.Items[e.Index]!;
 
             var displayNames = StaticResource.AllIngredients.Select(c => c.DisplayName);
             var goldernNames = displayNames
@@ -675,22 +586,31 @@ namespace CKCharaDataEditor
                 .Append("スターライトノーチラス");
 
             // 背景色を設定する
-            if (goldernNames.Contains(selectedText))
+            e.DrawBackground();
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                // 選択中のアイテムの背景色を変更
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
+            }
+            else if (goldernNames.Contains(itemText))
             {
                 // レア化食材
                 e.Graphics.FillRectangle(Brushes.Yellow, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
-            else if (displayNames.Contains(selectedText))
+            else if (displayNames.Contains(itemText))
             {
-                e.DrawBackground();
+                // 通常の食材
+                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
             else
             {
                 // 非食材もしくは旧食材
                 e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
-
-            e.Graphics.DrawString(selectedText, e.Font!, Brushes.Black, e.Bounds);
             e.DrawFocusRectangle();
         }
 
@@ -789,6 +709,96 @@ namespace CKCharaDataEditor
         private void slotReloadbutton_Click(object sender, EventArgs e)
         {
             LoadItems();
+        }
+
+        private void itemListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            string itemText = (string)itemListBox.Items[e.Index]!;
+            e.DrawBackground();
+            var uniqueSlot = StaticResource.ExtendSlotName.Keys.ToArray();
+
+            // 色変更
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                //選択中のアイテムの背景色を変更
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
+            }
+            else if (uniqueSlot.Contains(e.Index + 1))
+            {
+                // 装備など特定のインデックスのアイテムの背景色を変更
+                Brush color = StaticResource.ExtendSlotName[e.Index + 1].Color;
+                e.Graphics.FillRectangle(color, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+            else
+            {
+                // 通常のアイテムの背景色を変更
+                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+
+            e.DrawFocusRectangle();
+        }
+
+        private void itemListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (itemListBox.SelectedIndex < 0) return;
+
+            if (e.Control && e.KeyCode is Keys.C)
+            {
+                CopyButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.Control && e.KeyCode is Keys.V)
+            {
+                PasteButton_Click(sender, e);
+                createButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.Control && e.Shift && e.KeyCode is Keys.C)
+            {
+                inventryCopyButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.Control && e.Shift && e.KeyCode is Keys.V)
+            {
+                inventryPasteButton_Click(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private void FilePathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var settingsForm = new SettingForm();
+            settingsForm.ShowDialog();
+            if (settingsForm.DialogResult is DialogResult.OK)
+            {
+                _fileManager.SaveFolder = settingsForm.SaveFolderPath;
+                _fileManager.InstallFolder = settingsForm.InstallFolderPath;
+                if (_fileManager.SaveFilePaths.Count > 0)
+                {
+                    LoadSlots(_fileManager.SaveFilePaths[0].FullName);
+                }
+            }
+        }
+
+        private void cattleNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            string text = cattleNameTextBox.Text;
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            // ペット名が64バイトを超えたら溢れた分を削除する
+            if (bytes.Length > 64)
+            {
+                while (Encoding.UTF8.GetByteCount(text) > 64)
+                {
+                    text = text.Substring(0, text.Length - 1);
+                }
+                cattleNameTextBox.Text = text;
+                cattleNameTextBox.SelectionStart = text.Length; // キャレット位置を末尾に設定
+            }
         }
     }
 }

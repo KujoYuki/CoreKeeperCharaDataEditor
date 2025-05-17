@@ -1,17 +1,15 @@
-﻿using CKCharaDataEditor.Model;
+﻿using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
-using CKCharaDataEditor.Resource;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Text;
 
 namespace CKCharaDataEditor.Control
 {
     public partial class PetEditControl : UserControl, INotifyPropertyChanged
     {
-        static readonly List<PetId> _colorSelectablePets = [PetId.PetDog, PetId.PetCat, PetId.PetBird, PetId.PetBunny, PetId.PetMoth, PetId.PetTardigrade, PetId.PetWarlock];
+        private FileManager _fileManager = FileManager.Instance;
 
         public PetEditControl()
         {
@@ -23,17 +21,17 @@ namespace CKCharaDataEditor.Control
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private Item? _petItem = Item.Default;
-        public Item? PetItem
+        private Pet _pet = Pet.Default;
+        public Pet PetItem
         {
             get
             {
-                _petItem = AssemblePetParameters();
-                return _petItem;
+                _pet = AssemblePetParameters();
+                return _pet;
             }
             set
             {
-                _petItem = value;
+                _pet = value;
                 LoadPet(value!);
             }
         }
@@ -45,38 +43,43 @@ namespace CKCharaDataEditor.Control
 
         public void InitControl()
         {
-            var petKinds = Enum.GetNames<PetId>();
-            petKindComboBox.Items.AddRange(petKinds);
-            var petColors = Enum.GetNames<PetColor>();
-            petColorComboBox.Items.AddRange(petColors);
+            var petKinds = Enum.GetValues<PetType>();
+            for (int i = 0; i < petKinds.Length; i++)
+            {
+                string objectId = ((int)petKinds[i]).ToString();
+                //hack LocalizationDataを取得する前に初期化してしまうから一生初期化できない
+                if (_fileManager.LocalizationData.TryGetValue(objectId, out string[]? translateResources))
+                {
+                    petKindComboBox.Items.Add(translateResources[1]);
+                }
+                else
+                {
+                    petKindComboBox.Items.Add(petKinds[i].ToString());
+                }
+            }
         }
 
-        private static readonly IEnumerable<int> allPetIds = Enum.GetValues(typeof(PetId)).Cast<int>();
-
-        public void LoadPet(Item petItem)
+        public void LoadPet(Pet petItem)
         {
-            if (allPetIds.Contains(_petItem!.Info.objectID))
+            if (Pet.IsPet(petItem.objectID))
             {
-                int objectId = petItem.Info.objectID;
-                PetId petId = (PetId)objectId;
+                PetType petType = petItem.Type;
 
-                _battleType = PetResource.BattleType[petId];
+                _battleType = PetResource.BattleType[petType];
                 battleTypeLabel.Text = _battleType switch
                 {
                     PetBattleType.Melee => "近接",
                     PetBattleType.Range => "遠距離",
                     PetBattleType.Buff => "補助",
-                    _ => string.Empty,
+                    _ => throw new ArgumentException(),
                 };
-                petKindComboBox.SelectedIndex = Array.IndexOf(
-                    Enum.GetValues(typeof(PetId)).Cast<int>().ToArray(), objectId);
-                petExpNumeric.Value = petItem.Info.amount;
+                petKindComboBox.SelectedIndex = Array.IndexOf(Enum.GetValues<PetType>(), petItem.Type);
+                petExpNumeric.Value = petItem.Exp;
 
-                petItem.Aux.GetPetData(out var name, out var color, out List<PetTalent> talents);
-                petColorComboBox.SelectedIndex = color;
-                petNameTextBox.Text = name;
+                petColorComboBox.SelectedIndex = Convert.ToInt32(petItem.Color);
+                petNameTextBox.Text = petItem.Name;
 
-                LoadPetTalents(_battleType, talents);
+                LoadPetTalents(_battleType, petItem.Talents);
             }
             else
             {
@@ -85,7 +88,7 @@ namespace CKCharaDataEditor.Control
 
         }
 
-        private void LoadPetTalents(PetBattleType battleType, List<PetTalent> talents)
+        private void LoadPetTalents(PetBattleType battleType, IEnumerable<PetTalent> talents)
         {
             var petTalentContrls = petTalentTableLayoutPanel.Controls.Cast<PetTalentControl>()
                 .OrderBy(control => control.SlotNo)
@@ -122,8 +125,8 @@ namespace CKCharaDataEditor.Control
                 return;
             }
 
-            var allPetType = Enum.GetValues<PetId>();
-            Dictionary<int, PetId> petTabDic = Enumerable.Range(0, allPetType.Length)
+            var allPetType = Enum.GetValues<PetType>();
+            Dictionary<int, PetType> petTabDic = Enumerable.Range(0, allPetType.Length)
                 .Select(i => (i, allPetType[i]))
                 .ToDictionary();
             var colorDic = Enumerable.Range(0, Enum.GetValues<PetColor>().Length - 1)
@@ -150,7 +153,7 @@ namespace CKCharaDataEditor.Control
             }
 
             // 多色ペット判定
-            var colorPets = _colorSelectablePets.Select(k => k.ToString());
+            var colorPets = PetResource.ColorSelectablePets.Select(k => k.ToString());
             if (colorPets.Contains(petKindComboBox.SelectedItem?.ToString()))
             {
                 foreach (var color in Enum.GetValues<PetColor>())
@@ -185,22 +188,19 @@ namespace CKCharaDataEditor.Control
             return talents;
         }
 
-        private Item? AssemblePetParameters()
+        private Pet AssemblePetParameters()
         {
-            var allPetTypes = Enum.GetValues<PetId>();
-            var allPetColors = (PetColor[])Enum.GetValues(typeof(PetColor));
+            var allPetTypes = Enum.GetValues<PetType>();
+            var allPetColors = Enum.GetValues<PetColor>();
 
-            //元アイテムがペットでない場合はauxIndexはデフォルト値で与える
-            int auxIndex = _petItem?.Aux.index ?? 0;
-
-            ItemInfo itemInfo = new(objectID: (int)allPetTypes[petKindComboBox.SelectedIndex],
-                amount: (int)petExpNumeric.Value,
-                variation: 0);
-            string objectName = Enum.GetNames(typeof(PetId))[petKindComboBox.SelectedIndex];
+            int auxIndex = _pet.Aux.index;
+            int objectID = (int)allPetTypes[petKindComboBox.SelectedIndex];
+            int amount = (int)petExpNumeric.Value;
+            string objectName = Enum.GetNames<PetType>()[petKindComboBox.SelectedIndex];
             var petTalents = GeneratePetTalentLists();
             ItemAuxData auxData = new ItemAuxData(auxIndex, AuxPrefabManager.CreatePet(petNameTextBox.Text, petColorComboBox.SelectedIndex, petTalents));
 
-            return new Item(itemInfo, objectName, auxData);
+            return new(new Item(objectID, amount, 0, 0, objectName, auxData));
         }
 
         private void petNameTextBox_TextChanged(object sender, EventArgs e)

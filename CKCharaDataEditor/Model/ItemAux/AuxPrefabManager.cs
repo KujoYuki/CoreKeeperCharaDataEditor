@@ -19,9 +19,9 @@ namespace CKCharaDataEditor.Model.ItemAux
                 .ToList()!;
         }
 
-        public AuxPrefabManager()
+        public AuxPrefabManager(List<AuxPrefab> prefabs)
         {
-            Prefabs = new List<AuxPrefab>();
+            Prefabs = prefabs;
         }
 
         //Addメソッドを利用した無からの作成
@@ -69,24 +69,21 @@ namespace CKCharaDataEditor.Model.ItemAux
         {
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)petColor).ToString()]);
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash, petTalents.Select(t => t.ToJsonString()));
-            UpdateData(AuxHash.PetNameGroupHash, AuxHash.ItemNameHash, [petName]);
-        }
-
-        public void UpdateCattle()
-        {
-            // 家畜も補助データをもつので、必要に応じて実装する。
-            throw new NotImplementedException();
+            UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [petName]);
         }
 
         public IEnumerable<string> GetData(ulong prefabHash, ulong stableTypeHash)
         {
-            var data = Prefabs?.SingleOrDefault(p => p.prefabHash == prefabHash)?.types
-                .SingleOrDefault(s => s.stableTypeHash == stableTypeHash)?.data!;
-            if (data is null)
+            try
             {
-                throw new KeyNotFoundException($"Not found instead of the hash:{prefabHash} or {stableTypeHash}");
+                var data = Prefabs?.SingleOrDefault(p => p.prefabHash == prefabHash)?.types
+                .SingleOrDefault(s => s.stableTypeHash == stableTypeHash)?.data!;
+                return data;
             }
-            return data;
+            catch (Exception)
+            {
+                throw new InvalidOperationException($"Data not found for Prefab:{prefabHash}, StableType:{stableTypeHash}");
+            }
         }
 
         public static AuxPrefabManager CreatePet(string petName, int color, IEnumerable<PetTalent> talents)
@@ -97,7 +94,7 @@ namespace CKCharaDataEditor.Model.ItemAux
             var petColorStable = new AuxStableType(AuxHash.PetColorHash, new[] { color.ToString() });
             var petTalentsStable = new AuxStableType(AuxHash.PetTalentsHash, talents.Select(t => t.ToJsonString()));
             prefabs.Add(new AuxPrefab(AuxHash.PetGroupHash, new[] { petColorStable, petTalentsStable }));
-            return new AuxPrefabManager() { Prefabs = prefabs };
+            return new AuxPrefabManager(prefabs);
         }
 
         public string GetJsonString()

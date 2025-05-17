@@ -320,8 +320,8 @@
 319,Superman,N/A
 320,BiliBiliDodgeChance,x% dodge chance
 321,GreenGlow,緑色の光度 x
-322,ApplyIncreasedDamageFromMinions,N/A
-323,TakeIncreasedDamageFromMinions,N/A
+322,Unused1(ApplyIncreasedDamageFromMinions),N/A
+323,Unused2(TakeIncreasedDamageFromMinions),N/A
 324,LifeOnMinionHit,ミニオンのヒットでライフ x
 325,LifeOnPetHit,ペットのヒットでライフ x
 326,IncreasedMinionCritDamagePercentage,ミニオンのクリティカルヒットダメージ x%

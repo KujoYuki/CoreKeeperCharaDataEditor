@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using CKCharaDataEditor.Model;
+using CKCharaDataEditor.Model.ItemAux;
+using CKCharaDataEditor.Model.Items;
+using CKCharaDataEditor.Resource;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using CKCharaDataEditor.Model;
-using CKCharaDataEditor.Model.ItemAux;
-using CKCharaDataEditor.Resource;
 
 namespace CKCharaDataEditor
 {
@@ -12,10 +13,9 @@ namespace CKCharaDataEditor
     /// </summary>
     public sealed class SaveDataManager
     {
-        public const int LoadItemLimit = 130;
         private static SaveDataManager? _instance;
         public static SaveDataManager Instance => _instance ??= new();
-        private int CharaDataFormatVersion;
+        private int CharaDataFormatVersion => GetCharacterDataVersion();
         private Item? _copiedItem;
         private Item[]? _copiedInventory;
         private string _saveDataPath = string.Empty;
@@ -24,9 +24,22 @@ namespace CKCharaDataEditor
             get => _saveDataPath;
             set
             {
-                _saveDataPath = value;
-                _saveData = LoadInventory(out var items);
-                Items = items;
+                if (Path.Exists(value))
+                {
+                    _saveDataPath = value;
+                    _saveData = LoadInventory(out var items);
+                    Items = items;
+                }
+            }
+        }
+
+        private string _installFolderPath = string.Empty;
+        public string InstallFolderPath
+        {
+            get => _installFolderPath;
+            set
+            {
+                _installFolderPath = value;
             }
         }
 
@@ -35,6 +48,7 @@ namespace CKCharaDataEditor
 
         private SaveDataManager()
         {
+            // Singleton pattern
         }
 
         public static string SanitizeJsonString(string origin)
@@ -57,29 +71,52 @@ namespace CKCharaDataEditor
 
                 _saveData = JsonNode.Parse(saveDataContents)!.AsObject();
 
-                CharaDataFormatVersion = GetCharacterDataVersion();
                 var inventoryBase = _saveData["inventory"]!.AsArray();
                 var inventoryName = _saveData["inventoryObjectNames"]!.AsArray();
                 var inventoryAuxData = _saveData["inventoryAuxData"]!.AsArray();
 
-                var limitedItems = inventoryBase
-                    .Zip(inventoryName, inventoryAuxData)
-                    .Take(LoadItemLimit)
-                    .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
-                items = [];
-                foreach (var (item, objectName, auxData) in limitedItems)
+                if (CharaDataFormatVersion < 11)
                 {
-                    var itemBase = new ItemInfo(
-                        objectID: item["objectID"]!.GetValue<int>(),
-                        amount: item["amount"]!.GetValue<int>(),
-                        variation: item["variation"]!.GetValue<int>(),
-                        variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
-                    string objectInternalName = objectName!.GetValue<string>()!;
-                    var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
-                    items.Add(new(itemBase, objectInternalName, itemAux));
-                }
+                    var limitedItems = inventoryBase
+                    .Zip(inventoryName, inventoryAuxData)
+                    .Select(x => (item: x.First!, objectName: x.Second!, auxData: x.Third!));
 
-                return _saveData;
+                    items = [];
+                    foreach (var (item, objectName, auxData) in limitedItems)
+                    {
+                        int objectID = item["objectID"]!.GetValue<int>();
+                        int amount = item["amount"]!.GetValue<int>();
+                        int variation = item["variation"]!.GetValue<int>();
+                        int variationUpdateCount = item["variationUpdateCount"]!.GetValue<int>();
+                        string objectInternalName = objectName!.GetValue<string>()!;
+                        var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
+                        items.Add(new(objectID, amount, variation, variationUpdateCount, objectInternalName, itemAux));
+                    }
+                    return _saveData;
+                }
+                else
+                {
+                    var inventoryLocked = _saveData["lockedObjects"]!.AsArray();
+
+                    var limitedItems = inventoryBase
+                    .Zip(inventoryName, inventoryAuxData)
+                    .Zip(inventoryLocked)
+                    .Select(x => (item: x.First.First!, objectName: x.First.Second!, auxData: x.First.Third!, locked: x.Second!));
+
+                    items = [];
+                    foreach (var (item, objectName, auxData, locked) in limitedItems)
+                    {
+                        int objectID = item["objectID"]!.GetValue<int>();
+                        int amount = item["amount"]!.GetValue<int>();
+                        int variation = item["variation"]!.GetValue<int>();
+                        int variationUpdateCount = item["variationUpdateCount"]!.GetValue<int>();
+                        string objectInternalName = objectName!.GetValue<string>()!;
+                        var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
+                        bool objectLocked = locked!.GetValue<bool>()!;
+                        items.Add(new(objectID, amount, variation, variationUpdateCount, objectInternalName, itemAux, objectLocked));
+                    }
+                    return _saveData;
+                }
             }
             catch (Exception ex)
             {
@@ -93,43 +130,43 @@ namespace CKCharaDataEditor
             return new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
         }
 
-        // 補助データ込みの書き込みメソッド
-        public bool WriteItemData(int insertIndex, ItemInfo itemBase, string objectName, ItemAuxData? auxData = null)
+        /// <summary>
+        /// アイテムのデータを書き込みます。
+        /// </summary>
+        /// <param name="insertIndex">インベントリ内の上書き位置</param>
+        /// <param name="item">新しいアイテム</param>
+        /// <returns></returns>
+        public bool WriteItemData(int insertIndex, Item item)
         {
-            auxData ??= ItemAuxData.Default;
-            var success = false;
-            _saveData["version"] = CharaDataFormatVersion;  // データフォーマットが大きく変わった場合の保険
-            _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
-            _saveData["inventoryObjectNames"]![insertIndex] = objectName;
-            _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
-            BreakLastConnectedServerId();
-            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
-
-#if DEBUG
-            // 確認用に別名ファイルで作成
-            var verifyBuilder = new StringBuilder();
-            verifyBuilder.AppendLine($"insertIndex = {insertIndex}");
-            verifyBuilder.AppendLine($"objectName = {objectName}");
-            verifyBuilder.AppendLine($"itemBase = {JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption)}");
-            if (auxData != ItemAuxData.Default)
+            ItemInfo itemBase = new(item.objectID, item.amount, item.variation, item.variationUpdateCount);
+            try
             {
-                verifyBuilder.AppendLine($"auxData = {JsonSerializer.Serialize(auxData, StaticResource.SerializerOption)}");
+                _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
+                _saveData["inventoryObjectNames"]![insertIndex] = item.objectName;
+                _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(item.Aux, StaticResource.SerializerOption));
+                if (CharaDataFormatVersion >= 11)
+                {
+                    _saveData["lockedObjects"]![insertIndex] = item.Locked;
+                }
+
+                BreakLastConnectedServerId();
+                string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+
+                // 書き込む前に元jsonの構文に戻す
+                changedJson = RestoreJsonString(changedJson);
+
+                File.WriteAllText(SaveDataPath, changedJson);
+                return true;
             }
-            MessageBox.Show($"{verifyBuilder}", "書き込み内容確認");
-            _saveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
-#endif
-
-            // 書き込む前に元jsonの構文に戻す
-            changedJson = RestoreJsonString(changedJson);
-
-            File.WriteAllText(SaveDataPath, changedJson);
-            success = true;
-            return success;
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void RewriteAllItemData()
         {
-            _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Info), StaticResource.SerializerOption));
+            _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i), StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.objectName), StaticResource.SerializerOption));
             _saveData["inventoryAuxData"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Aux), StaticResource.SerializerOption));
             BreakLastConnectedServerId();
@@ -181,7 +218,7 @@ namespace CKCharaDataEditor
 
         public void CalculateRecepeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
         {
-            int[] allFoodID = StaticResource.AllIngredients.Select(c => c.Info.objectID).ToArray();
+            int[] allFoodID = StaticResource.AllIngredients.Select(c => c.objectID).ToArray();
             List<Tuple<int, int>> allPairs = allFoodID // hack Variation内の順序決定アルゴリズムが不明のため、実際の順番は前後している場合がある
                 .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
                 .ToList();
@@ -189,7 +226,7 @@ namespace CKCharaDataEditor
 
             // 料理のコモンとレアのカテゴリIDリスト
             List<int> allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare })
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
                 .ToList();
             List<Tuple<int, int>> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
@@ -222,10 +259,10 @@ namespace CKCharaDataEditor
             if (outputResult is DialogResult.Yes)
             {
                 var foodBuilder = new StringBuilder();
-                foreach (var exceptRecipe in exceptRecipes)
+                foreach ((var foodA, var foodB) in exceptRecipes)
                 {
-                    string FoodA = StaticResource.AllIngredients.Single(f => f.Info.objectID == exceptRecipe.Item1).DisplayName;
-                    string FoodB = StaticResource.AllIngredients.Single(f => f.Info.objectID == exceptRecipe.Item2).DisplayName;
+                    string FoodA = StaticResource.AllIngredients.Single(f => f.objectID == foodA).DisplayName;
+                    string FoodB = StaticResource.AllIngredients.Single(f => f.objectID == foodB).DisplayName;
                     foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
 
@@ -248,7 +285,7 @@ namespace CKCharaDataEditor
         public void DeleteAllRecipes()
         {
             var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare, c.Info.objectID + (int)CookRarity.Epic })
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare, c.objectID + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToList();
             var discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()
@@ -431,10 +468,16 @@ namespace CKCharaDataEditor
 
         private void BreakLastConnectedServerId()
         {
+            if (CharaDataFormatVersion < 12)
+            {
+                // 12未満のバージョンではlastConnectedServerGuidが存在しないため、何もしない
+                return;
+            }
             JsonObject valueObj = _saveData["lastConnectedServerGuid"]!["Value"]!.AsObject();
             uint x = valueObj["x"]!.GetValue<uint>();
             valueObj["x"] = x + 1;
             _saveData["lastConnectedServerGuid"]!["Value"] = valueObj;
+
         }
     }
 }

@@ -1,55 +1,37 @@
+using System.Text;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using CKCharaDataEditor.Properties;
 using CKCharaDataEditor.Model;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
+using CKCharaDataEditor.Model.Items;
+using CKCharaDataEditor.Model.Cattle;
 
-// todo 経験値テーブルの解析とNumericをポイントからLvに
-// todo ペットも上記同様
-// todo ペットのAuxDataのindexを0にして表示可能にする
+// todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
+// todo ペットも家畜同様リファクタリング
+// todo テーブルレイアウトパネルによるレイアウト調整
+// todo 料理関連のロジックをForm1から分離して、別のクラスにする
 
 namespace CKCharaDataEditor
 {
     public partial class Form1 : Form
     {
-
-        static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
-
+        private FileManager _fileManager = FileManager.Instance;
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
-        private List<Item> _ingredientCategories = [];
-        private List<Item> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
-
-        private string _saveDataFolderPath = string.Empty;
-
-        public string SaveDataFolderPath
-        {
-            get { return _saveDataFolderPath; }
-            set
-            {
-                savePathTextBox.Text = value;
-                _saveDataFolderPath = value;
-                if (Directory.Exists(_saveDataFolderPath))
-                {
-                    EnabeleUI();
-                }
-                else
-                {
-                    DisabeleUI();
-                }
-            }
-        }
+        private List<Ingredient> _ingredientCategories = [];
+        private List<Ingredient> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
 
         public Form1()
         {
             InitializeComponent();
             CheckUpdate();
             Initialize();
+            SetToolTips();
             if (Program.IsDeveloper)
             {
-                variationUpdateCountTextBox.ReadOnly = false;
-                auxIndexTextBox.ReadOnly = false;
+                variationUpdateCountNumericUpDown.ReadOnly = false;
+                auxIndexNumericUpDown.ReadOnly = false;
                 auxDataTextBox.ReadOnly = false;
                 toMinusOneButton.Visible = true;
             }
@@ -57,24 +39,18 @@ namespace CKCharaDataEditor
 
         public void Initialize()
         {
-            try
-            {
-                InitIngredientCategory();
-                InitCookedCategory();
-                rarityComboBox.SelectedIndex = 0;
+            InitIngredientCategory();
+            InitCookedCategory();
+            rarityComboBox.SelectedIndex = 0;
 
-                InitilizeFolderPath();
-                if (Directory.Exists(SaveDataFolderPath))
-                {
-                    LoadSlots();
-                }
-            }
-            catch (Exception ex)
+            _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
+            if (_fileManager.SaveFilePaths.Count > 0)
             {
-                MessageBox.Show($"{ex.Message}", "初期化処理に失敗しました。");
-                File.AppendAllText(_errorLogFilePath, DateTime.Now + Environment.NewLine + ex.ToString());
-                throw;
+                string firstSaveDataPath = _fileManager.SaveFilePaths.First().FullName;
+                LoadSlots(firstSaveDataPath);
             }
+
+            InitCattleCategory();
         }
 
         private void CheckUpdate()
@@ -108,6 +84,19 @@ namespace CKCharaDataEditor
             });
         }
 
+        private void SetToolTips()
+        {
+            toolTipDataFormatVersion.SetToolTip(dataFormatLabel, "セーブデータのバージョンを表示します。\nバージョンが古い場合は、ゲーム中のキャラ読み込みにより自動的に更新されます。");
+            toolTipVariation.SetToolTip(variationNumericUpDown, "同一IDのオブジェクトに用意されたバリエーションを設定します。\n料理の場合は食材の組み合わせを表します。\nアップグレード済み装備ではアイテムLvを表します。\n色塗りできるアイテムでは色を表します。\n方向が設定できるアイテムでは方向を表します。");
+            toolTipConstAmount.SetToolTip(amountConstCheckBox, "作成時に対象のアイテムのamountを設定した数で固定します。\n複数のスロットを同一個数で連続作成したい時に使います。");
+            toolTipObjectName.SetToolTip(objectNameTextBox, "アイテムの内部名称を表示します。\n空欄の場合はゲーム起動時にobjectIdから適切なものがセットされます。");
+            toolTipAmount.SetToolTip(amountNumericUpDown, "スタック可能アイテムの場合は個数になります。\n武器/防具の場合は耐久値になります。\nペットでは経験値になります。\n家畜では満腹度になります。");
+            toolTipAuxData.SetToolTip(auxDataTextBox, "アイテムの補助データです。\nペットや家畜の情報を設定する場合は、ペットタブや家畜タブを利用してください。");
+            toolTipLockedObject.SetToolTip(objectLockedCheckBox, "ゲーム内でのアイテムのロック状態を設定します。");
+            toolTipCattleStomach.SetToolTip(stomachNumericUpDown, "家畜の満腹度を設定します。通常、0～4の範囲です。\n2ごとに資源を生産します。");
+            toolTipCattleMeal.SetToolTip(mealNumericUpDown, "家畜の食事回数です。30を超えた同種二匹が近くにいると子が生まれ、0にリセットされます。\n子は8で大人に成長します。");
+        }
+
         private void InitIngredientCategory()
         {
             string additionalIngredientsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "AdditionalIngredients.csv")
@@ -116,11 +105,11 @@ namespace CKCharaDataEditor
                 .Select(line =>
                 {
                     string[] words = line.Split(',');
-                    return new Item(int.Parse(words[0]), words[1], words[2]);
+                    return new Ingredient(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked);
                 })
                 .ToArray();
             var allingredients = StaticResource.AllIngredients.Concat(ingredientCategories)
-                .OrderBy(c => c.Info.objectID)
+                .OrderBy(c => c.objectID)
                 .ToList();
             // 開発者モードの場合は非推奨食材も表示する
             if (Program.IsDeveloper)
@@ -148,78 +137,37 @@ namespace CKCharaDataEditor
             cookedCategoryComboBox.SelectedIndex = 0;
         }
 
-        private void InitilizeFolderPath()
+        private void InitCattleCategory()
         {
-            if (!string.IsNullOrEmpty(Settings.Default.LastSaveFolderPath))
+            cattleComboBox.Items.AddRange(Enum.GetNames<CattleType>());
+            Dictionary<string, int> cattles = Enum.GetNames<CattleType>()
+                .Zip(Enum.GetValues<CattleType>().Select(type => (int)type).ToArray())
+                .Select(values => (obejectName: values.First, id: values.Second))
+                .ToDictionary();
+            int[] cattleIds = Enum.GetValues<CattleType>().Select(type => (int)type).ToArray();
+            for (int i = 0; i < cattleComboBox.Items.Count; i++)
             {
-                SaveDataFolderPath = Settings.Default.LastSaveFolderPath;
-            }
-            else
-            {
-                string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
-                string generalPath = Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper\Steam");
-                if (Directory.GetDirectories(generalPath).Length is 0)
+                string objectName = cattleComboBox.Items[i]!.ToString()!;
+                string id = cattles[objectName].ToString();
+                if (_fileManager.LocalizationData.TryGetValue(id, out string[]? translateResources))
                 {
-                    SaveDataFolderPath = generalPath;
-                    return;
-                }
-                try
-                {
-                    SaveDataFolderPath = Path.Combine(Directory.GetDirectories(generalPath).FirstOrDefault()!, "saves");
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("セーブデータフォルダが見つかりませんでした。", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    throw;
-                }
-
-                if (!Directory.Exists(SaveDataFolderPath))
-                {
-                    SaveDataFolderPath = appDataPath;
+                    string displayName = translateResources[1];
+                    cattleComboBox.Items[i] = displayName;
                 }
             }
         }
 
-        private void LoadSlots()
+        private void LoadSlots(string filePath)
         {
-            saveSlotNoComboBox.Items.Clear();
-            // セーブデータ一覧の取得
-            Regex regex = new(@"^\d{1,2}|debug$", RegexOptions.Compiled);
-            List<FileInfo> saveFiles = new DirectoryInfo(SaveDataFolderPath).GetFiles(@"*.json")
-                .Where(file => regex.IsMatch(Path.GetFileNameWithoutExtension(file.Name)))
-                .OrderBy(file => file.Name)
-                .ToList();
-
-            List<FileInfo> nonNumericFiles = saveFiles
-                .Where(file => !int.TryParse(Path.GetFileNameWithoutExtension(file.Name), out _))
-                .ToList();
-
-            var sortedFiles = saveFiles
-                .Where(file => int.TryParse(Path.GetFileNameWithoutExtension(file.Name), out _))
-                .OrderBy(file => int.Parse(Path.GetFileNameWithoutExtension(file.Name)))
-                .Concat(nonNumericFiles)
-                .Select(fileInfo => fileInfo.FullName)
-                .ToList();
-
-            if (sortedFiles.Count is 0)
-            {
-                DisabeleUI();
-                return;
-            }
-            else
-            {
-                EnabeleUI();
-            }
-
-            foreach (string savePath in sortedFiles)
+            foreach (FileInfo savePath in _fileManager.SaveFilePaths)
             {
                 // キャラクター名取得
-                _saveDataManager.SaveDataPath = savePath;
+                _saveDataManager.SaveDataPath = savePath.FullName;
                 string characterName = _saveDataManager.GetCharacterName();
-                var fileName = Path.GetFileNameWithoutExtension(savePath);
+                var fileName = Path.GetFileNameWithoutExtension(savePath.FullName);
                 if (int.TryParse(fileName, out int saveNoInt))
                 {
-                    // ゲーム内でのセーブデータNoは1から始まるため+1
+                    // ゲーム内でのセーブデータNoは1から始まるため +1
                     saveSlotNoComboBox.Items.Add((saveNoInt + 1).ToString() + $", {characterName}");
                 }
                 else
@@ -231,69 +179,80 @@ namespace CKCharaDataEditor
             {
                 saveSlotNoComboBox.SelectedItem = saveSlotNoComboBox.Items[0];
             }
-            dataFormatLabel.Text = _saveDataManager.GetCharacterDataVersion().ToString();
-            LoadItems();
+
+            if (!Path.Exists(filePath))
+            {
+                DisabeleUI();
+                itemListBox.Items.Clear();
+                return;
+            }
+            else
+            {
+                EnabeleUI();
+                LoadItems();
+            }
         }
 
         private void LoadItems()
         {
             // リロード時のindex保持とクリア
             int selectedInventoryIndex = 0;
-            if (inventoryIndexComboBox.Items.Count > 0)
+            int topIndex = itemListBox.TopIndex;
+            if (itemListBox.Items.Count > 0)
             {
-                selectedInventoryIndex = inventoryIndexComboBox.SelectedIndex;
+                selectedInventoryIndex = itemListBox.SelectedIndex;
             }
-            inventoryIndexComboBox.Items.Clear();
+            itemListBox.Items.Clear();
 
-            // 選択されたセーブデータのファイルのアイテム読み込み
-            string displayedSaveDataSlot = saveSlotNoComboBox.SelectedItem!.ToString()!.Split(",").First();
-            if (int.TryParse(displayedSaveDataSlot, out int saveSlotNo))
-            {
-                // ゲーム内でのセーブデータNoは1から始まるため-1
-                displayedSaveDataSlot = (saveSlotNo - 1).ToString();
-            }
-            string selecetedSaveDataPath = Path.Combine(SaveDataFolderPath, displayedSaveDataSlot + ".json");
-            _saveDataManager.SaveDataPath = selecetedSaveDataPath;
+            if (_fileManager.SaveFilePaths.Count is 0) return;
+            _saveDataManager.SaveDataPath = _fileManager.SaveFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
-            // 選択中のセーブデータのアイテム情報をinventoryIndexComboBoxに反映する
+            // 選択中のセーブデータのアイテム情報をitemListBoxに反映する
             for (int i = 0; i < _saveDataManager.Items.Count; i++)
             {
-                string indexText = StaticResource.ExtendSlotName.TryGetValue(i + 1, out var rimName) ?
-                    (i + 1) + "," + rimName : (i + 1).ToString();
-                if (_saveDataManager.Items[i].Info == ItemInfo.Default)
+                string indexText = StaticResource.ExtendSlotName.TryGetValue(i + 1, out var rim) ?
+                    (i + 1) + "," + rim.Segment : (i + 1).ToString();
+                if (_saveDataManager.Items[i].objectID == 0)
                 {
-                    inventoryIndexComboBox.Items.Add($"{indexText} : ----");
+                    itemListBox.Items.Add($"{indexText} : ----");
                 }
                 else
                 {
-                    inventoryIndexComboBox.Items.Add($"{indexText} : {_saveDataManager.Items[i].objectName}");
+                    string objectId = _saveDataManager.Items[i].objectID.ToString();
+                    _fileManager.LocalizationData.TryGetValue(objectId, out var displayResource);
+                    string displayName = displayResource is null ? _saveDataManager.Items[i].objectName : displayResource[1];
+                    itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
-            inventoryIndexComboBox.SelectedIndex = selectedInventoryIndex;
+
+            itemListBox.SelectedIndex = selectedInventoryIndex < itemListBox.Items.Count ? selectedInventoryIndex : itemListBox.Items.Count - 1;
+            itemListBox.TopIndex = topIndex < itemListBox.Items.Count ? topIndex : itemListBox.Items.Count - 1;
 
             LoadPanel();
         }
 
         private void LoadPanel()
         {
-            var selectedItem = _saveDataManager.Items[inventoryIndexComboBox.SelectedIndex];
-            int selectedObjectID = selectedItem.Info.objectID;
-            int variation = selectedItem.Info.variation;
+            Item selectedItem = _saveDataManager.Items[itemListBox.SelectedIndex];
+            int variation = selectedItem.variation;
+            int amount = selectedItem.amount;
 
-            objectIdTextBox.Text = selectedObjectID.ToString();
-            amoutTextBox.Text = selectedItem.Info.amount.ToString();
-            variationTextBox.Text = variation.ToString();
-            variationUpdateCountTextBox.Text = selectedItem.Info.variationUpdateCount.ToString();
+            objectIdTextBox.Text = selectedItem.objectID.ToString();
+            amountNumericUpDown.Value = amount;
+            objectLockedCheckBox.Checked = selectedItem.Locked;
+            variationNumericUpDown.Value = variation;
+            variationUpdateCountNumericUpDown.Value = selectedItem.variationUpdateCount;
             objectNameTextBox.Text = selectedItem.objectName;
-            auxIndexTextBox.Text = selectedItem.Aux.index.ToString();
+            auxIndexNumericUpDown.Value = selectedItem.Aux.index;
             auxDataTextBox.Text = selectedItem.Aux.data;
 
             // 料理の場合は料理情報をセットする
-            if (IsCookedItem(selectedObjectID, out var rarity, out var indexBaseOffset))
+            // hack 他の特殊アイテム同様に料理アイテムクラスを作成する
+            if (IsCookedItem(selectedItem.objectID, out var rarity, out var indexBaseOffset))
             {
                 ReverseCalcurateVariation(variation, out var ingredientIdA, out var ingredientIdB);
-                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.Info.objectID == ingredientIdA)?.DisplayName;
-                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.Info.objectID == ingredientIdB)?.DisplayName;
+                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == ingredientIdA)?.DisplayName;
+                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == ingredientIdB)?.DisplayName;
 
                 cookedCategoryComboBox.SelectedIndex = indexBaseOffset;
                 rarityComboBox.SelectedIndex = rarity switch
@@ -303,15 +262,58 @@ namespace CKCharaDataEditor
                     CookRarity.Epic => 2,
                     _ => throw new NotImplementedException(),
                 };
-                createdNumericNo.Value = selectedItem.Info.amount;
+                createdNumericNo.Value = amount;
             }
 
-            petEditControl.PetItem = selectedItem;
+            // ペットのの場合はペット情報をセットする
+            if (Pet.IsPet(selectedItem.objectID))
+            {
+                petEditControl.PetItem = new(selectedItem);
+            }
+            else
+            {
+                petEditControl.ResetPetTab();
+            }
+
+            // 家畜の場合は家畜情報をセットする
+            if (Cattle.IsCattle(selectedItem.objectID))
+            {
+                var cattle = new Cattle(selectedItem);
+                int cattleTypeIndex = Array.IndexOf(Enum.GetValues<CattleType>(), cattle.Type);
+                cattleComboBox.SelectedIndex = cattleTypeIndex;
+                cattleColorVariationComboBox.SelectedIndex = variation;
+                cattleNameTextBox.Text = cattle.Name;
+                stomachNumericUpDown.Value = cattle.Stomach;
+                mealNumericUpDown.Value = cattle.Meal;
+                if (cattle.IsAdult)
+                {
+                    breedingCheckBox.Enabled = true;
+                    breedingCheckBox.Checked = cattle.Breeding;
+                }
+                else
+                {
+                    breedingCheckBox.Enabled = false;
+                    breedingCheckBox.Checked = false;
+                }
+            }
+            else
+            {
+                // 家畜タブの表示をクリア
+                cattleComboBox.SelectedIndex = -1;
+                cattleColorVariationComboBox.SelectedIndex = -1;
+                cattleNameTextBox.Text = string.Empty;
+                stomachNumericUpDown.Value = 0;
+                mealNumericUpDown.Value = 0;
+                breedingCheckBox.Enabled = true;
+                breedingCheckBox.Checked = false;
+            }
         }
 
         private void saveSlotNoComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadItems();
+            dataFormatLabel.Text = _saveDataManager.GetCharacterDataVersion().ToString();
+            clearedFlagLabel.Text = _saveDataManager.IsClearData() ? "クリア済み" : "未クリア";
         }
 
         private void toMaxButton_Click(object sender, EventArgs e)
@@ -324,32 +326,7 @@ namespace CKCharaDataEditor
             createdNumericNo.Value = -1;
         }
 
-        private void openSevePathDialogButton_Click(object sender, EventArgs e)
-        {
-            string appDataPath = Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))!.FullName;
-            string generalPath = Path.Combine(appDataPath, @"LocalLow\Pugstorm\Core Keeper\Steam");
-            if (Directory.GetDirectories(generalPath).Length is 0)
-            {
-                // ユーザーIDフォルダ見つからない場合はSteamフォルダで留め置く
-                saveFolderBrowserDialog.SelectedPath = generalPath;
-            }
-            else
-            {
-                saveFolderBrowserDialog.SelectedPath = Path.Combine(Directory.GetDirectories(generalPath).FirstOrDefault()!, "saves");
-            }
-
-            var result = saveFolderBrowserDialog.ShowDialog();
-            if (result is DialogResult.OK)
-            {
-                SaveDataFolderPath = saveFolderBrowserDialog.SelectedPath;
-            }
-            if (Directory.Exists(SaveDataFolderPath))
-            {
-                LoadSlots();
-            }
-        }
-
-        private void inventoryIndexComboBox_TextChanged(object sender, EventArgs e)
+        private void itemListBox_TextChanged(object sender, EventArgs e)
         {
             LoadPanel();
         }
@@ -393,7 +370,7 @@ namespace CKCharaDataEditor
             return true;
         }
 
-        private bool IsRunningGame()
+        private static bool IsRunningGame()
         {
             Process[] processes = Process.GetProcesses();
             foreach (Process process in processes)
@@ -413,82 +390,99 @@ namespace CKCharaDataEditor
             if (IsRunningGame()) return;
 
             bool result = false;
-            ItemInfo item;
-            string objectName;
-            try
+            Item item;
+
+            switch (itemEditTabControl.SelectedTab?.Name)
             {
-                switch (itemEditTabControl.SelectedTab?.Name)
-                {
-                    case "foodTab":
-                        int ingredientAId = _ingredientCategories
-                        .Single(c => c.DisplayName == ingredientComboBoxA
-                        .SelectedItem?.ToString()).Info.objectID;
-                        int ingredientBId = _ingredientCategories
-                            .Single(c => c.DisplayName == ingredientComboBoxB
-                            .SelectedItem?.ToString()).Info.objectID;
-                        int calculatedVariation = CalculateVariation(ingredientAId, ingredientBId);
+                case "foodTab":
+                    int ingredientAId = _ingredientCategories
+                    .Single(c => c.DisplayName == ingredientComboBoxA
+                    .SelectedItem?.ToString()).objectID;
+                    int ingredientBId = _ingredientCategories
+                        .Single(c => c.DisplayName == ingredientComboBoxB
+                        .SelectedItem?.ToString()).objectID;
+                    int calculatedVariation = CalculateVariation(ingredientAId, ingredientBId);
 
-                        // レア度反映
-                        int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).Info.objectID;
-                        DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out objectName);
-                        item = new(objectID: fixedObjectId,
-                                   amount: Convert.ToInt32(createdNumericNo.Value),
-                                   variation: calculatedVariation);
-                        _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName);
-                        result = true;
-                        break;
+                    // レア度反映
+                    int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).objectID;
+                    DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out string objectName);
+                    item = new(objectID: fixedObjectId,
+                               amount: Convert.ToInt32(createdNumericNo.Value),
+                               variation: calculatedVariation,
+                               variationUpdateCount: 0,
+                               objectName, ItemAuxData.Default);
+                    _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    result = true;
+                    break;
 
-                    case "petTab":
-                        if (!Enum.GetValues(typeof(PetId)).Cast<int>().Contains(int.Parse(objectIdTextBox.Text)))
-                        {
-                            MessageBox.Show("選択中のアイテムがペットではありません。\nインベントリ枠でペットアイテムを選択して編集してください。");
-                            return;
-                        }
+                case "petTab":
+                    if (!Pet.IsPet(int.Parse(objectIdTextBox.Text)))
+                    {
+                        MessageBox.Show("選択中のアイテムがペットではありません。\nインベントリ枠でペットアイテムを選択して編集してください。");
+                        return;
+                    }
 
-                        var petItem = petEditControl.PetItem;
-                        if (petItem is null)
-                        {
-                            MessageBox.Show("入力されたペット情報が取得できませんでした。");
-                            return;
-                        }
-                        objectName = petItem.objectName;
-                        // ItemAuxDataを込みで書きこむ
-                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, petItem.Info, objectName, petItem.Aux);
-                        break;
+                    item = petEditControl.PetItem!;
+                    if (item is null)
+                    {
+                        MessageBox.Show("入力されたペット情報が取得できませんでした。");
+                        return;
+                    }
+                    // ItemAuxDataを込みで書きこむ
+                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    break;
 
-                    case "advancedTab":
-                        item = GenerateItemBase();
-                        objectName = objectNameTextBox.Text;
-                        var newAuxData = new ItemAuxData(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
-                        result = _saveDataManager.WriteItemData(inventoryIndexComboBox.SelectedIndex, item, objectName, newAuxData);
-                        break;
+                case "advancedTab":
+                    item = GenerateAdvancedItem();
+                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    break;
 
-                    default:
-                        throw new InvalidOperationException();
-                }
-
-                if (result)
-                {
-                    EnableResultMessage($"{objectName}を作成しました。");
-                }
-                // 書き換え後の再読み込み
-                LoadItems();
+                case "cattleTab":
+                    int objectID = (int?)Enum.GetValues<CattleType>()[cattleComboBox.SelectedIndex] ?? (int)CattleType.Cow;
+                    int Color = cattleColorVariationComboBox.SelectedIndex == -1 ? 0 : cattleColorVariationComboBox.SelectedIndex;
+                    item = new Cattle(Cattle.Default) with
+                    {
+                        objectID = objectID,
+                        Color = Color,
+                        Stomach = (int)stomachNumericUpDown.Value,
+                        objectName = ((CattleType)objectID).ToString(),
+                        Name = cattleNameTextBox.Text,
+                        Meal = (int)mealNumericUpDown.Value,
+                        Breeding = breedingCheckBox.Checked,
+                    };
+                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    break;
+                default:
+                    throw new InvalidOperationException();
             }
-            catch (Exception ex)
+
+            if (result)
             {
-                MessageBox.Show($"{ex.Message}", "書き込み処理に失敗しました。");
-                File.AppendAllText(_errorLogFilePath, DateTime.Now + Environment.NewLine + ex.ToString());
-                throw;
+                string itemName = item.objectName;
+                if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
+                {
+                    itemName = displayResource[1];
+                }
+                EnableResultMessage($"{itemName}を作成しました。");
             }
+            // 書き換え後の再読み込み
+            LoadItems();
         }
 
-        private ItemInfo GenerateItemBase()
+        private Item GenerateAdvancedItem()
         {
             if (amountConstCheckBox.Checked)
             {
-                amoutTextBox.Text = amountConst.Value.ToString();
+                amountNumericUpDown.Value = amountConst.Value;
             }
-            return new(objectID: objectIdTextBox.Text, amount: amoutTextBox.Text, variation: variationTextBox.Text);
+            var aux = new ItemAuxData(Convert.ToInt32(auxIndexNumericUpDown.Value), auxDataTextBox.Text);
+            return new(objectID: int.Parse((objectIdTextBox.Text)),
+                amount: Convert.ToInt32(amountNumericUpDown.Value),
+                variation: Convert.ToInt32(variationNumericUpDown.Value),
+                variationUpdateCount: Convert.ToInt32(variationUpdateCountNumericUpDown.Value),
+                objectName:objectNameTextBox.Text,
+                aux:aux,
+                locked:objectLockedCheckBox.Checked);
         }
 
 
@@ -510,7 +504,7 @@ namespace CKCharaDataEditor
                 "エピック" => baseObjectId + (int)CookRarity.Epic,
                 _ => throw new ArgumentException(null, nameof(rarity)),
             };
-            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.Info.objectID == baseObjectId).objectName;
+            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.objectID == baseObjectId).objectName;
             fixedInternalName = rarity switch
             {
                 "コモン" => baseInternalName,
@@ -553,18 +547,18 @@ namespace CKCharaDataEditor
         private void SetDefaultButton_Click(object sender, EventArgs e)
         {
             objectIdTextBox.Text = ItemInfo.Default.objectID.ToString();
-            variationTextBox.Text = ItemInfo.Default.variation.ToString();
+            variationNumericUpDown.Value = ItemInfo.Default.variation;
             objectNameTextBox.Text = string.Empty;
-            amoutTextBox.Text = ItemInfo.Default.amount.ToString();
-            variationUpdateCountTextBox.Text = ItemInfo.Default.variationUpdateCount.ToString();
-            auxIndexTextBox.Text = ItemAuxData.Default.index.ToString();
+            amountNumericUpDown.Value = ItemInfo.Default.amount;
+            variationUpdateCountNumericUpDown.Value = ItemInfo.Default.variationUpdateCount;
+            auxIndexNumericUpDown.Value = ItemAuxData.Default.index;
             auxDataTextBox.Text = ItemAuxData.Default.data.ToString();
         }
 
         private static bool IsCookedItem(int objectID, out CookRarity rarity, out int indexBaseOffset)
         {
             int[] cookedCategoryAllIds = StaticResource.AllCookedBaseCategories
-                .Select(c => c.Info.objectID)
+                .Select(c => c.objectID)
                 .SelectMany(id => new[] { id, id + (int)CookRarity.Rare, id + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToArray();
@@ -593,46 +587,27 @@ namespace CKCharaDataEditor
         private void EnabeleUI()
         {
             saveSlotNoComboBox.Enabled = true;
-            inventoryIndexComboBox.Enabled = true;
+            itemListBox.Enabled = true;
             createButton.Enabled = true;
-            previousItemButton.Enabled = true;
-            nextItemButton.Enabled = true;
             listUncreatedRecipesButton.Enabled = true;
+            slotReloadbutton.Enabled = true;
+            openConditionsButton.Enabled = true;
+            openSkillbutton.Enabled = true;
         }
         private void DisabeleUI()
         {
             saveSlotNoComboBox.Enabled = false;
-            inventoryIndexComboBox.Enabled = false;
+            itemListBox.Enabled = false;
             createButton.Enabled = false;
-            previousItemButton.Enabled = false;
-            nextItemButton.Enabled = false;
             listUncreatedRecipesButton.Enabled = false;
+            slotReloadbutton.Enabled = false;
+            openConditionsButton.Enabled = false;
+            openSkillbutton.Enabled = false;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.Default.LastSaveFolderPath = SaveDataFolderPath;
-            Settings.Default.Save();
-        }
-
-        private void savePathTextBox_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            SaveDataFolderPath = savePathTextBox.Text;
-        }
-        private void previousItemButton_Click(object sender, EventArgs e)
-        {
-            if (inventoryIndexComboBox.SelectedIndex > 0)
-            {
-                inventoryIndexComboBox.SelectedIndex--;
-            }
-        }
-
-        private void nextItemButton_Click(object sender, EventArgs e)
-        {
-            if (inventoryIndexComboBox.SelectedIndex < SaveDataManager.LoadItemLimit - 1)
-            {
-                inventoryIndexComboBox.SelectedIndex++;
-            }
+            _fileManager.Dispose();
         }
 
         private void listUncreatedRecipesButton_Click(object sender, EventArgs e)
@@ -665,32 +640,39 @@ namespace CKCharaDataEditor
             if (e.Index < 0) return;
 
             ComboBox combo = (ComboBox)sender;
-            string selectedText = (string)combo.Items[e.Index]!;
+            string itemText = (string)combo.Items[e.Index]!;
 
             var displayNames = StaticResource.AllIngredients.Select(c => c.DisplayName);
-            var goldernNames = displayNames
-                .Where(name => name.StartsWith("金色の"))
-                .Where(name => name != "金色のダート")
-                .Where(name => name != "金色の幼虫肉")
-                .Append("スターライトノーチラス");
+            var goldernNames = StaticResource.AllIngredients
+                .Where(i => i.MakeRare)
+                .Select(i => i.DisplayName);
 
             // 背景色を設定する
-            if (goldernNames.Contains(selectedText))
+            e.DrawBackground();
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                // 選択中のアイテムの背景色を変更
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
+            }
+            else if (goldernNames.Contains(itemText))
             {
                 // レア化食材
                 e.Graphics.FillRectangle(Brushes.Yellow, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
-            else if (displayNames.Contains(selectedText))
+            else if (displayNames.Contains(itemText))
             {
-                e.DrawBackground();
+                // 通常の食材
+                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
             else
             {
                 // 非食材もしくは旧食材
                 e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
-
-            e.Graphics.DrawString(selectedText, e.Font!, Brushes.Black, e.Bounds);
             e.DrawFocusRectangle();
         }
 
@@ -699,12 +681,12 @@ namespace CKCharaDataEditor
             var item = Item.Default;
             try
             {
-                item.Info = new(int.Parse(objectIdTextBox.Text),
-                    int.Parse(amoutTextBox.Text),
-                    int.Parse(variationTextBox.Text),
-                    int.Parse(variationUpdateCountTextBox.Text));
+                item.objectID = int.Parse(objectIdTextBox.Text);
+                item.amount = Convert.ToInt32(amountNumericUpDown.Value);
+                item.variation = Convert.ToInt32(variationNumericUpDown.Value);
+                item.variationUpdateCount = Convert.ToInt32(variationUpdateCountNumericUpDown.Value);
                 item.objectName = objectNameTextBox.Text;
-                item.Aux = new(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
+                item.Aux = new(Convert.ToInt32(auxIndexNumericUpDown.Value), auxDataTextBox.Text);
             }
             catch (FormatException)
             {
@@ -712,20 +694,32 @@ namespace CKCharaDataEditor
                 return;
             }
             _saveDataManager.CopyItem(item);
-            EnableResultMessage($"{objectNameTextBox.Text}をコピーしました。");
+
+            string displayName = item.objectName;
+            if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
+            {
+                displayName = displayResource[1];
+            }
+            EnableResultMessage($"{displayName}をコピーしました。");
         }
 
         private void PasteButton_Click(object sender, EventArgs e)
         {
             Item item = _saveDataManager.PasteItem();
-            objectIdTextBox.Text = item.Info.objectID.ToString();
-            amoutTextBox.Text = item.Info.amount.ToString();
-            variationTextBox.Text = item.Info.variation.ToString();
-            variationUpdateCountTextBox.Text = item.Info.variationUpdateCount.ToString();
+            objectIdTextBox.Text = item.objectID.ToString();
+            amountNumericUpDown.Value = item.amount;
+            variationNumericUpDown.Value = item.variation;
+            variationUpdateCountNumericUpDown.Value = item.variationUpdateCount;
             objectNameTextBox.Text = item.objectName;
-            auxIndexTextBox.Text = item.Aux.index.ToString();
+            auxIndexNumericUpDown.Value = item.Aux.index;
             auxDataTextBox.Text = item.Aux.data;
-            EnableResultMessage($"{item.objectName}をペーストしました。");
+
+            string displayName = item.objectName;
+            if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
+            {
+                displayName = displayResource[1];
+            }
+            EnableResultMessage($"{displayName}をペーストしました。");
         }
 
         private void inventryCopyButton_Click(object sender, EventArgs e)
@@ -789,6 +783,121 @@ namespace CKCharaDataEditor
         private void slotReloadbutton_Click(object sender, EventArgs e)
         {
             LoadItems();
+        }
+
+        private void itemListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            string itemText = (string)itemListBox.Items[e.Index]!;
+            e.DrawBackground();
+            var uniqueSlot = StaticResource.ExtendSlotName.Keys.ToArray();
+
+            // 色変更
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                //選択中のアイテムの背景色を変更
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
+            }
+            else if (uniqueSlot.Contains(e.Index + 1))
+            {
+                // 装備など特定のインデックスのアイテムの背景色を変更
+                Brush color = StaticResource.ExtendSlotName[e.Index + 1].Color;
+                e.Graphics.FillRectangle(color, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+            else
+            {
+                // 通常のアイテムの背景色を変更
+                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+
+            e.DrawFocusRectangle();
+        }
+
+        private void itemListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (itemListBox.SelectedIndex < 0) return;
+
+            if (e.Control && e.KeyCode is Keys.C)
+            {
+                CopyButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.Control && e.KeyCode is Keys.V)
+            {
+                PasteButton_Click(sender, e);
+                createButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.Control && e.Shift && e.KeyCode is Keys.C)
+            {
+                inventryCopyButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.Control && e.Shift && e.KeyCode is Keys.V)
+            {
+                inventryPasteButton_Click(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private void FilePathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var settingsForm = new SettingForm();
+            settingsForm.ShowDialog();
+            if (settingsForm.DialogResult is DialogResult.OK)
+            {
+                _fileManager.SaveFolder = settingsForm.SaveFolderPath;
+                _fileManager.InstallFolder = settingsForm.InstallFolderPath;
+                if (_fileManager.SaveFilePaths.Count > 0)
+                {
+                    LoadSlots(_fileManager.SaveFilePaths[0].FullName);
+                }
+            }
+        }
+
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var versionForm = new AboutBox();
+            versionForm.ShowDialog();
+        }
+
+        private void cattleNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            string text = cattleNameTextBox.Text;
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            // ペット名が64バイトを超えたら溢れた分を削除する
+            if (bytes.Length > 64)
+            {
+                while (Encoding.UTF8.GetByteCount(text) > 64)
+                {
+                    text = text[..^1];
+                }
+                cattleNameTextBox.Text = text;
+                cattleNameTextBox.SelectionStart = text.Length; // キャレット位置を末尾に設定
+            }
+        }
+
+        private void cattleComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int colorIndex = cattleColorVariationComboBox.SelectedIndex;
+            cattleColorVariationComboBox.Items.Clear();
+
+            if (cattleComboBox.SelectedIndex < 0) return;
+
+            CattleType cattleType = Enum.GetValues<CattleType>().ElementAt(cattleComboBox.SelectedIndex);
+            if (cattleType.ToString().EndsWith("Baby"))
+            {
+                cattleType = CattleResource.CattleSpecies[cattleType];
+            }
+            string[] colors = Enumerable.Range(0, 5)
+                .Select(i => CattleResource.Colors[(cattleType, i)])
+                .ToArray();
+            cattleColorVariationComboBox.Items.AddRange(colors);
+            cattleColorVariationComboBox.SelectedIndex = colorIndex;
         }
     }
 }

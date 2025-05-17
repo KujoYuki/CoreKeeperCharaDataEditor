@@ -1,4 +1,4 @@
-﻿namespace CKCharaDataEditor.Model
+﻿namespace CKCharaDataEditor.Model.Cattle
 {
     public enum CattleType
     {
@@ -12,5 +12,7 @@
         TurtleBaby = 1308,
         Dodo = 1309,
         DodoBaby = 1310,
+        Camel = 1311,
+        CamelBaby = 1312,
     }
 }

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "CKFoodMaker": {
+    "CKCharaDataEditor": {
       "commandName": "Project",
       "commandLineArgs": "--Usagi"
     }

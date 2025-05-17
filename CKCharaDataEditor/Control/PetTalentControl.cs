@@ -1,5 +1,4 @@
 ﻿using CKCharaDataEditor.Model.Pet;
-using CKCharaDataEditor.Resource;
 
 namespace CKCharaDataEditor.Control
 {

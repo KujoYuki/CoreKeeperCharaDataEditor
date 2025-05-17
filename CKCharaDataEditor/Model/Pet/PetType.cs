@@ -1,6 +1,6 @@
 ﻿namespace CKCharaDataEditor.Model.Pet
 {
-    public enum PetId
+    public enum PetType
     {
         PetDog = 1222,
         PetCat = 1225,

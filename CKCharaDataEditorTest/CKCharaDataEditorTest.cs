@@ -1,17 +1,14 @@
 using CKCharaDataEditor;
-using CKCharaDataEditor.Model;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
-using CKCharaDataEditor.Resource;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace CKFoodMakerTest
+namespace CKCharaDataEditorTest
 {
     [TestClass]
-    public class CKFoodMakerTest
+    public class CKCharaDataEditorTest
     {
         const string LawPetData = "{\"prefabs\":[{\"prefabHash\":1145011307,\"types\":[{\"stableTypeHash\":13695103918181693450,\"data\":[\"0\"]},{\"stableTypeHash\":16038764625220822319,\"data\":[\"{\\\"Talent\\\":2,\\\"Points\\\":0}\",\"{\\\"Talent\\\":3,\\\"Points\\\":0}\",\"{\\\"Talent\\\":17,\\\"Points\\\":1}\",\"{\\\"Talent\\\":0,\\\"Points\\\":0}\",\"{\\\"Talent\\\":3,\\\"Points\\\":1}\",\"{\\\"Talent\\\":16,\\\"Points\\\":1}\",\"{\\\"Talent\\\":16,\\\"Points\\\":1}\",\"{\\\"Talent\\\":3,\\\"Points\\\":1}\",\"{\\\"Talent\\\":3,\\\"Points\\\":0}\"]}]},{\"prefabHash\":2811915185,\"types\":[{\"stableTypeHash\":9923282613123898873,\"data\":[\"BlueSlimePet\"]}]}]}";
 
@@ -46,7 +43,7 @@ namespace CKFoodMakerTest
 
             AuxPrefabManager manager = new(JsonNode.Parse(LawPetData)!.AsObject());
             var color = int.Parse(manager.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash).Single());
-            var name = manager.GetData(AuxHash.PetNameGroupHash, AuxHash.ItemNameHash).Single(); ;
+            var name = manager.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash).Single(); ;
             var talents = manager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)
                 .Select(str => new PetTalent(str))
                 .ToList();
@@ -60,15 +57,15 @@ namespace CKFoodMakerTest
             var aux = new ItemAuxData(10, LawPetData);  //index‚Í”CˆÓ‚Ì’l
             aux.GetPetData(out string name, out int color, out var Talents);
 
-            var manager = new AuxPrefabManager();
+            var manager = new AuxPrefabManager(new List<AuxPrefab>());
             manager.AddPrefab([new AuxPrefab(AuxHash.PetGroupHash, [])]);
-            manager.AddPrefab([new AuxPrefab(AuxHash.PetNameGroupHash, [])]);
+            manager.AddPrefab([new AuxPrefab(AuxHash.ItemNameGroupHash, [])]);
             var petColor = new AuxStableType(AuxHash.PetColorHash, [color.ToString()]);
             var petTalent = new AuxStableType(AuxHash.PetTalentsHash, Talents.Select(t => t.ToJsonString()));
             var petName = new AuxStableType(AuxHash.ItemNameHash, [name]);
             manager.AddStableType(AuxHash.PetGroupHash, petColor);
             manager.AddStableType(AuxHash.PetGroupHash, petTalent);
-            manager.AddStableType(AuxHash.PetNameGroupHash, petName);
+            manager.AddStableType(AuxHash.ItemNameGroupHash, petName);
             
             JsonSerializerOptions serializerOptionWrite = new()
             {

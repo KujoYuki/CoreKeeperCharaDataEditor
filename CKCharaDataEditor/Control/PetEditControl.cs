@@ -1,10 +1,9 @@
-﻿using CKCharaDataEditor.Model;
+﻿using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Text;
 
 namespace CKCharaDataEditor.Control
@@ -55,9 +54,9 @@ namespace CKCharaDataEditor.Control
 
         public void LoadPet(Item petItem)
         {
-            if (allPetIds.Contains(_petItem!.Info.objectID))
+            if (allPetIds.Contains(_petItem!.objectID))
             {
-                int objectId = petItem.Info.objectID;
+                int objectId = petItem.objectID;
                 PetId petId = (PetId)objectId;
 
                 _battleType = PetResource.BattleType[petId];
@@ -70,7 +69,7 @@ namespace CKCharaDataEditor.Control
                 };
                 petKindComboBox.SelectedIndex = Array.IndexOf(
                     Enum.GetValues(typeof(PetId)).Cast<int>().ToArray(), objectId);
-                petExpNumeric.Value = petItem.Info.amount;
+                petExpNumeric.Value = petItem.amount;
 
                 petItem.Aux.GetPetData(out var name, out var color, out List<PetTalent> talents);
                 petColorComboBox.SelectedIndex = color;
@@ -192,15 +191,13 @@ namespace CKCharaDataEditor.Control
 
             //元アイテムがペットでない場合はauxIndexはデフォルト値で与える
             int auxIndex = _petItem?.Aux.index ?? 0;
-
-            ItemInfo itemInfo = new(objectID: (int)allPetTypes[petKindComboBox.SelectedIndex],
-                amount: (int)petExpNumeric.Value,
-                variation: 0);
+            int objectID = (int)allPetTypes[petKindComboBox.SelectedIndex];
+            int amount = (int)petExpNumeric.Value;
             string objectName = Enum.GetNames(typeof(PetId))[petKindComboBox.SelectedIndex];
             var petTalents = GeneratePetTalentLists();
             ItemAuxData auxData = new ItemAuxData(auxIndex, AuxPrefabManager.CreatePet(petNameTextBox.Text, petColorComboBox.SelectedIndex, petTalents));
 
-            return new Item(itemInfo, objectName, auxData);
+            return new Item(objectID, amount, 0, 0, objectName, auxData);
         }
 
         private void petNameTextBox_TextChanged(object sender, EventArgs e)

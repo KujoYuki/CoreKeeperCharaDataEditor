@@ -1,6 +1,6 @@
-﻿namespace CKCharaDataEditor.Model
+﻿namespace CKCharaDataEditor.Model.Items
 {
-    public record DiscoveredObjects
+    public record DiscoveredObjects : IItem
     {
         public int objectID { get; set; }
         public int variation { get; set; }
@@ -10,5 +10,6 @@
             this.objectID = objectID;
             this.variation = variation;
         }
+        public static readonly DiscoveredObjects Default = new(0, 0);
     }
 }

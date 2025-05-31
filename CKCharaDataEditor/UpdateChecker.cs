@@ -18,7 +18,7 @@ namespace CKCharaDataEditor
             client.BaseAddress = new Uri(_uri);
 
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("CKFoodMaker", "1.0"));
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("CKCharaDataEditor", "1.0"));
 
             var response = await client.GetAsync(_uri, HttpCompletionOption.ResponseHeadersRead);
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CKFoodMakerTest
+namespace CKCharaDataEditorTest
 {
     [TestClass]
     public class ResourceTest

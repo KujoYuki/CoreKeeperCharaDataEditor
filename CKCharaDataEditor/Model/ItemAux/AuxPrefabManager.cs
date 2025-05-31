@@ -69,24 +69,24 @@ namespace CKCharaDataEditor.Model.ItemAux
         {
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)petColor).ToString()]);
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash, petTalents.Select(t => t.ToJsonString()));
-            UpdateData(AuxHash.PetNameGroupHash, AuxHash.ItemNameHash, [petName]);
+            UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [petName]);
         }
 
-        public void UpdateCattle()
+        public IEnumerable<string>? GetData(ulong prefabHash, ulong stableTypeHash)
         {
-            // 家畜も補助データをもつので、必要に応じて実装する。
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<string> GetData(ulong prefabHash, ulong stableTypeHash)
-        {
-            var data = Prefabs?.SingleOrDefault(p => p.prefabHash == prefabHash)?.types
-                .SingleOrDefault(s => s.stableTypeHash == stableTypeHash)?.data!;
-            if (data is null)
+            try
             {
-                throw new KeyNotFoundException($"Not found instead of the hash:{prefabHash} or {stableTypeHash}");
+                var data = Prefabs?.SingleOrDefault(p => p.prefabHash == prefabHash)?.types
+                .SingleOrDefault(s => s.stableTypeHash == stableTypeHash)?.data!;
+                return data;
             }
-            return data;
+            catch (Exception)
+            {
+                // 例外が発生した場合はnullを返す
+                // 例えば、prefabHashやstableTypeHashが見つからない場合など
+                // ここではログ出力などは行わない
+            }
+            return null;
         }
 
         public static AuxPrefabManager CreatePet(string petName, int color, IEnumerable<PetTalent> talents)

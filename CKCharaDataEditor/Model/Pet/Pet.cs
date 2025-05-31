@@ -1,10 +1,11 @@
-﻿using CKCharaDataEditor.Resource;
+﻿using CKCharaDataEditor.Model.ItemAux;
+using CKCharaDataEditor.Model.Items;
+using CKCharaDataEditor.Resource;
 
 namespace CKCharaDataEditor.Model.Pet
 {
-    public record Pet
+    public record Pet : Item
     {
-        // undone ペット関連の情報を一意に持つモデル
         public PetId Id { get; set; }
 
         public PetBattleType BattleType
@@ -21,33 +22,36 @@ namespace CKCharaDataEditor.Model.Pet
 
         public string Name { get; set; } = string.Empty;
 
-        public int Exp { get; set; } = 0;
+        public PetTalent[] Talents { get; set; }
 
-        public PetTalent[] Talents { get; set; } = new PetTalent[9];
-
-        public int AuxIndex { get; set; } = 0;
-
-        public Pet()
+        protected Pet(PetId petId, int exp, ItemAuxData auxData)
+            : base((int)petId, exp, 0, 0, petId.ToString(), auxData)
         {
-            Id = PetId.PetDog;
-            Color = PetColor.Color_0;
-            Name = string.Empty;
-            Talents = new PetTalent[9];
+            Id = petId;
+            Aux = auxData;
+            Aux.GetPetData(out string name, out int color, out var talents);
+            Color = (PetColor)color;
+            Name = name;
+            Talents = talents.ToArray();
         }
 
-        public Pet(Item item)
+        // hack ペットごとの特質が必要な場合にこの辞書を参照するように既存ロジックを変更する
+        public static readonly Dictionary<int, (PetId PetId, PetBattleType PetBattleType, bool HasMultiColor)> PetDic = new()
         {
-            // todo アイテムからペットを生成する
-            for (int i = 0; i < 9; i++)
-            {
-                Talents[i] = PetTalent.Default;
-            }
-            throw new NotImplementedException();
-        }
-        public Item ToItem()
-        {
-            // todo ペットをアイテムに変換する
-            throw new NotImplementedException();
-        }
+            { 1222, (PetId.PetDog, PetBattleType.Melee,true) },
+            { 1225, (PetId.PetCat, PetBattleType.Range,true) },
+            { 1228, (PetId.PetBird, PetBattleType.Buff,true) },
+            { 1231, (PetId.PetSlimeBlob, PetBattleType.Melee, false) },
+            { 1234, (PetId.PetBunny, PetBattleType.Range, true) },
+            { 1237, (PetId.PetSlipperySlimeBlob, PetBattleType.Melee, false) },
+            { 1240, (PetId.PetPoisonSlimeBlob, PetBattleType.Melee, false) },
+            { 1243, (PetId.PetLavaSlimeBlob, PetBattleType.Melee, false) },
+            { 1246, (PetId.PetPrinceSlimeBlob, PetBattleType.Melee, false) },
+            { 1247, (PetId.PetMoth, PetBattleType.Buff, true) },
+            { 1252, (PetId.PetTardigrade, PetBattleType.Melee, true) },
+            { 1253, (PetId.PetMagic, PetBattleType.Buff, false) },
+            { 1258, (PetId.PetElectric, PetBattleType.Melee, false) },
+            { 1261, (PetId.PetWarlock, PetBattleType.Buff, true) },
+        };
     }
 }

@@ -22,7 +22,7 @@
 - ゲームやmodのバージョンに殆ど関係なく使えます。
 
 
-![CKFoodMaker Overview](Document/images/imageSample.png)  
+![CKCharaDataEditor Overview](Document/images/imageSample.png)  
 ![EditPet OverView](Document/images/imageEditPet.png)
 ![EditCondition Overview](Document/images/imageCondition.png)
 ![EditSkillExp Overview](Document/images/imageEditSkill.png)

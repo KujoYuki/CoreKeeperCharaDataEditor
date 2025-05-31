@@ -5,24 +5,22 @@ using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
 using System.Text;
+using CKCharaDataEditor.Model.Items;
+using CKCharaDataEditor.Model.Cattle;
 
 // todo 経験値テーブルの解析とLv表示をLabelで追加
 // todo ペットも上記同様
-// todo 家畜の編集機能追加
-// ゲームインストールフォルダを指定して、日本語リソースを取得する
-// todo Itemクラスを継承して食材用のクラスを作って、金色化、非食材プロパティを生やす
-// todo IteminfoをItemの親クラスとして分離する
+// todo 家畜の編集機能実装
+// todo 料理関連のロジックをForm1から分離して、別のクラスにする
 
 namespace CKCharaDataEditor
 {
     public partial class Form1 : Form
     {
-        static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
-
         private FileManager _fileManager = FileManager.Instance;
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
-        private List<Item> _ingredientCategories = [];
-        private List<Item> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
+        private List<Ingredient> _ingredientCategories = [];
+        private List<Ingredient> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
 
         private string _saveDataFolderPath = string.Empty;
 
@@ -43,24 +41,15 @@ namespace CKCharaDataEditor
 
         public void Initialize()
         {
-            try
-            {
-                InitIngredientCategory();
-                InitCookedCategory();
-                rarityComboBox.SelectedIndex = 0;
+            InitIngredientCategory();
+            InitCookedCategory();
+            rarityComboBox.SelectedIndex = 0;
 
-                _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
-                if (_fileManager.SaveFilePaths.Count > 0)
-                {
-                    string firstSaveDataPath = _fileManager.SaveFilePaths.First().FullName;
-                    LoadSlots(firstSaveDataPath);
-                }
-            }
-            catch (Exception ex)
+            _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
+            if (_fileManager.SaveFilePaths.Count > 0)
             {
-                MessageBox.Show($"{ex.Message}", "初期化処理に失敗しました。");
-                File.AppendAllText(_errorLogFilePath, DateTime.Now + Environment.NewLine + ex.ToString());
-                throw;
+                string firstSaveDataPath = _fileManager.SaveFilePaths.First().FullName;
+                LoadSlots(firstSaveDataPath);
             }
         }
 
@@ -104,6 +93,8 @@ namespace CKCharaDataEditor
             toolTipAmount.SetToolTip(labelAmount, "スタック可能アイテムの場合は個数を、スタック不可のアイテムの場合は耐久値を意味します。");
             toolTipAuxData.SetToolTip(labelAuxData, "アイテムの補助データです。\nペットや家畜の情報を設定する場合は、ペットタブや家畜タブを利用してください。");
             toolTipLockedObject.SetToolTip(objectLockedCheckBox, "ゲーム内でのアイテムのロック状態を設定します。");
+            toolTipCattleStomach.SetToolTip(stomachNumericUpDown, "家畜の満腹度を設定します。通常、0～4の範囲です。\n2ごとに資源を生産します。");
+            toolTipCattleMeal.SetToolTip(mealNumericUpDown, "家畜の食事回数です。30で同種が近くにいると子が生まれます。\n子は8で大人に成長します。");
         }
 
         private void InitIngredientCategory()
@@ -114,11 +105,11 @@ namespace CKCharaDataEditor
                 .Select(line =>
                 {
                     string[] words = line.Split(',');
-                    return new Item(int.Parse(words[0]), words[1], words[2]);
+                    return new Ingredient(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked);
                 })
                 .ToArray();
             var allingredients = StaticResource.AllIngredients.Concat(ingredientCategories)
-                .OrderBy(c => c.Info.objectID)
+                .OrderBy(c => c.objectID)
                 .ToList();
             // 開発者モードの場合は非推奨食材も表示する
             if (Program.IsDeveloper)
@@ -201,13 +192,13 @@ namespace CKCharaDataEditor
             {
                 string indexText = StaticResource.ExtendSlotName.TryGetValue(i + 1, out var rim) ?
                     (i + 1) + "," + rim.Segment : (i + 1).ToString();
-                if (_saveDataManager.Items[i].Info == ItemInfo.Default)
+                if (_saveDataManager.Items[i].objectID == 0)
                 {
                     itemListBox.Items.Add($"{indexText} : ----");
                 }
                 else
                 {
-                    string objectId = _saveDataManager.Items[i].Info.objectID.ToString();
+                    string objectId = _saveDataManager.Items[i].objectID.ToString();
                     _fileManager.LocalizationData.TryGetValue(objectId, out var displayResource);
                     string displayName = displayResource is null ? _saveDataManager.Items[i].objectName : displayResource[1];
                     itemListBox.Items.Add($"{indexText} : {displayName}");
@@ -222,15 +213,15 @@ namespace CKCharaDataEditor
 
         private void LoadPanel()
         {
-            var selectedItem = _saveDataManager.Items[itemListBox.SelectedIndex];
-            int selectedObjectID = selectedItem.Info.objectID;
-            int variation = selectedItem.Info.variation;
+            Item selectedItem = _saveDataManager.Items[itemListBox.SelectedIndex];
+            int selectedObjectID = selectedItem.objectID;
+            int variation = selectedItem.variation;
 
             objectIdTextBox.Text = selectedObjectID.ToString();
-            amoutTextBox.Text = selectedItem.Info.amount.ToString();
+            amoutTextBox.Text = selectedItem.amount.ToString();
             objectLockedCheckBox.Checked = selectedItem.Locked;
             variationTextBox.Text = variation.ToString();
-            variationUpdateCountTextBox.Text = selectedItem.Info.variationUpdateCount.ToString();
+            variationUpdateCountTextBox.Text = selectedItem.variationUpdateCount.ToString();
             objectNameTextBox.Text = selectedItem.objectName;
             auxIndexTextBox.Text = selectedItem.Aux.index.ToString();
             auxDataTextBox.Text = selectedItem.Aux.data;
@@ -239,8 +230,8 @@ namespace CKCharaDataEditor
             if (IsCookedItem(selectedObjectID, out var rarity, out var indexBaseOffset))
             {
                 ReverseCalcurateVariation(variation, out var ingredientIdA, out var ingredientIdB);
-                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.Info.objectID == ingredientIdA)?.DisplayName;
-                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.Info.objectID == ingredientIdB)?.DisplayName;
+                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == ingredientIdA)?.DisplayName;
+                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == ingredientIdB)?.DisplayName;
 
                 cookedCategoryComboBox.SelectedIndex = indexBaseOffset;
                 rarityComboBox.SelectedIndex = rarity switch
@@ -250,10 +241,20 @@ namespace CKCharaDataEditor
                     CookRarity.Epic => 2,
                     _ => throw new NotImplementedException(),
                 };
-                createdNumericNo.Value = selectedItem.Info.amount;
+                createdNumericNo.Value = selectedItem.amount;
             }
-
             petEditControl.PetItem = selectedItem;
+
+            // 家畜の場合は家畜情報をセットする
+            if (Cattle.IsCattle(selectedObjectID))
+            {
+                //cattleComboBox
+                //cattleColorVariationComboBox
+                //cattleNameTextBox
+                //stomachNumericUpDown
+                //mealNumericUpDown
+                //breedingCheckBox
+            }
         }
 
         private void saveSlotNoComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -339,76 +340,69 @@ namespace CKCharaDataEditor
             bool result = false;
             ItemInfo item;
             string objectName = string.Empty;
-            try
+
+            switch (itemEditTabControl.SelectedTab?.Name)
             {
-                switch (itemEditTabControl.SelectedTab?.Name)
-                {
-                    case "foodTab":
-                        int ingredientAId = _ingredientCategories
-                        .Single(c => c.DisplayName == ingredientComboBoxA
-                        .SelectedItem?.ToString()).Info.objectID;
-                        int ingredientBId = _ingredientCategories
-                            .Single(c => c.DisplayName == ingredientComboBoxB
-                            .SelectedItem?.ToString()).Info.objectID;
-                        int calculatedVariation = CalculateVariation(ingredientAId, ingredientBId);
+                case "foodTab":
+                    int ingredientAId = _ingredientCategories
+                    .Single(c => c.DisplayName == ingredientComboBoxA
+                    .SelectedItem?.ToString()).objectID;
+                    int ingredientBId = _ingredientCategories
+                        .Single(c => c.DisplayName == ingredientComboBoxB
+                        .SelectedItem?.ToString()).objectID;
+                    int calculatedVariation = CalculateVariation(ingredientAId, ingredientBId);
 
-                        // レア度反映
-                        int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).Info.objectID;
-                        DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out objectName);
-                        item = new(objectID: fixedObjectId,
-                                   amount: Convert.ToInt32(createdNumericNo.Value),
-                                   variation: calculatedVariation);
-                        _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item, objectName);
-                        result = true;
-                        break;
+                    // レア度反映
+                    int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).objectID;
+                    DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out objectName);
+                    item = new(objectID: fixedObjectId,
+                               amount: Convert.ToInt32(createdNumericNo.Value),
+                               variation: calculatedVariation);
+                    _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item, objectName);
+                    result = true;
+                    break;
 
-                    case "petTab":
-                        if (!Enum.GetValues(typeof(PetId)).Cast<int>().Contains(int.Parse(objectIdTextBox.Text)))
-                        {
-                            MessageBox.Show("選択中のアイテムがペットではありません。\nインベントリ枠でペットアイテムを選択して編集してください。");
-                            return;
-                        }
+                case "petTab":
+                    if (!Enum.GetValues(typeof(PetId)).Cast<int>().Contains(int.Parse(objectIdTextBox.Text)))
+                    {
+                        MessageBox.Show("選択中のアイテムがペットではありません。\nインベントリ枠でペットアイテムを選択して編集してください。");
+                        return;
+                    }
 
-                        var petItem = petEditControl.PetItem;
-                        if (petItem is null)
-                        {
-                            MessageBox.Show("入力されたペット情報が取得できませんでした。");
-                            return;
-                        }
-                        objectName = petItem.objectName;
-                        // ItemAuxDataを込みで書きこむ
-                        result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, petItem.Info, objectName, petItem.Aux);
-                        break;
+                    var petItem = petEditControl.PetItem;
+                    if (petItem is null)
+                    {
+                        MessageBox.Show("入力されたペット情報が取得できませんでした。");
+                        return;
+                    }
+                    objectName = petItem.objectName;
+                    // ItemAuxDataを込みで書きこむ
+                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, petItem, objectName, petItem.Aux);
+                    break;
 
-                    case "advancedTab":
-                        item = GenerateItemBase();
-                        objectName = objectNameTextBox.Text;
-                        var newAuxData = new ItemAuxData(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
-                        result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item, objectName, newAuxData, objectLockedCheckBox.Checked);
-                        break;
+                case "advancedTab":
+                    item = GenerateItemBase();
+                    objectName = objectNameTextBox.Text;
+                    var newAuxData = new ItemAuxData(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
+                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item, objectName, newAuxData, objectLockedCheckBox.Checked);
+                    break;
 
-                    case "cattleTab":
-                        // todo 家畜の書き込み処理
+                case "cattleTab":
+                    // todo 家畜の書き込み処理
+                    
 
-                        break;
+                    break;
 
-                    default:
-                        throw new InvalidOperationException();
-                }
-
-                if (result)
-                {
-                    EnableResultMessage($"{objectName}を作成しました。");
-                }
-                // 書き換え後の再読み込み
-                LoadItems();
+                default:
+                    throw new InvalidOperationException();
             }
-            catch (Exception ex)
+
+            if (result)
             {
-                MessageBox.Show($"{ex.Message}", "書き込み処理に失敗しました。");
-                File.AppendAllText(_errorLogFilePath, DateTime.Now + Environment.NewLine + ex.ToString());
-                throw;
+                EnableResultMessage($"{objectName}を作成しました。");
             }
+            // 書き換え後の再読み込み
+            LoadItems();
         }
 
         private ItemInfo GenerateItemBase()
@@ -439,7 +433,7 @@ namespace CKCharaDataEditor
                 "エピック" => baseObjectId + (int)CookRarity.Epic,
                 _ => throw new ArgumentException(null, nameof(rarity)),
             };
-            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.Info.objectID == baseObjectId).objectName;
+            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.objectID == baseObjectId).objectName;
             fixedInternalName = rarity switch
             {
                 "コモン" => baseInternalName,
@@ -493,7 +487,7 @@ namespace CKCharaDataEditor
         private static bool IsCookedItem(int objectID, out CookRarity rarity, out int indexBaseOffset)
         {
             int[] cookedCategoryAllIds = StaticResource.AllCookedBaseCategories
-                .Select(c => c.Info.objectID)
+                .Select(c => c.objectID)
                 .SelectMany(id => new[] { id, id + (int)CookRarity.Rare, id + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToArray();
@@ -578,11 +572,9 @@ namespace CKCharaDataEditor
             string itemText = (string)combo.Items[e.Index]!;
 
             var displayNames = StaticResource.AllIngredients.Select(c => c.DisplayName);
-            var goldernNames = displayNames
-                .Where(name => name.StartsWith("金色の"))
-                .Where(name => name != "金色のダート")
-                .Where(name => name != "金色の幼虫肉")
-                .Append("スターライトノーチラス");
+            var goldernNames = StaticResource.AllIngredients
+                .Where(i => i.MakeRare)
+                .Select(i => i.DisplayName);
 
             // 背景色を設定する
             e.DrawBackground();
@@ -618,10 +610,10 @@ namespace CKCharaDataEditor
             var item = Item.Default;
             try
             {
-                item.Info = new(int.Parse(objectIdTextBox.Text),
-                    int.Parse(amoutTextBox.Text),
-                    int.Parse(variationTextBox.Text),
-                    int.Parse(variationUpdateCountTextBox.Text));
+                item.objectID = int.Parse(objectIdTextBox.Text);
+                item.amount = int.Parse(amoutTextBox.Text);
+                item.variation = int.Parse(variationTextBox.Text);
+                item.variationUpdateCount = int.Parse(variationUpdateCountTextBox.Text);
                 item.objectName = objectNameTextBox.Text;
                 item.Aux = new(int.Parse(auxIndexTextBox.Text), auxDataTextBox.Text);
             }
@@ -637,10 +629,10 @@ namespace CKCharaDataEditor
         private void PasteButton_Click(object sender, EventArgs e)
         {
             Item item = _saveDataManager.PasteItem();
-            objectIdTextBox.Text = item.Info.objectID.ToString();
-            amoutTextBox.Text = item.Info.amount.ToString();
-            variationTextBox.Text = item.Info.variation.ToString();
-            variationUpdateCountTextBox.Text = item.Info.variationUpdateCount.ToString();
+            objectIdTextBox.Text = item.objectID.ToString();
+            amoutTextBox.Text = item.amount.ToString();
+            variationTextBox.Text = item.variation.ToString();
+            variationUpdateCountTextBox.Text = item.variationUpdateCount.ToString();
             objectNameTextBox.Text = item.objectName;
             auxIndexTextBox.Text = item.Aux.index.ToString();
             auxDataTextBox.Text = item.Aux.data;

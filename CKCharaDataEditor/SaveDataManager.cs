@@ -2,8 +2,10 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using CKCharaDataEditor.Model;
+using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Resource;
+using Windows.ApplicationModel.Activation;
 
 namespace CKCharaDataEditor
 {
@@ -84,14 +86,13 @@ namespace CKCharaDataEditor
                     items = [];
                     foreach (var (item, objectName, auxData) in limitedItems)
                     {
-                        var itemBase = new ItemInfo(
-                            objectID: item["objectID"]!.GetValue<int>(),
-                            amount: item["amount"]!.GetValue<int>(),
-                            variation: item["variation"]!.GetValue<int>(),
-                            variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
+                        int objectID = item["objectID"]!.GetValue<int>();
+                        int amount = item["amount"]!.GetValue<int>();
+                        int variation = item["variation"]!.GetValue<int>();
+                        int variationUpdateCount = item["variationUpdateCount"]!.GetValue<int>();
                         string objectInternalName = objectName!.GetValue<string>()!;
                         var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
-                        items.Add(new(itemBase, objectInternalName, itemAux));
+                        items.Add(new(objectID, amount, variation, variationUpdateCount, objectInternalName, itemAux));
                     }
                     return _saveData;
                 }
@@ -107,15 +108,14 @@ namespace CKCharaDataEditor
                     items = [];
                     foreach (var (item, objectName, auxData, locked) in limitedItems)
                     {
-                        var itemBase = new ItemInfo(
-                            objectID: item["objectID"]!.GetValue<int>(),
-                            amount: item["amount"]!.GetValue<int>(),
-                            variation: item["variation"]!.GetValue<int>(),
-                            variationUpdateCount: item["variationUpdateCount"]!.GetValue<int>());
+                        int objectID = item["objectID"]!.GetValue<int>();
+                        int amount = item["amount"]!.GetValue<int>();
+                        int variation = item["variation"]!.GetValue<int>();
+                        int variationUpdateCount = item["variationUpdateCount"]!.GetValue<int>();
                         string objectInternalName = objectName!.GetValue<string>()!;
                         var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
                         bool objectLocked = locked!.GetValue<bool>()!;
-                        items.Add(new(itemBase, objectInternalName, itemAux, objectLocked));
+                        items.Add(new(objectID, amount, variation, variationUpdateCount, objectInternalName, itemAux, objectLocked));
                     }
                     return _saveData;
                 }
@@ -168,7 +168,7 @@ namespace CKCharaDataEditor
 
         public void RewriteAllItemData()
         {
-            _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Info), StaticResource.SerializerOption));
+            _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i), StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.objectName), StaticResource.SerializerOption));
             _saveData["inventoryAuxData"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Aux), StaticResource.SerializerOption));
             BreakLastConnectedServerId();
@@ -220,7 +220,7 @@ namespace CKCharaDataEditor
 
         public void CalculateRecepeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
         {
-            int[] allFoodID = StaticResource.AllIngredients.Select(c => c.Info.objectID).ToArray();
+            int[] allFoodID = StaticResource.AllIngredients.Select(c => c.objectID).ToArray();
             List<Tuple<int, int>> allPairs = allFoodID // hack Variation内の順序決定アルゴリズムが不明のため、実際の順番は前後している場合がある
                 .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
                 .ToList();
@@ -228,7 +228,7 @@ namespace CKCharaDataEditor
 
             // 料理のコモンとレアのカテゴリIDリスト
             List<int> allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare })
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
                 .ToList();
             List<Tuple<int, int>> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
@@ -261,10 +261,10 @@ namespace CKCharaDataEditor
             if (outputResult is DialogResult.Yes)
             {
                 var foodBuilder = new StringBuilder();
-                foreach (var exceptRecipe in exceptRecipes)
+                foreach ((var foodA, var foodB) in exceptRecipes)
                 {
-                    string FoodA = StaticResource.AllIngredients.Single(f => f.Info.objectID == exceptRecipe.Item1).DisplayName;
-                    string FoodB = StaticResource.AllIngredients.Single(f => f.Info.objectID == exceptRecipe.Item2).DisplayName;
+                    string FoodA = StaticResource.AllIngredients.Single(f => f.objectID == foodA).DisplayName;
+                    string FoodB = StaticResource.AllIngredients.Single(f => f.objectID == foodB).DisplayName;
                     foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
 
@@ -287,7 +287,7 @@ namespace CKCharaDataEditor
         public void DeleteAllRecipes()
         {
             var allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare, c.Info.objectID + (int)CookRarity.Epic })
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare, c.objectID + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToList();
             var discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()

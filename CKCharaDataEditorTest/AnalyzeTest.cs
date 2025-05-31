@@ -4,9 +4,10 @@ using CKCharaDataEditor;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json;
-using CKFoodMakerTest.Model;
+using CKCharaDataEditorTest.Model;
+using CKCharaDataEditor.Model.Items;
 
-namespace CKFoodMakerTest
+namespace CKCharaDataEditorTest
 {
     [TestClass]
     public class AnalyzeTest
@@ -22,14 +23,14 @@ namespace CKFoodMakerTest
 
             // 料理のコモンとレアのカテゴリIDリスト
             List<int> allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.Info.objectID, c.Info.objectID + (int)CookRarity.Rare })
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
                 .ToList();
 
             // 全ての食材と料理の表示名を取得
             var ingredients = StaticResource.AllIngredients
                 .Concat(StaticResource.ObsoleteIngredients)   // レシピには載らないが料理は作成できるため含める
-                .Select(item => (objectID: item.Info.objectID, DisplayName: item.DisplayName))
+                .Select(item => (objectID: item.objectID, DisplayName: item.DisplayName))
                 .ToList();
 
 

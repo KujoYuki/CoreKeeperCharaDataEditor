@@ -78,8 +78,8 @@
             label16 = new Label();
             cattleComboBox = new ComboBox();
             label8 = new Label();
-            checkBox1 = new CheckBox();
-            numericUpDown1 = new NumericUpDown();
+            breedingCheckBox = new CheckBox();
+            stomachNumericUpDown = new NumericUpDown();
             cattleNameTextBox = new TextBox();
             label15 = new Label();
             label7 = new Label();
@@ -108,6 +108,10 @@
             SettingToolStripMenuItem = new ToolStripMenuItem();
             FilePathToolStripMenuItem = new ToolStripMenuItem();
             AboutToolStripMenuItem = new ToolStripMenuItem();
+            mealNumericUpDown = new NumericUpDown();
+            label2 = new Label();
+            toolTipCattleStomach = new ToolTip(components);
+            toolTipCattleMeal = new ToolTip(components);
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)amountConst).BeginInit();
@@ -115,8 +119,9 @@
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
             petTab.SuspendLayout();
             cattleTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -577,12 +582,14 @@
             // 
             // cattleTab
             // 
+            cattleTab.Controls.Add(mealNumericUpDown);
+            cattleTab.Controls.Add(label2);
             cattleTab.Controls.Add(cattleColorVariationComboBox);
             cattleTab.Controls.Add(label16);
             cattleTab.Controls.Add(cattleComboBox);
             cattleTab.Controls.Add(label8);
-            cattleTab.Controls.Add(checkBox1);
-            cattleTab.Controls.Add(numericUpDown1);
+            cattleTab.Controls.Add(breedingCheckBox);
+            cattleTab.Controls.Add(stomachNumericUpDown);
             cattleTab.Controls.Add(cattleNameTextBox);
             cattleTab.Controls.Add(label15);
             cattleTab.Controls.Add(label7);
@@ -595,7 +602,9 @@
             // 
             // cattleColorVariationComboBox
             // 
+            cattleColorVariationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             cattleColorVariationComboBox.FormattingEnabled = true;
+            cattleColorVariationComboBox.Items.AddRange(new object[] { "Color_0", "Color_1", "Color_2", "Color_3", "Color_4" });
             cattleColorVariationComboBox.Location = new Point(252, 16);
             cattleColorVariationComboBox.Name = "cattleColorVariationComboBox";
             cattleColorVariationComboBox.Size = new Size(122, 23);
@@ -612,6 +621,7 @@
             // 
             // cattleComboBox
             // 
+            cattleComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             cattleComboBox.FormattingEnabled = true;
             cattleComboBox.Location = new Point(46, 16);
             cattleComboBox.Name = "cattleComboBox";
@@ -627,22 +637,24 @@
             label8.TabIndex = 6;
             label8.Text = "種別";
             // 
-            // checkBox1
+            // breedingCheckBox
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(9, 187);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(50, 19);
-            checkBox1.TabIndex = 5;
-            checkBox1.Text = "繁殖";
-            checkBox1.UseVisualStyleBackColor = true;
+            breedingCheckBox.AutoSize = true;
+            breedingCheckBox.Location = new Point(9, 187);
+            breedingCheckBox.Name = "breedingCheckBox";
+            breedingCheckBox.Size = new Size(119, 19);
+            breedingCheckBox.TabIndex = 5;
+            breedingCheckBox.Text = "繁殖（大人のみ）";
+            breedingCheckBox.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown1
+            // stomachNumericUpDown
             // 
-            numericUpDown1.Location = new Point(9, 137);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(120, 23);
-            numericUpDown1.TabIndex = 4;
+            stomachNumericUpDown.Location = new Point(9, 137);
+            stomachNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            stomachNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            stomachNumericUpDown.Name = "stomachNumericUpDown";
+            stomachNumericUpDown.Size = new Size(120, 23);
+            stomachNumericUpDown.TabIndex = 4;
             // 
             // cattleNameTextBox
             // 
@@ -657,9 +669,9 @@
             label15.AutoSize = true;
             label15.Location = new Point(9, 119);
             label15.Name = "label15";
-            label15.Size = new Size(79, 15);
+            label15.Size = new Size(43, 15);
             label15.TabIndex = 2;
-            label15.Text = "家畜用満腹度";
+            label15.Text = "満腹度";
             // 
             // label7
             // 
@@ -860,16 +872,34 @@
             // FilePathToolStripMenuItem
             // 
             FilePathToolStripMenuItem.Name = "FilePathToolStripMenuItem";
-            FilePathToolStripMenuItem.Size = new Size(180, 22);
+            FilePathToolStripMenuItem.Size = new Size(174, 22);
             FilePathToolStripMenuItem.Text = "ファイルパス設定...(&F)";
             FilePathToolStripMenuItem.Click += FilePathToolStripMenuItem_Click;
             // 
             // AboutToolStripMenuItem
             // 
             AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
-            AboutToolStripMenuItem.Size = new Size(180, 22);
+            AboutToolStripMenuItem.Size = new Size(174, 22);
             AboutToolStripMenuItem.Text = "バージョン情報(&A)";
             AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
+            // 
+            // MealNumericUpDown
+            // 
+            mealNumericUpDown.Location = new Point(180, 137);
+            mealNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            mealNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            mealNumericUpDown.Name = "MealNumericUpDown";
+            mealNumericUpDown.Size = new Size(120, 23);
+            mealNumericUpDown.TabIndex = 11;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(180, 119);
+            label2.Name = "label2";
+            label2.Size = new Size(55, 15);
+            label2.TabIndex = 10;
+            label2.Text = "食事回数";
             // 
             // Form1
             // 
@@ -907,9 +937,10 @@
             petTab.ResumeLayout(false);
             cattleTab.ResumeLayout(false);
             cattleTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).EndInit();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -988,11 +1019,15 @@
         private TextBox cattleNameTextBox;
         private Label label15;
         private Label label7;
-        private NumericUpDown numericUpDown1;
-        private CheckBox checkBox1;
+        private NumericUpDown stomachNumericUpDown;
+        private CheckBox breedingCheckBox;
         private ComboBox cattleColorVariationComboBox;
         private Label label16;
         private ComboBox cattleComboBox;
         private Label label8;
+        private NumericUpDown mealNumericUpDown;
+        private Label label2;
+        private ToolTip toolTipCattleStomach;
+        private ToolTip toolTipCattleMeal;
     }
 }

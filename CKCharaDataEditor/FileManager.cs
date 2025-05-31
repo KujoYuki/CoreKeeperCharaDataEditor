@@ -62,7 +62,7 @@ namespace CKCharaDataEditor
             Settings.Default.Save();
         }
 
-        private string InitSaveFolderPath()
+        private static string InitSaveFolderPath()
         {
             try
             {
@@ -89,7 +89,7 @@ namespace CKCharaDataEditor
             }
         }
 
-        private string InitInstallFolderPath()
+        private static string InitInstallFolderPath()
         {
             //@"G:\SteamLibrary\steamapps\common\Core Keeper"; //Yukiさんのインストール先
             //@"C:\Program Files (x86)\Steam\steamapps\common\Core Keeper";   //一般的なインストール先

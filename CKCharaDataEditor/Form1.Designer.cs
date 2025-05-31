@@ -869,6 +869,7 @@
             AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             AboutToolStripMenuItem.Size = new Size(180, 22);
             AboutToolStripMenuItem.Text = "バージョン情報(&A)";
+            AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
             // Form1
             // 

@@ -6,7 +6,7 @@ using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
 using System.Text;
 
-// todo 経験値テーブルの解析とNumericをポイントからLvに
+// todo 経験値テーブルの解析とLv表示をLabelで追加
 // todo ペットも上記同様
 // todo 家畜の編集機能追加
 // ゲームインストールフォルダを指定して、日本語リソースを取得する
@@ -17,7 +17,6 @@ namespace CKCharaDataEditor
 {
     public partial class Form1 : Form
     {
-
         static readonly string _errorLogFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"ErrorStackTrace.txt");
 
         private FileManager _fileManager = FileManager.Instance;
@@ -214,8 +213,8 @@ namespace CKCharaDataEditor
                     itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
-            
-            itemListBox.SelectedIndex = selectedInventoryIndex < itemListBox.Items.Count? selectedInventoryIndex : itemListBox.Items.Count - 1;
+
+            itemListBox.SelectedIndex = selectedInventoryIndex < itemListBox.Items.Count ? selectedInventoryIndex : itemListBox.Items.Count - 1;
             itemListBox.TopIndex = topIndex < itemListBox.Items.Count ? topIndex : itemListBox.Items.Count - 1;
 
             LoadPanel();
@@ -318,7 +317,7 @@ namespace CKCharaDataEditor
             return true;
         }
 
-        private bool IsRunningGame()
+        private static bool IsRunningGame()
         {
             Process[] processes = Process.GetProcesses();
             foreach (Process process in processes)
@@ -785,6 +784,12 @@ namespace CKCharaDataEditor
             }
         }
 
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var versionForm = new AboutBox();
+            versionForm.ShowDialog();
+        }
+
         private void cattleNameTextBox_TextChanged(object sender, EventArgs e)
         {
             string text = cattleNameTextBox.Text;
@@ -794,7 +799,7 @@ namespace CKCharaDataEditor
             {
                 while (Encoding.UTF8.GetByteCount(text) > 64)
                 {
-                    text = text.Substring(0, text.Length - 1);
+                    text = text[..^1];
                 }
                 cattleNameTextBox.Text = text;
                 cattleNameTextBox.SelectionStart = text.Length; // キャレット位置を末尾に設定

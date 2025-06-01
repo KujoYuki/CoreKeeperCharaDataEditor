@@ -216,9 +216,10 @@ namespace CKCharaDataEditor
             Item selectedItem = _saveDataManager.Items[itemListBox.SelectedIndex];
             int selectedObjectID = selectedItem.objectID;
             int variation = selectedItem.variation;
+            int amount = selectedItem.amount;
 
             objectIdTextBox.Text = selectedObjectID.ToString();
-            amoutTextBox.Text = selectedItem.amount.ToString();
+            amoutTextBox.Text = amount.ToString();
             objectLockedCheckBox.Checked = selectedItem.Locked;
             variationTextBox.Text = variation.ToString();
             variationUpdateCountTextBox.Text = selectedItem.variationUpdateCount.ToString();
@@ -241,19 +242,23 @@ namespace CKCharaDataEditor
                     CookRarity.Epic => 2,
                     _ => throw new NotImplementedException(),
                 };
-                createdNumericNo.Value = selectedItem.amount;
+                createdNumericNo.Value = amount;
             }
             petEditControl.PetItem = selectedItem;
 
             // 家畜の場合は家畜情報をセットする
             if (Cattle.IsCattle(selectedObjectID))
             {
-                //cattleComboBox
-                //cattleColorVariationComboBox
-                //cattleNameTextBox
-                //stomachNumericUpDown
-                //mealNumericUpDown
-                //breedingCheckBox
+                //cattleComboBox.SelectedIndex
+                cattleColorVariationComboBox.SelectedIndex = variation;
+                //cattleNameTextBox.Text
+                stomachNumericUpDown.Value = amount;
+                //mealNumericUpDown.Value
+                //breedingCheckBox.Text
+            }
+            else
+            {
+                //todo 家畜タブの表示をクリア
             }
         }
 

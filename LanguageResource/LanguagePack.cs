@@ -20,9 +20,12 @@ namespace LanguageResource
 
             // 新規TSVファイルに出力
             string outputPath = Path.Combine(Environment.CurrentDirectory, "LanguageResource.tsv");
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // JISエンコードを追加
-            File.WriteAllLines(outputPath, outputNumericLines, Encoding.GetEncoding("Shift-JIS"));
-
+            
+            //依存パッケージが増えるのでShift-JISは使わないことにする
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // JISエンコードを追加 
+            //File.WriteAllLines(outputPath, outputNumericLines, Encoding.GetEncoding("Shift-JIS"));
+            
+            File.WriteAllLines(outputPath, outputNumericLines, Encoding.UTF8);
             Console.WriteLine($"TSVファイルが出力されました: {outputPath}");
         }
 

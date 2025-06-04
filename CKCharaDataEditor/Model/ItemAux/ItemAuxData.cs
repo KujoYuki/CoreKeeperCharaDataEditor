@@ -6,7 +6,6 @@ namespace CKCharaDataEditor.Model.ItemAux
 {
     public record ItemAuxData
     {
-        // hack Managerは外から使うようにする
         public AuxPrefabManager? AuxPrefabManager = null;
 
         #region Property

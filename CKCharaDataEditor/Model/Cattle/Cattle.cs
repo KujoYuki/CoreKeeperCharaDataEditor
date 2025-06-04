@@ -6,53 +6,114 @@ namespace CKCharaDataEditor.Model.Cattle
     public record Cattle : Item
     {
         public int Stomach => amount;
-        public bool IsAdult => CattleDic[objectID].IsAdult;
+        public int Color => variation;
+        public bool IsAdult => Define[objectID].IsAdult;
         public bool EnableBreeding
         {
             get => EnableBreeding;
             set => EnableBreeding = IsAdult ? value : false;
         }
 
-        //hack 元データはItemと変わらんのでインデクサをAuxManger使って絞りだした方が健全で済みそう
-        public CattleType Type { get; set; }
-        public string Name { get; set; }
-        public int Meal { get; set; }
-        
-        public static readonly Dictionary<int, (CattleType CattleType, string ObjectName, bool IsAdult)> CattleDic = new()
+        public CattleType Type 
         {
-            { 1300, (CattleType.Cow, CattleType.Cow.ToString(), true) },
-            { 1304, (CattleType.CowBaby, CattleType.CowBaby.ToString(), false) },
-            { 1302, (CattleType.Bambuck, CattleType.Bambuck.ToString(), true) },
-            { 1305, (CattleType.BambuckBaby, CattleType.BambuckBaby.ToString(), false) },
-            { 1303, (CattleType.RolyPoly, CattleType.RolyPoly.ToString(), true) },
-            { 1306, (CattleType.RolyPolyBaby, CattleType.RolyPolyBaby.ToString(), false) },
-            { 1307, (CattleType.Turtle, CattleType.Turtle.ToString(), true) },
-            { 1308, (CattleType.TurtleBaby, CattleType.TurtleBaby.ToString(), false) },
-            { 1309, (CattleType.Dodo, CattleType.Dodo.ToString(), true) },
-            { 1310, (CattleType.DodoBaby, CattleType.DodoBaby.ToString(), false) },
-            { 1311, (CattleType.Camel, CattleType.Camel.ToString(), true) },
-            { 1312, (CattleType.CamelBaby, CattleType.CamelBaby.ToString(), true) },
+            get
+            {
+                return Define[objectID].CattleType;
+            }
+            set 
+            {
+                objectID = (int)value;
+            }
+        }
+        public string Name
+        {
+            get 
+            {
+                return Aux.AuxPrefabManager!.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault()!;
+            }
+            set
+            {
+                Aux.AuxPrefabManager!.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
+            } 
+        }
+        public int Meal
+        {
+            get
+            {
+                return Convert.ToInt32(Aux.AuxPrefabManager!.GetData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash)!.FirstOrDefault()!);
+            }
+            set
+            {
+                Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash, [value.ToString()]);
+            }
+        }
+
+        public bool Breeding
+        {
+            get
+            {
+                return Aux.AuxPrefabManager!.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash)!.FirstOrDefault() == "False";
+            }
+            set
+            {
+                if (IsAdult)
+                {
+                    // データ側がbool値が逆になってるので注意
+                    Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash, [value ? "False" : "True"]);
+                }
+                
+            }
+        }
+
+        public static readonly Dictionary<int, (CattleType CattleType, string ObjectName, bool IsAdult)> Define = new()
+        {
+            { (int)CattleType.Cow, (CattleType.Cow, CattleType.Cow.ToString(), true) },
+            { (int)CattleType.CowBaby, (CattleType.CowBaby, CattleType.CowBaby.ToString(), false) },
+            { (int)CattleType.Bambuck, (CattleType.Bambuck, CattleType.Bambuck.ToString(), true) },
+            { (int)CattleType.BambuckBaby, (CattleType.BambuckBaby, CattleType.BambuckBaby.ToString(), false) },
+            { (int)CattleType.RolyPoly, (CattleType.RolyPoly, CattleType.RolyPoly.ToString(), true) },
+            { (int)CattleType.RolyPolyBaby, (CattleType.RolyPolyBaby, CattleType.RolyPolyBaby.ToString(), false) },
+            { (int)CattleType.Turtle, (CattleType.Turtle, CattleType.Turtle.ToString(), true) },
+            { (int)CattleType.TurtleBaby, (CattleType.TurtleBaby, CattleType.TurtleBaby.ToString(), false) },
+            { (int)CattleType.Dodo, (CattleType.Dodo, CattleType.Dodo.ToString(), true) },
+            { (int)CattleType.DodoBaby, (CattleType.DodoBaby, CattleType.DodoBaby.ToString(), false) },
+            { (int)CattleType.Camel, (CattleType.Camel, CattleType.Camel.ToString(), true) },
+            { (int)CattleType.CamelBaby, (CattleType.CamelBaby, CattleType.CamelBaby.ToString(), true) },
         };
 
         public static bool IsCattle(int objectID)
         {
-            return CattleDic.ContainsKey(objectID);
+            return Define.ContainsKey(objectID);
         }
 
-        // hack CattleにItemAuxData.Defaultは存在しないので、適切に設定する
-        //public static new Cattle Default = new(CattleType.Cow, 0, 0, 0, string.Empty, ItemAuxData.Default);
-
-        public Cattle(CattleType cattleType, int stomach, int variation, int variationUpdateCount, string objectName, ItemAuxData aux, bool locked = false) 
+        public Cattle(CattleType cattleType,string name, int meal, bool breeding, int stomach, int variation, int variationUpdateCount, string objectName, ItemAuxData aux, bool locked = false) 
             : base((int)cattleType, stomach, variation, 0, cattleType.ToString(), aux, locked)
         {
-            // hack Auxnoの中にあるパラメータなので不要になりそう
-            aux.GetCattleData(out string name, out int meal, out bool? breeding);
             Name = name;
             Meal = meal;
-            if (breeding != null)
-            {
-                EnableBreeding = breeding ?? false;
-            }
+            Breeding = breeding;
         }
+
+        //hack 次はここから
+        //public Cattle ConvertFrom(Item item)
+        //{
+        //    if (IsCattle(item.objectID))
+        //    {
+        //        throw new InvalidCastException("Cannot convert Item to Cattle.");
+        //    }
+
+        //    // ItemからCattleに変換する際、デフォルトを経由してAuxを定義したい。
+        //    return new Cattle()
+        //    {
+        //        objectID = item.objectID,
+        //        variation = item.variation,
+        //        amount = item.amount,
+        //        variationUpdateCount = item.variationUpdateCount,
+        //        Aux = item.Aux,
+        //    };
+        //}
+
+        /// デフォルトの牛を生成します。ItemAuxDataが空だとNameをsetする時に失敗する。定義するなら中身も用意すること
+        //public static new Cattle Default = new(CattleType.Cow, string.Empty, 0, true, 0, 0, 0, "Cow", ItemAuxData.Default);
     }
 }

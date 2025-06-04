@@ -249,9 +249,10 @@ namespace CKCharaDataEditor
             // ‰Æ’{‚Ìê‡‚Í‰Æ’{î•ñ‚ğƒZƒbƒg‚·‚é
             if (Cattle.IsCattle(selectedObjectID))
             {
+                //var cattle = (Cattle)selectedItem;
                 //cattleComboBox.SelectedIndex
                 cattleColorVariationComboBox.SelectedIndex = variation;
-                //cattleNameTextBox.Text
+                //cattleNameTextBox.Text = cattle.Name;
                 stomachNumericUpDown.Value = amount;
                 //mealNumericUpDown.Value
                 //breedingCheckBox.Text

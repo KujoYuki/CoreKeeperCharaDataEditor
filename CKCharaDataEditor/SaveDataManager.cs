@@ -5,7 +5,6 @@ using CKCharaDataEditor.Model;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Resource;
-using Windows.ApplicationModel.Activation;
 
 namespace CKCharaDataEditor
 {
@@ -16,7 +15,7 @@ namespace CKCharaDataEditor
     {
         private static SaveDataManager? _instance;
         public static SaveDataManager Instance => _instance ??= new();
-        private int CharaDataFormatVersion;
+        private int CharaDataFormatVersion => GetCharacterDataVersion();
         private Item? _copiedItem;
         private Item[]? _copiedInventory;
         private string _saveDataPath = string.Empty;
@@ -72,7 +71,6 @@ namespace CKCharaDataEditor
 
                 _saveData = JsonNode.Parse(saveDataContents)!.AsObject();
 
-                CharaDataFormatVersion = GetCharacterDataVersion();
                 var inventoryBase = _saveData["inventory"]!.AsArray();
                 var inventoryName = _saveData["inventoryObjectNames"]!.AsArray();
                 var inventoryAuxData = _saveData["inventoryAuxData"]!.AsArray();

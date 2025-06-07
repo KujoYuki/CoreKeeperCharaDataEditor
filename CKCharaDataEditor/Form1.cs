@@ -447,7 +447,7 @@ namespace CKCharaDataEditor
                         Meal = (int)mealNumericUpDown.Value,
                         Breeding = breedingCheckBox.Checked,
                     };
-                    _saveDataManager.WriteItemData(itemListBox.SelectedIndex, newCattle);
+                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, newCattle);
                     break;
                 default:
                     throw new InvalidOperationException();

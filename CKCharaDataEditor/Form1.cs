@@ -8,9 +8,9 @@ using System.Text;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.Cattle;
 
-// todo 経験値テーブルの解析とLv表示をLabelで追加
-// todo ペットも上記同様
-// todo 家畜の編集機能実装
+// todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
+// todo ペットも家畜同様リファクタリング
+// todo 非推奨のアイテム書き込みを移行する
 // todo 料理関連のロジックをForm1から分離して、別のクラスにする
 
 namespace CKCharaDataEditor
@@ -144,7 +144,7 @@ namespace CKCharaDataEditor
             cattleComboBox.Items.AddRange(Enum.GetNames<CattleType>());
             Dictionary<string, int> cattles = Enum.GetNames<CattleType>()
                 .Zip(Enum.GetValues<CattleType>().Select(type => (int)type).ToArray())
-                .Select(values => (obejectName:values.First, id:values.Second))
+                .Select(values => (obejectName: values.First, id: values.Second))
                 .ToDictionary();
             int[] cattleIds = Enum.GetValues<CattleType>().Select(type => (int)type).ToArray();
             for (int i = 0; i < cattleComboBox.Items.Count; i++)
@@ -852,6 +852,25 @@ namespace CKCharaDataEditor
                 cattleNameTextBox.Text = text;
                 cattleNameTextBox.SelectionStart = text.Length; // キャレット位置を末尾に設定
             }
+        }
+
+        private void cattleComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int colorIndex = cattleColorVariationComboBox.SelectedIndex;
+            cattleColorVariationComboBox.Items.Clear();
+
+            if (cattleComboBox.SelectedIndex < 0) return;
+
+            CattleType cattleType = Enum.GetValues<CattleType>().ElementAt(cattleComboBox.SelectedIndex);
+            if (cattleType.ToString().EndsWith("Baby"))
+            {
+                cattleType = Cattle.CattleSpecies[cattleType];
+            }
+            string[] colors = Enumerable.Range(0, 5)
+                .Select(i => Cattle.Colors[(cattleType, i)])
+                .ToArray();
+            cattleColorVariationComboBox.Items.AddRange(colors);
+            cattleColorVariationComboBox.SelectedIndex = colorIndex;
         }
     }
 }

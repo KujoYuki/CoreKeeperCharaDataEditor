@@ -645,6 +645,7 @@
             cattleComboBox.Name = "cattleComboBox";
             cattleComboBox.Size = new Size(122, 23);
             cattleComboBox.TabIndex = 7;
+            cattleComboBox.SelectedIndexChanged += cattleComboBox_SelectedIndexChanged;
             // 
             // label8
             // 

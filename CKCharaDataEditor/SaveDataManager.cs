@@ -1,10 +1,10 @@
-﻿using System.Text;
+﻿using CKCharaDataEditor.Model;
+using CKCharaDataEditor.Model.ItemAux;
+using CKCharaDataEditor.Model.Items;
+using CKCharaDataEditor.Resource;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using CKCharaDataEditor.Model;
-using CKCharaDataEditor.Model.Items;
-using CKCharaDataEditor.Model.ItemAux;
-using CKCharaDataEditor.Resource;
 
 namespace CKCharaDataEditor
 {
@@ -131,6 +131,7 @@ namespace CKCharaDataEditor
         }
 
         // 補助データ込みの書き込みメソッド
+        [Obsolete]
         public bool WriteItemData(int insertIndex, ItemInfo itemBase, string objectName, ItemAuxData? auxData = null, bool locked = false)
         {
             auxData ??= ItemAuxData.Default;
@@ -146,19 +147,35 @@ namespace CKCharaDataEditor
             BreakLastConnectedServerId();
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
-#if DEBUG
-            // 確認用に別名ファイルで作成
-            var verifyBuilder = new StringBuilder();
-            verifyBuilder.AppendLine($"insertIndex = {insertIndex}");
-            verifyBuilder.AppendLine($"objectName = {objectName}");
-            verifyBuilder.AppendLine($"itemBase = {JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption)}");
-            if (auxData != ItemAuxData.Default)
+            // 書き込む前に元jsonの構文に戻す
+            changedJson = RestoreJsonString(changedJson);
+
+            File.WriteAllText(SaveDataPath, changedJson);
+            success = true;
+            return success;
+        }
+
+        /// <summary>
+        /// アイテムのデータを書き込みます。
+        /// </summary>
+        /// <param name="insertIndex">インベントリ内の上書き位置</param>
+        /// <param name="item">新しいアイテム</param>
+        /// <returns></returns>
+        public bool WriteItemData(int insertIndex, Item item)
+        {
+            item.Aux ??= ItemAuxData.Default;
+            var success = false;
+            ItemInfo itemBase = new(item.objectID, item.amount, item.variation, item.variationUpdateCount);
+            _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
+            _saveData["inventoryObjectNames"]![insertIndex] = item.objectName;
+            _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(item.Aux, StaticResource.SerializerOption));
+            if (CharaDataFormatVersion >= 11)
             {
-                verifyBuilder.AppendLine($"auxData = {JsonSerializer.Serialize(auxData, StaticResource.SerializerOption)}");
+                _saveData["lockedObjects"]![insertIndex] = item.Locked;
             }
-            MessageBox.Show($"{verifyBuilder}", "書き込み内容確認");
-            _saveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
-#endif
+
+            BreakLastConnectedServerId();
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
             // 書き込む前に元jsonの構文に戻す
             changedJson = RestoreJsonString(changedJson);

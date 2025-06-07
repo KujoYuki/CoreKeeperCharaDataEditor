@@ -37,8 +37,16 @@ namespace CKCharaDataEditor.Model.Cattle
         #endregion
 
         #region properties
-        public int Color => variation;
-        public int Stomach => amount;
+        public int Color
+        {
+            get => variation;
+            set => variation = value;
+        }
+        public int Stomach
+        {
+            get => amount;
+            set => amount = value;
+        }
         public string Name
         {
             get
@@ -74,7 +82,6 @@ namespace CKCharaDataEditor.Model.Cattle
                     // データ側がbool値が逆になってるので注意
                     Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash, [value ? "False" : "True"]);
                 }
-
             }
         }
         #endregion

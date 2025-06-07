@@ -51,6 +51,8 @@ namespace CKCharaDataEditor
                 string firstSaveDataPath = _fileManager.SaveFilePaths.First().FullName;
                 LoadSlots(firstSaveDataPath);
             }
+
+            InitCattleCategory();
         }
 
         private void CheckUpdate()
@@ -135,6 +137,26 @@ namespace CKCharaDataEditor
                 .ToArray();
             cookedCategoryComboBox.Items.AddRange(cookedCategoryNames);
             cookedCategoryComboBox.SelectedIndex = 0;
+        }
+
+        private void InitCattleCategory()
+        {
+            cattleComboBox.Items.AddRange(Enum.GetNames<CattleType>());
+            Dictionary<string, int> cattles = Enum.GetNames<CattleType>()
+                .Zip(Enum.GetValues<CattleType>().Select(type => (int)type).ToArray())
+                .Select(values => (obejectName:values.First, id:values.Second))
+                .ToDictionary();
+            int[] cattleIds = Enum.GetValues<CattleType>().Select(type => (int)type).ToArray();
+            for (int i = 0; i < cattleComboBox.Items.Count; i++)
+            {
+                string objectName = cattleComboBox.Items[i]!.ToString()!;
+                string id = cattles[objectName].ToString();
+                if (_fileManager.LocalizationData.TryGetValue(id, out string[]? translateResources))
+                {
+                    string displayName = translateResources.ElementAt(1);
+                    cattleComboBox.Items[i] = displayName;
+                }
+            }
         }
 
         private void LoadSlots(string filePath)
@@ -244,22 +266,41 @@ namespace CKCharaDataEditor
                 };
                 createdNumericNo.Value = amount;
             }
+
+            // hack ペットの方も家畜と同様に処理する
             petEditControl.PetItem = selectedItem;
 
             // 家畜の場合は家畜情報をセットする
             if (Cattle.IsCattle(selectedObjectID))
             {
-                //var cattle = (Cattle)selectedItem;
-                //cattleComboBox.SelectedIndex
+                var cattle = new Cattle(selectedItem);
+                int cattleTypeIndex = Array.IndexOf(Enum.GetValues<CattleType>(), cattle.Type);
+                cattleComboBox.SelectedIndex = cattleTypeIndex;
                 cattleColorVariationComboBox.SelectedIndex = variation;
-                //cattleNameTextBox.Text = cattle.Name;
-                stomachNumericUpDown.Value = amount;
-                //mealNumericUpDown.Value
-                //breedingCheckBox.Text
+                cattleNameTextBox.Text = cattle.Name;
+                stomachNumericUpDown.Value = cattle.Stomach;
+                mealNumericUpDown.Value = cattle.Meal;
+                if (cattle.IsAdult)
+                {
+                    breedingCheckBox.Enabled = true;
+                    breedingCheckBox.Checked = cattle.Breeding;
+                }
+                else
+                {
+                    breedingCheckBox.Enabled = false;
+                    breedingCheckBox.Checked = false;
+                }
             }
             else
             {
-                //todo 家畜タブの表示をクリア
+                // 家畜タブの表示をクリア
+                cattleComboBox.SelectedIndex = -1;
+                cattleColorVariationComboBox.SelectedIndex = -1;
+                cattleNameTextBox.Text = string.Empty;
+                stomachNumericUpDown.Value = 0;
+                mealNumericUpDown.Value = 0;
+                breedingCheckBox.Enabled = true;
+                breedingCheckBox.Checked = false;
             }
         }
 
@@ -394,11 +435,20 @@ namespace CKCharaDataEditor
                     break;
 
                 case "cattleTab":
-                    // todo 家畜の書き込み処理
-                    
-
+                    int objectID = (int?)Enum.GetValues<CattleType>()[cattleComboBox.SelectedIndex] ?? (int)CattleType.Cow;
+                    int Color = cattleColorVariationComboBox.SelectedIndex == -1 ? 0 : cattleColorVariationComboBox.SelectedIndex;
+                    Cattle newCattle = new Cattle(Cattle.Default) with
+                    {
+                        objectID = objectID,
+                        Color = Color,
+                        Stomach = (int)stomachNumericUpDown.Value,
+                        objectName = ((CattleType)objectID).ToString(),
+                        Name = cattleNameTextBox.Text,
+                        Meal = (int)mealNumericUpDown.Value,
+                        Breeding = breedingCheckBox.Checked,
+                    };
+                    _saveDataManager.WriteItemData(itemListBox.SelectedIndex, newCattle);
                     break;
-
                 default:
                     throw new InvalidOperationException();
             }

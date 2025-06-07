@@ -74,6 +74,8 @@
             petTab = new TabPage();
             petEditControl = new CKCharaDataEditor.Control.PetEditControl();
             cattleTab = new TabPage();
+            mealNumericUpDown = new NumericUpDown();
+            label2 = new Label();
             cattleColorVariationComboBox = new ComboBox();
             label16 = new Label();
             cattleComboBox = new ComboBox();
@@ -108,8 +110,6 @@
             SettingToolStripMenuItem = new ToolStripMenuItem();
             FilePathToolStripMenuItem = new ToolStripMenuItem();
             AboutToolStripMenuItem = new ToolStripMenuItem();
-            mealNumericUpDown = new NumericUpDown();
-            label2 = new Label();
             toolTipCattleStomach = new ToolTip(components);
             toolTipCattleMeal = new ToolTip(components);
             itemEditTabControl.SuspendLayout();
@@ -119,9 +119,9 @@
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
             petTab.SuspendLayout();
             cattleTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             menuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -600,6 +600,24 @@
             cattleTab.Text = "家畜";
             cattleTab.UseVisualStyleBackColor = true;
             // 
+            // mealNumericUpDown
+            // 
+            mealNumericUpDown.Location = new Point(180, 137);
+            mealNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            mealNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            mealNumericUpDown.Name = "mealNumericUpDown";
+            mealNumericUpDown.Size = new Size(120, 23);
+            mealNumericUpDown.TabIndex = 11;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(180, 119);
+            label2.Name = "label2";
+            label2.Size = new Size(55, 15);
+            label2.TabIndex = 10;
+            label2.Text = "食事回数";
+            // 
             // cattleColorVariationComboBox
             // 
             cattleColorVariationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -883,24 +901,6 @@
             AboutToolStripMenuItem.Text = "バージョン情報(&A)";
             AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
-            // MealNumericUpDown
-            // 
-            mealNumericUpDown.Location = new Point(180, 137);
-            mealNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            mealNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
-            mealNumericUpDown.Name = "MealNumericUpDown";
-            mealNumericUpDown.Size = new Size(120, 23);
-            mealNumericUpDown.TabIndex = 11;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(180, 119);
-            label2.Name = "label2";
-            label2.Size = new Size(55, 15);
-            label2.TabIndex = 10;
-            label2.Text = "食事回数";
-            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
@@ -937,10 +937,10 @@
             petTab.ResumeLayout(false);
             cattleTab.ResumeLayout(false);
             cattleTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).EndInit();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

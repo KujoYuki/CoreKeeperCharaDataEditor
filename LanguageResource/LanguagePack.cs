@@ -42,13 +42,12 @@ namespace LanguageResource
 
             if (!File.Exists(localizationPath) || !File.Exists(objectIdPath))
             {
-                string errorMessage = $"インストールフォルダ内の指定されたファイルが見つかりません。\n" +
-                    $"パスを確認するかゲームを再インストールしてください。";
                 // hack 例外をロガーに投げる
-
+                //string errorMessage = $"インストールフォルダ内の指定されたファイルが見つかりません。\n" +
+                //    $"パスを確認するかゲームを再インストールしてください。";
+                
                 // 空の辞書を返す
                 return new Dictionary<string, string[]>();
-
             }
 
             var objectIdDic = File.ReadAllText(objectIdPath).Trim()

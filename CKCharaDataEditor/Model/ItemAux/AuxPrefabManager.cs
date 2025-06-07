@@ -19,9 +19,9 @@ namespace CKCharaDataEditor.Model.ItemAux
                 .ToList()!;
         }
 
-        public AuxPrefabManager()
+        public AuxPrefabManager(List<AuxPrefab> prefabs)
         {
-            Prefabs = new List<AuxPrefab>();
+            Prefabs = prefabs;
         }
 
         //Addメソッドを利用した無からの作成
@@ -72,7 +72,7 @@ namespace CKCharaDataEditor.Model.ItemAux
             UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [petName]);
         }
 
-        public IEnumerable<string>? GetData(ulong prefabHash, ulong stableTypeHash)
+        public IEnumerable<string> GetData(ulong prefabHash, ulong stableTypeHash)
         {
             try
             {
@@ -82,11 +82,8 @@ namespace CKCharaDataEditor.Model.ItemAux
             }
             catch (Exception)
             {
-                // 例外が発生した場合はnullを返す
-                // 例えば、prefabHashやstableTypeHashが見つからない場合など
-                // ここではログ出力などは行わない
+                throw new InvalidOperationException($"Data not found for Prefab:{prefabHash}, StableType:{stableTypeHash}");
             }
-            return null;
         }
 
         public static AuxPrefabManager CreatePet(string petName, int color, IEnumerable<PetTalent> talents)
@@ -97,7 +94,7 @@ namespace CKCharaDataEditor.Model.ItemAux
             var petColorStable = new AuxStableType(AuxHash.PetColorHash, new[] { color.ToString() });
             var petTalentsStable = new AuxStableType(AuxHash.PetTalentsHash, talents.Select(t => t.ToJsonString()));
             prefabs.Add(new AuxPrefab(AuxHash.PetGroupHash, new[] { petColorStable, petTalentsStable }));
-            return new AuxPrefabManager() { Prefabs = prefabs };
+            return new AuxPrefabManager(prefabs);
         }
 
         public string GetJsonString()

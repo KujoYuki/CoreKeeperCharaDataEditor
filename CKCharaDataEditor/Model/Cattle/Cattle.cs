@@ -5,65 +5,7 @@ namespace CKCharaDataEditor.Model.Cattle
 {
     public record Cattle : Item
     {
-        public int Stomach => amount;
-        public int Color => variation;
-        public bool IsAdult => Define[objectID].IsAdult;
-        public bool EnableBreeding
-        {
-            get => EnableBreeding;
-            set => EnableBreeding = IsAdult ? value : false;
-        }
-
-        public CattleType Type 
-        {
-            get
-            {
-                return Define[objectID].CattleType;
-            }
-            set 
-            {
-                objectID = (int)value;
-            }
-        }
-        public string Name
-        {
-            get 
-            {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault()!;
-            }
-            set
-            {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
-            } 
-        }
-        public int Meal
-        {
-            get
-            {
-                return Convert.ToInt32(Aux.AuxPrefabManager!.GetData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash)!.FirstOrDefault()!);
-            }
-            set
-            {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash, [value.ToString()]);
-            }
-        }
-
-        public bool Breeding
-        {
-            get
-            {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash)!.FirstOrDefault() == "False";
-            }
-            set
-            {
-                if (IsAdult)
-                {
-                    // データ側がbool値が逆になってるので注意
-                    Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash, [value ? "False" : "True"]);
-                }
-                
-            }
-        }
+        #region static
 
         public static readonly Dictionary<int, (CattleType CattleType, string ObjectName, bool IsAdult)> Define = new()
         {
@@ -81,39 +23,83 @@ namespace CKCharaDataEditor.Model.Cattle
             { (int)CattleType.CamelBaby, (CattleType.CamelBaby, CattleType.CamelBaby.ToString(), true) },
         };
 
+        public static readonly List<AuxPrefab> DefaultCattlePrefabs =
+        [
+            new AuxPrefab(AuxHash.ItemNameGroupHash, [new AuxStableType(AuxHash.ItemNameHash, [""])]),
+            new AuxPrefab(AuxHash.CattleMealGroupHash, [new AuxStableType(AuxHash.CattleMealHash, ["0"])]),
+            new AuxPrefab(AuxHash.CattleBreedingGroupHash, [new AuxStableType(AuxHash.CattleBreedingHash, ["False"])]),
+        ];
+
+        public static readonly ItemAuxData DefaultAdultCattle = new(0, new AuxPrefabManager(DefaultCattlePrefabs!));
+
+        public static new Cattle Default = new Cattle(new Item((int)CattleType.Cow, 0, 0, 0, CattleType.Cow.ToString(), DefaultAdultCattle));
+
+        #endregion
+
+        #region properties
+        public int Color => variation;
+        public int Stomach => amount;
+        public string Name
+        {
+            get
+            {
+                return Aux.AuxPrefabManager!.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault()!;
+            }
+            set
+            {
+                Aux.AuxPrefabManager!.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
+            }
+        }
+        public int Meal
+        {
+            get
+            {
+                return Convert.ToInt32(Aux.AuxPrefabManager!.GetData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash)!.FirstOrDefault()!);
+            }
+            set
+            {
+                Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash, [value.ToString()]);
+            }
+        }
+        public bool Breeding
+        {
+            get
+            {
+                return Aux.AuxPrefabManager!.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash)!.FirstOrDefault() == "False";
+            }
+            set
+            {
+                if (IsAdult)
+                {
+                    // データ側がbool値が逆になってるので注意
+                    Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash, [value ? "False" : "True"]);
+                }
+
+            }
+        }
+        #endregion
+
         public static bool IsCattle(int objectID)
         {
             return Define.ContainsKey(objectID);
         }
 
-        public Cattle(CattleType cattleType,string name, int meal, bool breeding, int stomach, int variation, int variationUpdateCount, string objectName, ItemAuxData aux, bool locked = false) 
-            : base((int)cattleType, stomach, variation, 0, cattleType.ToString(), aux, locked)
+        public bool IsAdult => Define[objectID].IsAdult;
+
+        /// <summary>
+        /// alias objectID for CattleType
+        /// </summary>
+        public CattleType Type
         {
-            Name = name;
-            Meal = meal;
-            Breeding = breeding;
+            get
+            {
+                return Define[objectID].CattleType;
+            }
+            set
+            {
+                objectID = (int)value;
+            }
         }
-
-        //hack 次はここから
-        //public Cattle ConvertFrom(Item item)
-        //{
-        //    if (IsCattle(item.objectID))
-        //    {
-        //        throw new InvalidCastException("Cannot convert Item to Cattle.");
-        //    }
-
-        //    // ItemからCattleに変換する際、デフォルトを経由してAuxを定義したい。
-        //    return new Cattle()
-        //    {
-        //        objectID = item.objectID,
-        //        variation = item.variation,
-        //        amount = item.amount,
-        //        variationUpdateCount = item.variationUpdateCount,
-        //        Aux = item.Aux,
-        //    };
-        //}
-
-        /// デフォルトの牛を生成します。ItemAuxDataが空だとNameをsetする時に失敗する。定義するなら中身も用意すること
-        //public static new Cattle Default = new(CattleType.Cow, string.Empty, 0, true, 0, 0, 0, "Cow", ItemAuxData.Default);
+        public Cattle(Item item) : base(item) { }
     }
 }

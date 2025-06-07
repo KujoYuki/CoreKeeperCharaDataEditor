@@ -75,7 +75,7 @@ namespace CKCharaDataEditor
                 var inventoryName = _saveData["inventoryObjectNames"]!.AsArray();
                 var inventoryAuxData = _saveData["inventoryAuxData"]!.AsArray();
 
-                if (CharaDataFormatVersion < 12)
+                if (CharaDataFormatVersion < 11)
                 {
                     var limitedItems = inventoryBase
                     .Zip(inventoryName, inventoryAuxData)
@@ -138,7 +138,11 @@ namespace CKCharaDataEditor
             _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"]![insertIndex] = objectName;
             _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(auxData, StaticResource.SerializerOption));
-            _saveData["lockedObjects"]![insertIndex] = locked;
+            if(CharaDataFormatVersion >= 11)
+            {
+                _saveData["lockedObjects"]![insertIndex] = locked;
+            }
+            
             BreakLastConnectedServerId();
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 

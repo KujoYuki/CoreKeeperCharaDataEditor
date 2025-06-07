@@ -57,7 +57,7 @@ namespace CKCharaDataEditorTest
             var aux = new ItemAuxData(10, LawPetData);  //index‚Í”CˆÓ‚Ì’l
             aux.GetPetData(out string name, out int color, out var Talents);
 
-            var manager = new AuxPrefabManager();
+            var manager = new AuxPrefabManager(new List<AuxPrefab>());
             manager.AddPrefab([new AuxPrefab(AuxHash.PetGroupHash, [])]);
             manager.AddPrefab([new AuxPrefab(AuxHash.ItemNameGroupHash, [])]);
             var petColor = new AuxStableType(AuxHash.PetColorHash, [color.ToString()]);

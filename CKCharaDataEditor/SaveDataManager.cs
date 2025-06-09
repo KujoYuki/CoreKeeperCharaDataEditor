@@ -479,5 +479,33 @@ namespace CKCharaDataEditor
             _saveData["lastConnectedServerGuid"]!["Value"] = valueObj;
 
         }
+
+        /// <summary>
+        /// インベントリ先頭の装備アイテム4つを、アイテムLvごとに20個ずつ複製します。
+        /// </summary>
+        internal void DupeEquipmentEachLv()
+        {
+            Item[] items = Items.Take(4).ToArray();
+
+            // 通常のアイテム枠とポーチのアイテム枠
+            Queue<int> indexes = new Queue<int>(
+                Enumerable.Range(0, 50)
+                    .Concat(Enumerable.Range(87, 10))
+                    .Concat(Enumerable.Range(98, 10))
+                    .Concat(Enumerable.Range(109, 10))
+                    .Concat(Enumerable.Range(120, 10))
+                    );
+            foreach (var item in items)
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Item newItem = item with
+                    {
+                        variation = i
+                    };
+                    WriteItemData(indexes.Dequeue(), newItem);
+                }
+            }
+        }
     }
 }

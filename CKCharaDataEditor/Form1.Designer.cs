@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             advancedTab = new TabPage();
+            dupeEquipmentEachLv = new Button();
             auxIndexNumericUpDown = new NumericUpDown();
             variationNumericUpDown = new NumericUpDown();
             variationUpdateCountNumericUpDown = new NumericUpDown();
@@ -143,6 +144,7 @@
             // 
             // advancedTab
             // 
+            advancedTab.Controls.Add(dupeEquipmentEachLv);
             advancedTab.Controls.Add(auxIndexNumericUpDown);
             advancedTab.Controls.Add(variationNumericUpDown);
             advancedTab.Controls.Add(variationUpdateCountNumericUpDown);
@@ -174,6 +176,17 @@
             advancedTab.TabIndex = 1;
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
+            // 
+            // dupeEquipmentEachLv
+            // 
+            dupeEquipmentEachLv.Location = new Point(121, 216);
+            dupeEquipmentEachLv.Name = "dupeEquipmentEachLv";
+            dupeEquipmentEachLv.Size = new Size(152, 23);
+            dupeEquipmentEachLv.TabIndex = 36;
+            dupeEquipmentEachLv.Text = "装備のLv別制作（４）";
+            dupeEquipmentEachLv.UseVisualStyleBackColor = true;
+            dupeEquipmentEachLv.Visible = false;
+            dupeEquipmentEachLv.Click += dupeEquipmentEachLv_Click;
             // 
             // auxIndexNumericUpDown
             // 
@@ -1048,5 +1061,6 @@
         private NumericUpDown variationUpdateCountNumericUpDown;
         private NumericUpDown variationNumericUpDown;
         private NumericUpDown auxIndexNumericUpDown;
+        private Button dupeEquipmentEachLv;
     }
 }

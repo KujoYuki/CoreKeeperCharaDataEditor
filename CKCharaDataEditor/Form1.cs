@@ -10,8 +10,9 @@ using CKCharaDataEditor.Model.Cattle;
 
 // todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
 // todo ペットも家畜同様リファクタリング
+// todo ペット、家畜の色コントロールを当該の色にする
 // todo テーブルレイアウトパネルによるレイアウト調整
-// todo 料理関連のロジックをForm1から分離して、別のクラスにする
+// todo 料理関連のロジックをForm1から完全に分離して、別のクラスにする
 
 namespace CKCharaDataEditor
 {
@@ -34,6 +35,7 @@ namespace CKCharaDataEditor
                 auxIndexNumericUpDown.ReadOnly = false;
                 auxDataTextBox.ReadOnly = false;
                 toMinusOneButton.Visible = true;
+                dupeEquipmentEachLv.Visible = true;
             }
         }
 
@@ -480,9 +482,9 @@ namespace CKCharaDataEditor
                 amount: Convert.ToInt32(amountNumericUpDown.Value),
                 variation: Convert.ToInt32(variationNumericUpDown.Value),
                 variationUpdateCount: Convert.ToInt32(variationUpdateCountNumericUpDown.Value),
-                objectName:objectNameTextBox.Text,
-                aux:aux,
-                locked:objectLockedCheckBox.Checked);
+                objectName: objectNameTextBox.Text,
+                aux: aux,
+                locked: objectLockedCheckBox.Checked);
         }
 
 
@@ -898,6 +900,18 @@ namespace CKCharaDataEditor
                 .ToArray();
             cattleColorVariationComboBox.Items.AddRange(colors);
             cattleColorVariationComboBox.SelectedIndex = colorIndex;
+        }
+
+        private void dupeEquipmentEachLv_Click(object sender, EventArgs e)
+        {
+            string assertion = "インベントリの最初の4つの装備を各アイテムLvごとに複製します。\n続行しますか？\n\n" +
+                "※対象のスロットに既に存在するアイテムは上書きされます。";
+            DialogResult result = MessageBox.Show(assertion, "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (result is DialogResult.OK)
+            {
+                _saveDataManager.DupeEquipmentEachLv();
+                LoadItems();
+            }
         }
     }
 }

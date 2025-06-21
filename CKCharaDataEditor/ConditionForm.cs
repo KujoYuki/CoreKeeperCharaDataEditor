@@ -1,4 +1,5 @@
 ﻿using CKCharaDataEditor.Model;
+using CKCharaDataEditor.Properties;
 using System.Data;
 using System.Diagnostics;
 
@@ -16,6 +17,14 @@ namespace CKCharaDataEditor
             InitializeComponent();
             this.StartPosition = FormStartPosition.Manual;
             this.Location = Cursor.Position;
+            if (Settings.Default.ConditonFormSizeHeight is not 0 &&
+                Settings.Default.ConditonFormSizeWidth is not 0)
+            {
+                var size = this.Size;
+                size.Width = Settings.Default.ConditonFormSizeWidth;
+                size.Height = Settings.Default.ConditonFormSizeHeight;
+                this.Size = size;
+            }
             Conditions = new(_saveDataManager.GetConditions().OrderBy(c => c.Id));
             ((DataGridViewComboBoxColumn)dataGridView.Columns["Description"]).Items
                 .AddRange(ConditionDescriptions.Select(c => c.Description).ToArray());
@@ -232,6 +241,13 @@ namespace CKCharaDataEditor
                     dataGridView.Rows.Remove(row);
                 }
             }
+        }
+
+        private void ConditionForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.Default.ConditonFormSizeWidth = this.Size.Width;
+            Settings.Default.ConditonFormSizeHeight = this.Size.Height;
+            Settings.Default.Save();
         }
     }
 }

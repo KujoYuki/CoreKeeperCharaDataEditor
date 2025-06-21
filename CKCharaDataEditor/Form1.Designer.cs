@@ -629,8 +629,8 @@
             // mealNumericUpDown
             // 
             mealNumericUpDown.Location = new Point(180, 137);
-            mealNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            mealNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            mealNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            mealNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             mealNumericUpDown.Name = "mealNumericUpDown";
             mealNumericUpDown.Size = new Size(120, 23);
             mealNumericUpDown.TabIndex = 11;
@@ -695,8 +695,8 @@
             // stomachNumericUpDown
             // 
             stomachNumericUpDown.Location = new Point(9, 137);
-            stomachNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            stomachNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            stomachNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            stomachNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             stomachNumericUpDown.Name = "stomachNumericUpDown";
             stomachNumericUpDown.Size = new Size(120, 23);
             stomachNumericUpDown.TabIndex = 4;

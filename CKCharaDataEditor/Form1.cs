@@ -142,11 +142,9 @@ namespace CKCharaDataEditor
         private void InitCattleCategory()
         {
             cattleComboBox.Items.AddRange(Enum.GetNames<CattleType>());
-            Dictionary<string, int> cattles = Enum.GetNames<CattleType>()
-                .Zip(Enum.GetValues<CattleType>().Select(type => (int)type).ToArray())
-                .Select(values => (obejectName: values.First, id: values.Second))
-                .ToDictionary();
-            int[] cattleIds = Enum.GetValues<CattleType>().Select(type => (int)type).ToArray();
+            Dictionary<string, int> cattles = Enum.GetValues<CattleType>()
+                .ToDictionary(type => type.ToString(), type => (int)type);
+            // 翻訳データがある場合に表示名を設定する
             for (int i = 0; i < cattleComboBox.Items.Count; i++)
             {
                 string objectName = cattleComboBox.Items[i]!.ToString()!;
@@ -831,7 +829,9 @@ namespace CKCharaDataEditor
             if (e.Control && e.KeyCode is Keys.V)
             {
                 PasteButton_Click(sender, e);
-                createButton_Click(sender, e);
+                var item = GenerateAdvancedItem();
+                _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                LoadItems();
                 e.Handled = true;
             }
             if (e.Control && e.Shift && e.KeyCode is Keys.C)
@@ -842,6 +842,14 @@ namespace CKCharaDataEditor
             if (e.Control && e.Shift && e.KeyCode is Keys.V)
             {
                 inventryPasteButton_Click(sender, e);
+                e.Handled = true;
+            }
+            if (e.KeyCode == Keys.Delete)
+            {
+                // デフォルトアイテムで上書きして削除扱い
+                _saveDataManager.WriteItemData(itemListBox.SelectedIndex, Item.Default);
+                LoadItems();
+                EnableResultMessage("アイテムを削除しました。");
                 e.Handled = true;
             }
         }

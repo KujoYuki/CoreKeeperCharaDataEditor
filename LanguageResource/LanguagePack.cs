@@ -7,15 +7,15 @@ namespace LanguageResource
     /// </summary>
     public class LanguagePack
     {
+        const string YukisInstallPath = @"G:\SteamLibrary\steamapps\common\Core Keeper";
+
         /// <summary>
         /// 動作確認用に単体でリソースを合成し、tsvファイルにします。
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string installPath = @"G:\SteamLibrary\steamapps\common\Core Keeper";
-
-            var dic = CreateLanguageDictionary(installPath);
+            var dic = CreateLanguageDictionary(YukisInstallPath);
             var outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value[0]}\t{pair.Value[1]}").ToList();
 
             // 新規TSVファイルに出力
@@ -58,9 +58,12 @@ namespace LanguageResource
                 .Skip(1) // Noneをスキップ
                 .ToDictionary(line => line[0], line => int.Parse(line[1]));
 
-            var trancelation = File.ReadAllLines(localizationPath)
-                .Skip(1) // ヘッダーをスキップ
+            var languageResourceOrigin = File.ReadAllLines(localizationPath)
+                .Skip(1)
                 .Select(line => line.Split('\t'))
+                .ToList(); // ヘッダーをスキップ
+
+            var trancelation = FixLineFeed(languageResourceOrigin)
                 .Where(words =>
                 {
                     string key = words[0];
@@ -88,6 +91,46 @@ namespace LanguageResource
                 .ToDictionary();
 
             return outputDic;
+        }
+
+        /// <summary>
+        /// リソースファイル中の無意味な改行コードの混入を修正します。
+        /// </summary>
+        /// <param name="languageResources"></param>
+        /// <returns></returns>
+        private static List<string[]> FixLineFeed(List<string[]> languageResources)
+        {
+            string lastKey = @"youAreInGuestMode";
+            for(int i = 0; i < languageResources.Count(); i++)
+            {
+                string[] keyResource = languageResources[i];
+                if (keyResource[0]==lastKey)
+                {
+                    break; // 最後の行に到達したら終了
+                }
+                if (keyResource.Length < 16)
+                {
+                    if (keyResource.Length is 1 ||
+                        (keyResource.Length >= 2 && keyResource[1] is not "Text"))
+                    {
+                        // 単一で改行された行、もしくは行中に複数のカラムが残っているが先頭から始まっていない場合は前の行と連結する
+                        string fixedLine = string.Join('\t', languageResources[i - 1]) + string.Join('\t', languageResources[i]);
+                        languageResources[i - 1] = fixedLine.Split('\t');
+                        // 前の行に連結完了した現在行は削除する
+                        languageResources.RemoveAt(i);
+                        i--;
+                    }
+                    else if (keyResource.Length >= 2 && keyResource[1] is "Text")
+                    {
+                        // 行の途中での改行は次の行と連結する
+                        string fixedLine = string.Join('\t', languageResources[i]) + string.Join('\t', languageResources[i + 1]);
+                        languageResources[i] = fixedLine.Split('\t');
+                        // 現在の行に連結完了した次の行は削除する
+                        languageResources.RemoveAt(i + 1);
+                    }
+                }
+            }
+            return languageResources;
         }
     }
 }

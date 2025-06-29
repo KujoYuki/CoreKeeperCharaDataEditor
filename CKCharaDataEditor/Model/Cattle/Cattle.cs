@@ -36,11 +36,11 @@ namespace CKCharaDataEditor.Model.Cattle
         {
             get
             {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault()!;
+                return DisplayName;
             }
             set
             {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
+                DisplayName = value;
             }
         }
         public int Meal

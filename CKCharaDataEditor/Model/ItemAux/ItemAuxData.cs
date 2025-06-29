@@ -6,7 +6,7 @@ namespace CKCharaDataEditor.Model.ItemAux
 {
     public record ItemAuxData
     {
-        public AuxPrefabManager? AuxPrefabManager = null;
+        public AuxPrefabManager AuxPrefabManager;
 
         #region Property
         public int index { get; set; }
@@ -14,13 +14,23 @@ namespace CKCharaDataEditor.Model.ItemAux
         {
             get
             {
-                if (AuxPrefabManager is null)
+                if (AuxPrefabManager == AuxPrefabManager.Default)
                 {
                     return "";
                 }
                 return AuxPrefabManager.ToInnerJsonString(StaticResource.SerializerOption);
             }
-            set { }
+            set
+            {
+                try
+                {
+                    AuxPrefabManager = new AuxPrefabManager(JsonNode.Parse(value)!.AsObject());
+                }
+                catch (Exception ex)
+                {
+                    throw new ArgumentException($"補助データのフォーマットが違います。\n{value}", ex.Message);
+                }
+            }
         }
         #endregion
 
@@ -29,11 +39,8 @@ namespace CKCharaDataEditor.Model.ItemAux
         public ItemAuxData(int index, string data)
         {
             this.index = index;
-            this.data = data;
-            if (data != "")
-            {
-                AuxPrefabManager = new(JsonNode.Parse(data)!.AsObject());
-            }
+            AuxPrefabManager = (data is "") ? AuxPrefabManager.Default
+                : new AuxPrefabManager(JsonNode.Parse(data)!.AsObject());
         }
 
         public ItemAuxData(int index, AuxPrefabManager prefabManager)

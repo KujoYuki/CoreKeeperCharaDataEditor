@@ -356,9 +356,10 @@ namespace CKCharaDataEditor
             File.WriteAllText(SaveDataPath, changedJson);
         }
 
-        internal void CopyItem(Item item)
+        internal Item CopyItem(int index)
         {
-            _copiedItem = item;
+            _copiedItem = Items[index];
+            return _copiedItem;
         }
 
         internal Item PasteItem()

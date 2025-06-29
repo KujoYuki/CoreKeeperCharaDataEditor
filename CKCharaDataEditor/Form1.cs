@@ -685,46 +685,33 @@ namespace CKCharaDataEditor
 
         private void CopyButton_Click(object sender, EventArgs e)
         {
-            var item = Item.Default;
-            try
-            {
-                item.objectID = int.Parse(objectIdTextBox.Text);
-                item.amount = Convert.ToInt32(amountNumericUpDown.Value);
-                item.variation = Convert.ToInt32(variationNumericUpDown.Value);
-                item.variationUpdateCount = Convert.ToInt32(variationUpdateCountNumericUpDown.Value);
-                item.objectName = objectNameTextBox.Text;
-                item.Aux = new(Convert.ToInt32(auxIndexNumericUpDown.Value), auxDataTextBox.Text);
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("コピーできない値が含まれています。");
-                return;
-            }
-            _saveDataManager.CopyItem(item);
+            int selectedItemIndex = itemListBox.SelectedIndex;
+            var copiedItem = _saveDataManager.CopyItem(selectedItemIndex);
 
-            string displayName = item.objectName;
-            if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
+            string displayName = copiedItem.objectName;
+            if (_fileManager.LocalizationData.TryGetValue(copiedItem.objectID.ToString(), out string[]? displayResource))
             {
                 displayName = displayResource[1];
+            }
+            if (copiedItem.DisplayName != string.Empty)
+            {
+                displayName = copiedItem.DisplayName;
             }
             EnableResultMessage($"{displayName}をコピーしました。");
         }
 
         private void PasteButton_Click(object sender, EventArgs e)
         {
-            Item item = _saveDataManager.PasteItem();
-            objectIdTextBox.Text = item.objectID.ToString();
-            amountNumericUpDown.Value = item.amount;
-            variationNumericUpDown.Value = item.variation;
-            variationUpdateCountNumericUpDown.Value = item.variationUpdateCount;
-            objectNameTextBox.Text = item.objectName;
-            auxIndexNumericUpDown.Value = item.Aux.index;
-            auxDataTextBox.Text = item.Aux.data;
-
-            string displayName = item.objectName;
-            if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
+            Item pastedfItem = _saveDataManager.PasteItem();
+            
+            string displayName = pastedfItem.objectName;
+            if (_fileManager.LocalizationData.TryGetValue(pastedfItem.objectID.ToString(), out string[]? displayResource))
             {
                 displayName = displayResource[1];
+            }
+            if (pastedfItem.DisplayName != string.Empty)
+            {
+                displayName = pastedfItem.DisplayName;
             }
             EnableResultMessage($"{displayName}をペーストしました。");
         }

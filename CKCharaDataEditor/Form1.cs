@@ -218,9 +218,8 @@ namespace CKCharaDataEditor
                 }
                 else
                 {
-                    string objectId = _saveDataManager.Items[i].objectID.ToString();
-                    _fileManager.LocalizationData.TryGetValue(objectId, out var displayResource);
-                    string displayName = displayResource is null ? _saveDataManager.Items[i].objectName : displayResource[1];
+                    Item item = _saveDataManager.Items[i];
+                    string displayName = TranslateObjectName(item);
                     itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
@@ -683,36 +682,32 @@ namespace CKCharaDataEditor
             e.DrawFocusRectangle();
         }
 
-        private void CopyButton_Click(object sender, EventArgs e)
+        private string TranslateObjectName(Item item)
         {
-            int selectedItemIndex = itemListBox.SelectedIndex;
-            var copiedItem = _saveDataManager.CopyItem(selectedItemIndex);
-
-            string displayName = copiedItem.objectName;
-            if (_fileManager.LocalizationData.TryGetValue(copiedItem.objectID.ToString(), out string[]? displayResource))
+            string displayName = item.objectName;
+            if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
             {
                 displayName = displayResource[1];
             }
-            if (copiedItem.DisplayName != string.Empty)
+            if (item.DisplayName != string.Empty)
             {
-                displayName = copiedItem.DisplayName;
+                displayName = item.DisplayName;
             }
+            return displayName;
+        }
+
+        private void CopyButton_Click(object sender, EventArgs e)
+        {
+            int selectedItemIndex = itemListBox.SelectedIndex;
+            Item copiedItem = _saveDataManager.CopyItem(selectedItemIndex);
+            string displayName = TranslateObjectName(copiedItem);
             EnableResultMessage($"{displayName}をコピーしました。");
         }
 
         private void PasteButton_Click(object sender, EventArgs e)
         {
             Item pastedfItem = _saveDataManager.PasteItem();
-            
-            string displayName = pastedfItem.objectName;
-            if (_fileManager.LocalizationData.TryGetValue(pastedfItem.objectID.ToString(), out string[]? displayResource))
-            {
-                displayName = displayResource[1];
-            }
-            if (pastedfItem.DisplayName != string.Empty)
-            {
-                displayName = pastedfItem.DisplayName;
-            }
+            string displayName = TranslateObjectName(pastedfItem);
             EnableResultMessage($"{displayName}をペーストしました。");
         }
 

@@ -190,7 +190,6 @@
             // 
             // auxIndexNumericUpDown
             // 
-            auxIndexNumericUpDown.Enabled = false;
             auxIndexNumericUpDown.Location = new Point(488, 89);
             auxIndexNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             auxIndexNumericUpDown.Name = "auxIndexNumericUpDown";
@@ -209,7 +208,6 @@
             // 
             // variationUpdateCountNumericUpDown
             // 
-            variationUpdateCountNumericUpDown.Enabled = false;
             variationUpdateCountNumericUpDown.Location = new Point(488, 28);
             variationUpdateCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             variationUpdateCountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });

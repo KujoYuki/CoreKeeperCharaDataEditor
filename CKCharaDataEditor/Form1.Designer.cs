@@ -113,6 +113,9 @@
             AboutToolStripMenuItem = new ToolStripMenuItem();
             toolTipCattleStomach = new ToolTip(components);
             toolTipCattleMeal = new ToolTip(components);
+            otherTab = new TabPage();
+            label18 = new Label();
+            DisplayNameTextBox = new TextBox();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
@@ -127,6 +130,7 @@
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             menuStrip.SuspendLayout();
+            otherTab.SuspendLayout();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -135,6 +139,7 @@
             itemEditTabControl.Controls.Add(foodTab);
             itemEditTabControl.Controls.Add(petTab);
             itemEditTabControl.Controls.Add(cattleTab);
+            itemEditTabControl.Controls.Add(otherTab);
             itemEditTabControl.Location = new Point(304, 146);
             itemEditTabControl.MinimumSize = new Size(650, 300);
             itemEditTabControl.Name = "itemEditTabControl";
@@ -926,6 +931,34 @@
             AboutToolStripMenuItem.Text = "バージョン情報(&A)";
             AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
+            // otherTab
+            // 
+            otherTab.Controls.Add(DisplayNameTextBox);
+            otherTab.Controls.Add(label18);
+            otherTab.Location = new Point(4, 24);
+            otherTab.Name = "otherTab";
+            otherTab.Padding = new Padding(3);
+            otherTab.Size = new Size(642, 276);
+            otherTab.TabIndex = 4;
+            otherTab.Text = "その他";
+            otherTab.UseVisualStyleBackColor = true;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(17, 20);
+            label18.Name = "label18";
+            label18.Size = new Size(113, 15);
+            label18.TabIndex = 0;
+            label18.Text = "ユーザー定義の表示名";
+            // 
+            // DisplayNameTextBox
+            // 
+            DisplayNameTextBox.Location = new Point(17, 38);
+            DisplayNameTextBox.Name = "DisplayNameTextBox";
+            DisplayNameTextBox.Size = new Size(333, 23);
+            DisplayNameTextBox.TabIndex = 1;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
@@ -971,6 +1004,8 @@
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).EndInit();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            otherTab.ResumeLayout(false);
+            otherTab.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1060,5 +1095,8 @@
         private NumericUpDown variationNumericUpDown;
         private NumericUpDown auxIndexNumericUpDown;
         private Button dupeEquipmentEachLv;
+        private TabPage otherTab;
+        private TextBox DisplayNameTextBox;
+        private Label label18;
     }
 }

@@ -103,6 +103,21 @@ namespace CKCharaDataEditor.Model.ItemAux
             UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [petName]);
         }
 
+        public bool TryGetData(ulong prefabHash, ulong stableTypeHash, out IEnumerable<string>? data)
+        {
+            try
+            {
+                data = Prefabs?.SingleOrDefault(p => p.prefabHash == prefabHash)?.types
+                .SingleOrDefault(s => s.stableTypeHash == stableTypeHash)?.data;
+                return data is not null;
+            }
+            catch (Exception)
+            {
+                data = null;
+                return false;
+            }
+        }
+
         public IEnumerable<string> GetData(ulong prefabHash, ulong stableTypeHash)
         {
             try
@@ -134,6 +149,10 @@ namespace CKCharaDataEditor.Model.ItemAux
             {
                 return new JsonObject().ToJsonString();
             }
+            if (Prefabs.Count == 0)
+            {
+                return string.Empty;
+            }
             var jsonObject = new JsonObject
             {
                 ["prefabs"] = new JsonArray(
@@ -146,6 +165,10 @@ namespace CKCharaDataEditor.Model.ItemAux
 
         public string ToInnerJsonString(JsonSerializerOptions options)
         {
+            if (Prefabs.Count is 0)
+            {
+                return string.Empty;
+            }
             var jsonObject = new JsonObject
             {
                 ["prefabs"] = new JsonArray(
@@ -160,5 +183,19 @@ namespace CKCharaDataEditor.Model.ItemAux
         {
             ["prefabs"] = new JsonArray()
         });
+
+        public AuxPrefabManager DeepCopy()
+        {
+            var copiedPrefabs = Prefabs
+                .Select(prefab => new AuxPrefab(
+                    prefab.prefabHash,
+                    prefab.types
+                        .Select(type => new AuxStableType(type.stableTypeHash, type.data.ToList()))
+                        .ToList()
+                ))
+                .ToList();
+
+            return new AuxPrefabManager(copiedPrefabs);
+        }
     }
 }

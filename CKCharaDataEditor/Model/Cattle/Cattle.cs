@@ -47,25 +47,25 @@ namespace CKCharaDataEditor.Model.Cattle
         {
             get
             {
-                return Convert.ToInt32(Aux.AuxPrefabManager!.GetData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash)!.FirstOrDefault()!);
+                return Convert.ToInt32(Aux.AuxPrefabManager.GetData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash)!.FirstOrDefault()!);
             }
             set
             {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash, [value.ToString()]);
+                Aux.AuxPrefabManager.UpdateData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash, [value.ToString()]);
             }
         }
         public bool Breeding
         {
             get
             {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash)!.FirstOrDefault() == "False";
+                return Aux.AuxPrefabManager.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash)!.FirstOrDefault() == "False";
             }
             set
             {
                 if (IsAdult)
                 {
                     // データ側がbool値が逆になってるので注意
-                    Aux.AuxPrefabManager!.UpdateData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash, [value ? "False" : "True"]);
+                    Aux.AuxPrefabManager.UpdateData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash, [value ? "False" : "True"]);
                 }
             }
         }

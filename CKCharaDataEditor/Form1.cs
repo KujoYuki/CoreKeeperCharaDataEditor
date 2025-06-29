@@ -245,6 +245,7 @@ namespace CKCharaDataEditor
             objectNameTextBox.Text = selectedItem.objectName;
             auxIndexNumericUpDown.Value = selectedItem.Aux.index;
             auxDataTextBox.Text = selectedItem.Aux.data;
+            DisplayNameTextBox.Text = selectedItem.DisplayName;
 
             // 料理の場合は料理情報をセットする
             // hack 他の特殊アイテム同様に料理アイテムクラスを作成する
@@ -265,7 +266,7 @@ namespace CKCharaDataEditor
                 createdNumericNo.Value = amount;
             }
 
-            // ペットのの場合はペット情報をセットする
+            // ペットの場合はペット情報をセットする
             if (Pet.IsPet(selectedItem.objectID))
             {
                 petEditControl.PetItem = new(selectedItem);
@@ -390,7 +391,8 @@ namespace CKCharaDataEditor
             if (IsRunningGame()) return;
 
             bool result = false;
-            Item item;
+            int index = itemListBox.SelectedIndex;
+            Item item = _saveDataManager.Items[index];
 
             switch (itemEditTabControl.SelectedTab?.Name)
             {
@@ -411,7 +413,7 @@ namespace CKCharaDataEditor
                                variation: calculatedVariation,
                                variationUpdateCount: 0,
                                objectName, ItemAuxData.Default);
-                    _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    _saveDataManager.WriteItemData(index, item);
                     result = true;
                     break;
 
@@ -428,13 +430,12 @@ namespace CKCharaDataEditor
                         MessageBox.Show("入力されたペット情報が取得できませんでした。");
                         return;
                     }
-                    // ItemAuxDataを込みで書きこむ
-                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    result = _saveDataManager.WriteItemData(index, item);
                     break;
 
                 case "advancedTab":
                     item = GenerateAdvancedItem();
-                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    result = _saveDataManager.WriteItemData(index, item);
                     break;
 
                 case "cattleTab":
@@ -450,7 +451,13 @@ namespace CKCharaDataEditor
                         Meal = (int)mealNumericUpDown.Value,
                         Breeding = breedingCheckBox.Checked,
                     };
-                    result = _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                    result = _saveDataManager.WriteItemData(index, item);
+                    break;
+
+                case "otherTab":
+                    string overrideName = DisplayNameTextBox.Text;
+                    item.DisplayName = overrideName;
+                    result = _saveDataManager.WriteItemData(index, item);
                     break;
                 default:
                     throw new InvalidOperationException();

@@ -15,26 +15,33 @@ namespace CKCharaDataEditor.Model.Items
         {
             get
             {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault() ?? string.Empty;
+                if (Aux.AuxPrefabManager.TryGetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, out var _))
+                {
+                    return Aux.AuxPrefabManager.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault()!;
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
             set
             {
                 // 空文字ならPrefabを削除する
                 if (string.IsNullOrEmpty(value))
                 {
-                    Aux.AuxPrefabManager!.DeletePrefab(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash);
+                    Aux.AuxPrefabManager.DeletePrefab(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash);
                     return;
                 }
 
                 // 元が無ければPrefab追加する
-                if (!Aux.AuxPrefabManager!.HasData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash))
+                if (!Aux.AuxPrefabManager.HasData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash))
                 {
                     Aux.AuxPrefabManager.AddPrefab([new AuxPrefab(AuxHash.ItemNameGroupHash, [new AuxStableType(AuxHash.ItemNameHash, [value])])]);
                     return;
                 }
 
                 // 既に存在する場合は更新する
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
+                Aux.AuxPrefabManager.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
             }
         }
 

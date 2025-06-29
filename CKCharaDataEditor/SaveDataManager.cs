@@ -219,7 +219,7 @@ namespace CKCharaDataEditor
         public void CalculateRecepeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
         {
             int[] allFoodID = StaticResource.AllIngredients.Select(c => c.objectID).ToArray();
-            List<Tuple<int, int>> allPairs = allFoodID // hack Variation内の順序決定アルゴリズムが不明のため、実際の順番は前後している場合がある
+            List<Tuple<int, int>> allPairs = allFoodID
                 .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
                 .ToList();
             allRecipeTempVariationCount = allPairs.Count;

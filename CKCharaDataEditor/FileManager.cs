@@ -84,7 +84,6 @@ namespace CKCharaDataEditor
             }
             catch (Exception)
             {
-                //todo ロガー出力
                 return string.Empty;
             }
         }
@@ -100,7 +99,6 @@ namespace CKCharaDataEditor
             }
             else
             {
-                //todo ロガー出力
                 return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             }
         }

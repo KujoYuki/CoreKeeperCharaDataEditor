@@ -34,9 +34,7 @@ namespace CKCharaDataEditor
             }
             else
             {
-                // todo globalなロギング
                 return (false, _currentVersion, 0);
-                //throw new HttpRequestException($"バージョンチェックに失敗しました。ステータスコード: {response.StatusCode}");
             }
         }
 

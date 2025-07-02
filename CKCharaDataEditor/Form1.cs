@@ -802,7 +802,6 @@ namespace CKCharaDataEditor
             if (e.Control && e.KeyCode is Keys.C)
             {
                 CopyButton_Click(sender, e);
-                _saveDataManager.CopyItem(itemListBox.SelectedIndex);
                 e.Handled = true;
             }
             if (e.Control && e.KeyCode is Keys.V)

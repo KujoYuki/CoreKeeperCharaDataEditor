@@ -719,19 +719,8 @@ namespace CKCharaDataEditor
 
         private void inventryPasteButton_Click(object sender, EventArgs e)
         {
-            if (!Program.IsDeveloper)
-            {
-                if (_saveDataManager.HasOveredHealth(out _))
-                {
-                    MessageBox.Show("体力過剰のため、利用を制限します。", "注意");
-                    return;
-                }
-                if (!_saveDataManager.IsClearData() && !_saveDataManager.IsCreativeData())
-                {
-                    MessageBox.Show("クリア済みでない場合は機能を制限します。\n通常クリア後にお楽しみください。");
-                    return;
-                }
-            }
+            if (!IsLegalSaveData()) return;
+            if (IsRunningGame()) return;
             if (_saveDataManager.HasCopiedInventory())
             {
                 string assertion = "インベントリ全体をペーストしますか？\n上書きされたアイテムは戻りません。";
@@ -813,12 +802,13 @@ namespace CKCharaDataEditor
             if (e.Control && e.KeyCode is Keys.C)
             {
                 CopyButton_Click(sender, e);
+                _saveDataManager.CopyItem(itemListBox.SelectedIndex);
                 e.Handled = true;
             }
             if (e.Control && e.KeyCode is Keys.V)
             {
                 PasteButton_Click(sender, e);
-                var item = GenerateAdvancedItem();
+                var item = _saveDataManager.PasteItem();
                 _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
                 LoadItems();
                 e.Handled = true;

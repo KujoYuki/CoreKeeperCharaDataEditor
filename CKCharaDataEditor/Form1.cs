@@ -807,6 +807,8 @@ namespace CKCharaDataEditor
             if (e.Control && e.KeyCode is Keys.V)
             {
                 PasteButton_Click(sender, e);
+                if (IsLegalSaveData()) return;
+                if (IsRunningGame()) return;
                 var item = _saveDataManager.PasteItem();
                 _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
                 LoadItems();

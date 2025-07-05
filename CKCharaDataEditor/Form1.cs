@@ -706,9 +706,19 @@ namespace CKCharaDataEditor
 
         private void PasteButton_Click(object sender, EventArgs e)
         {
-            Item pastedfItem = _saveDataManager.PasteItem();
-            string displayName = TranslateObjectName(pastedfItem);
-            EnableResultMessage($"{displayName}をペーストしました。");
+            if (!IsLegalSaveData()) return;
+            if (IsRunningGame()) return;
+            Item pasteItem = _saveDataManager.PasteItem();
+            objectIdTextBox.Text = pasteItem.objectID.ToString();
+            amountNumericUpDown.Value = pasteItem.amount;
+            variationNumericUpDown.Value = pasteItem.variation;
+            variationUpdateCountNumericUpDown.Value = pasteItem.variationUpdateCount;
+            objectNameTextBox.Text = pasteItem.objectName;
+            auxIndexNumericUpDown.Value = pasteItem.Aux.index;
+            auxDataTextBox.Text = pasteItem.Aux.data;
+
+            string displayName = TranslateObjectName(pasteItem);
+            EnableResultMessage($"{displayName}の情報をペーストしました。");
         }
 
         private void inventryCopyButton_Click(object sender, EventArgs e)
@@ -806,11 +816,12 @@ namespace CKCharaDataEditor
             }
             if (e.Control && e.KeyCode is Keys.V)
             {
-                PasteButton_Click(sender, e);
-                if (IsLegalSaveData()) return;
+                if (!IsLegalSaveData()) return;
                 if (IsRunningGame()) return;
-                var item = _saveDataManager.PasteItem();
-                _saveDataManager.WriteItemData(itemListBox.SelectedIndex, item);
+                Item pasteItem = _saveDataManager.PasteItem();
+                _saveDataManager.WriteItemData(itemListBox.SelectedIndex, pasteItem);
+                string displayName = TranslateObjectName(pasteItem);
+                EnableResultMessage($"{displayName}をペーストしました。");
                 LoadItems();
                 e.Handled = true;
             }

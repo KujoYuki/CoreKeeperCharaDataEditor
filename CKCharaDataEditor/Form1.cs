@@ -7,6 +7,7 @@ using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.Cattle;
+using CKCharaDataEditor.Model.Food;
 
 // todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
 // todo ペットも家畜同様リファクタリング
@@ -20,9 +21,7 @@ namespace CKCharaDataEditor
     {
         private FileManager _fileManager = FileManager.Instance;
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
-        private List<Ingredient> _ingredientCategories = [];
-        private List<Ingredient> _cookedCategories = StaticResource.AllCookedBaseCategories.ToList();
-
+        private List<Food> _ingredientCategories = [];
         public Form1()
         {
             InitializeComponent();
@@ -107,21 +106,21 @@ namespace CKCharaDataEditor
                 .Select(line =>
                 {
                     string[] words = line.Split(',');
-                    return new Ingredient(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked);
+                    return new Food(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked);
                 })
                 .ToArray();
-            var allingredients = StaticResource.AllIngredients.Concat(ingredientCategories)
+            var allingredients = Food.AllIngredients.Concat(ingredientCategories)
                 .OrderBy(c => c.objectID)
                 .ToList();
             // 開発者モードの場合は非推奨食材も表示する
             if (Program.IsDeveloper)
             {
-                allingredients.AddRange(StaticResource.ObsoleteIngredients);
+                allingredients.AddRange(Food.ObsoleteIngredients);
             }
             _ingredientCategories.AddRange(allingredients);
 
             var sortedIngredientNames = _ingredientCategories
-                .Select(c => c.DisplayName)
+                .Select(c => c.DefaultDisplayName)
                 .ToArray();
             ingredientComboBoxA.Items.AddRange(sortedIngredientNames);
             ingredientComboBoxB.Items.AddRange(sortedIngredientNames);
@@ -132,8 +131,8 @@ namespace CKCharaDataEditor
 
         private void InitCookedCategory()
         {
-            var cookedCategoryNames = StaticResource.AllCookedBaseCategories
-                .Select(c => c.DisplayName)
+            var cookedCategoryNames = Food.AllCookedBaseCategories
+                .Select(c => c.DefaultDisplayName)
                 .ToArray();
             cookedCategoryComboBox.Items.AddRange(cookedCategoryNames);
             cookedCategoryComboBox.SelectedIndex = 0;
@@ -219,7 +218,7 @@ namespace CKCharaDataEditor
                 else
                 {
                     Item item = _saveDataManager.Items[i];
-                    string displayName = TranslateObjectName(item);
+                    string displayName = TranslateObjectName(item.objectID, item.objectName);
                     itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
@@ -247,15 +246,15 @@ namespace CKCharaDataEditor
             DisplayNameTextBox.Text = selectedItem.DisplayName;
 
             // 料理の場合は料理情報をセットする
-            // hack 他の特殊アイテム同様に料理アイテムクラスを作成する
-            if (IsCookedItem(selectedItem.objectID, out var rarity, out var indexBaseOffset))
+            if (Food.IsCookedItem(selectedItem.objectID))
             {
-                ReverseCalcurateVariation(variation, out var ingredientIdA, out var ingredientIdB);
-                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == ingredientIdA)?.DisplayName;
-                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == ingredientIdB)?.DisplayName;
+                Food food = new(selectedItem);
+                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.IngredientA)?.DisplayName;
+                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.IngredientB)?.DisplayName;
 
-                cookedCategoryComboBox.SelectedIndex = indexBaseOffset;
-                rarityComboBox.SelectedIndex = rarity switch
+                cookedCategoryComboBox.SelectedIndex =
+                    Array.IndexOf(Food.AllCookedBaseCategories.Select(c=>c.objectID).ToArray(), food.BaseRecipeID);
+                rarityComboBox.SelectedIndex = food.Rarity switch
                 {
                     CookRarity.Common => 0,
                     CookRarity.Rare => 1,
@@ -396,23 +395,23 @@ namespace CKCharaDataEditor
             switch (itemEditTabControl.SelectedTab?.Name)
             {
                 case "foodTab":
-                    int ingredientAId = _ingredientCategories
-                    .Single(c => c.DisplayName == ingredientComboBoxA
-                    .SelectedItem?.ToString()).objectID;
-                    int ingredientBId = _ingredientCategories
-                        .Single(c => c.DisplayName == ingredientComboBoxB
-                        .SelectedItem?.ToString()).objectID;
-                    int calculatedVariation = CalculateVariation(ingredientAId, ingredientBId);
-
-                    // レア度反映
-                    int baseObjectId = _cookedCategories.Single(c => c.DisplayName == cookedCategoryComboBox.SelectedItem!.ToString()).objectID;
-                    DetermineCookedAttributes(baseObjectId, rarityComboBox.SelectedItem?.ToString()!, out int fixedObjectId, out string objectName);
-                    item = new(objectID: fixedObjectId,
-                               amount: Convert.ToInt32(createdNumericNo.Value),
-                               variation: calculatedVariation,
-                               variationUpdateCount: 0,
-                               objectName, ItemAuxData.Default);
-                    _saveDataManager.WriteItemData(index, item);
+                    // undone レア度と食材の組み合わせからObjectIdを先に決定する
+                    int recipeId = Food.AllCookedBaseCategories.ElementAt(cookedCategoryComboBox.SelectedIndex).objectID;
+                    int ingredientAId = _ingredientCategories[ingredientComboBoxA.SelectedIndex].objectID;
+                    int ingredientBId = _ingredientCategories[ingredientComboBoxB.SelectedIndex].objectID;
+                    CookRarity rarity = rarityComboBox.SelectedIndex switch
+                    {
+                        0 => CookRarity.Common,
+                        1 => CookRarity.Rare,
+                        2 => CookRarity.Epic,
+                        _ => throw new ArgumentException("不正なレア度が選択されました。")
+                    };
+                    Food createdFood = new Food(recipeId, ingredientAId, ingredientBId, rarity)
+                    {
+                        amount = Convert.ToInt32(createdNumericNo.Value),
+                        DisplayName = cookedCategoryComboBox.SelectedItem?.ToString() ?? string.Empty
+                    };
+                    _saveDataManager.WriteItemData(index, createdFood);
                     result = true;
                     break;
 
@@ -501,6 +500,7 @@ namespace CKCharaDataEditor
             resultLabel.Visible = false;
         }
 
+        [Obsolete]
         private static void DetermineCookedAttributes(int baseObjectId, string rarity, out int fixedObjectId, out string fixedInternalName)
         {
             fixedObjectId = rarity switch
@@ -510,7 +510,7 @@ namespace CKCharaDataEditor
                 "エピック" => baseObjectId + (int)CookRarity.Epic,
                 _ => throw new ArgumentException(null, nameof(rarity)),
             };
-            string baseInternalName = StaticResource.AllCookedBaseCategories.Single(c => c.objectID == baseObjectId).objectName;
+            string baseInternalName = Food.AllCookedBaseCategories.Single(c => c.objectID == baseObjectId).objectName;
             fixedInternalName = rarity switch
             {
                 "コモン" => baseInternalName,
@@ -526,6 +526,7 @@ namespace CKCharaDataEditor
         /// <param name="IdA">1つめの食材のId(dec)</param>
         /// <param name="IdB">2つめの食材のId(dec)</param>
         /// <returns></returns>
+        [Obsolete]
         public static int CalculateVariation(int IdA, int IdB)
         {
             // ゲーム内動作に合わせて降順に入れ替え
@@ -542,6 +543,7 @@ namespace CKCharaDataEditor
         /// <param name="variation"></param>
         /// <param name="ingredientA">材料の食材A</param>
         /// <param name="ingredientB">材料の食材B</param>
+        [Obsolete]
         public static void ReverseCalcurateVariation(int variation, out int ingredientA, out int ingredientB)
         {
             // 16ビット右にシフトして上位16ビットを取得
@@ -561,14 +563,15 @@ namespace CKCharaDataEditor
             auxDataTextBox.Text = ItemAuxData.Default.data.ToString();
         }
 
+        [Obsolete]
         private static bool IsCookedItem(int objectID, out CookRarity rarity, out int indexBaseOffset)
         {
-            int[] cookedCategoryAllIds = StaticResource.AllCookedBaseCategories
+            int[] cookedCategoryAllIds = Food.AllCookedBaseCategories
                 .Select(c => c.objectID)
                 .SelectMany(id => new[] { id, id + (int)CookRarity.Rare, id + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToArray();
-            int categorySize = StaticResource.AllCookedBaseCategories.Count;
+            int categorySize = Food.AllCookedBaseCategories.Count;
             var commonIDs = cookedCategoryAllIds.Take(categorySize).ToArray();
             var rareIDs = cookedCategoryAllIds.Skip(categorySize).Take(categorySize).ToArray();
             if (commonIDs.Contains(objectID))
@@ -648,10 +651,10 @@ namespace CKCharaDataEditor
             ComboBox combo = (ComboBox)sender;
             string itemText = (string)combo.Items[e.Index]!;
 
-            var displayNames = StaticResource.AllIngredients.Select(c => c.DisplayName);
-            var goldernNames = StaticResource.AllIngredients
-                .Where(i => i.MakeRare)
-                .Select(i => i.DisplayName);
+            var displayNames = Food.AllIngredients.Select(c => c.DefaultDisplayName);
+            var goldernNames = Food.AllIngredients
+                .Where(i => i.CanMakeRare)
+                .Select(i => i.DefaultDisplayName);
 
             // 背景色を設定する
             e.DrawBackground();
@@ -682,16 +685,11 @@ namespace CKCharaDataEditor
             e.DrawFocusRectangle();
         }
 
-        private string TranslateObjectName(Item item)
+        private string TranslateObjectName(int objectID, string displayName)
         {
-            string displayName = item.objectName;
-            if (_fileManager.LocalizationData.TryGetValue(item.objectID.ToString(), out string[]? displayResource))
+            if (_fileManager.LocalizationData.TryGetValue(objectID.ToString(), out string[]? displayResource))
             {
                 displayName = displayResource[1];
-            }
-            if (item.DisplayName != string.Empty)
-            {
-                displayName = item.DisplayName;
             }
             return displayName;
         }
@@ -700,7 +698,7 @@ namespace CKCharaDataEditor
         {
             int selectedItemIndex = itemListBox.SelectedIndex;
             Item copiedItem = _saveDataManager.CopyItem(selectedItemIndex);
-            string displayName = TranslateObjectName(copiedItem);
+            string displayName = TranslateObjectName(copiedItem.objectID, copiedItem.objectName);
             EnableResultMessage($"{displayName}をコピーしました。");
         }
 
@@ -717,7 +715,7 @@ namespace CKCharaDataEditor
             auxIndexNumericUpDown.Value = pasteItem.Aux.index;
             auxDataTextBox.Text = pasteItem.Aux.data;
 
-            string displayName = TranslateObjectName(pasteItem);
+            string displayName = TranslateObjectName(pasteItem.objectID, pasteItem.objectName);
             EnableResultMessage($"{displayName}の情報をペーストしました。");
         }
 
@@ -820,7 +818,7 @@ namespace CKCharaDataEditor
                 if (IsRunningGame()) return;
                 Item pasteItem = _saveDataManager.PasteItem();
                 _saveDataManager.WriteItemData(itemListBox.SelectedIndex, pasteItem);
-                string displayName = TranslateObjectName(pasteItem);
+                string displayName = TranslateObjectName(pasteItem.objectID, pasteItem.objectName);
                 EnableResultMessage($"{displayName}をペーストしました。");
                 LoadItems();
                 e.Handled = true;

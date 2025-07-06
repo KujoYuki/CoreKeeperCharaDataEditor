@@ -4,7 +4,7 @@ namespace CKCharaDataEditor.Model.Items
 {
     public record Item : ItemInfo
     {
-        public string objectName { get; set; }
+        public virtual string objectName { get; set; }
         public ItemAuxData Aux { get; set; }
         public bool Locked { get; set; }
 

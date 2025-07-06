@@ -2,8 +2,8 @@
 {
     public record DiscoveredObjects : IItem
     {
-        public int objectID { get; set; }
-        public int variation { get; set; }
+        public virtual int objectID { get; set; }
+        public virtual int variation { get; set; }
 
         public DiscoveredObjects(int objectID, int variation)
         {

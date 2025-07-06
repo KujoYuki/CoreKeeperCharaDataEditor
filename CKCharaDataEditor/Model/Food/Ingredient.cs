@@ -1,5 +1,8 @@
-﻿namespace CKCharaDataEditor.Model.Items
+﻿using CKCharaDataEditor.Model.Items;
+
+namespace CKCharaDataEditor.Model.Food
 {
+    //[Obsolete]
     public record Ingredient : DiscoveredObjects
     {
         public string objectName { get; set; }

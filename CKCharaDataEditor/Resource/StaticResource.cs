@@ -1,4 +1,4 @@
-﻿using CKCharaDataEditor.Model.Items;
+﻿using CKCharaDataEditor.Model.Food;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -13,6 +13,7 @@ namespace CKCharaDataEditor.Resource
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
 
+        [Obsolete]
         public static IReadOnlyCollection<Ingredient> AllCookedBaseCategories { get; } =
         [
             new(9500, "CookedSoup", "スープ", IngredientRoots.Cooked),
@@ -32,7 +33,8 @@ namespace CKCharaDataEditor.Resource
             new(9514, "CookedCake", "ケーキ", IngredientRoots.Cooked),
         ];
 
-        public static IReadOnlyCollection<Ingredient> AllIngredients { get; } =
+        [Obsolete]
+        public static IReadOnlyList<Ingredient> AllIngredients { get; } =
         [
             new(1645,"LarvaMeat","幼虫肉", IngredientRoots.None),
             new(1646,"GoldenLarvaMeat","金色の幼虫肉", IngredientRoots.None),
@@ -110,7 +112,8 @@ namespace CKCharaDataEditor.Resource
             new(9743,"RiftianLampfish","亀裂のランプフィッシュ", IngredientRoots.Fish),
         ];
 
-        public static IReadOnlyCollection<Ingredient> ObsoleteIngredients { get; } =
+        [Obsolete]
+        public static IReadOnlyList<Ingredient> ObsoleteIngredients { get; } =
         [
             new(5501,"GiantMushroom2","ジャンボマッシュルーム(古)", IngredientRoots.Harvest & IngredientRoots.Deprecated),
             new(5607,"AmberLarva2","幼虫の琥珀(古)", IngredientRoots.None & IngredientRoots.Deprecated),

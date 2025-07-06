@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CKCharaDataEditor.Model.Items
+﻿namespace CKCharaDataEditor.Model.Food
 {
     [Flags]
     public enum IngredientRoots
@@ -13,6 +7,7 @@ namespace CKCharaDataEditor.Model.Items
         Harvest,
         Fish,
         Cooked,
+        Season,
         /// <summary>
         /// 削除済みアイテム
         /// </summary>

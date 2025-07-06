@@ -47,7 +47,6 @@ namespace CKCharaDataEditor.Control
             for (int i = 0; i < petKinds.Length; i++)
             {
                 string objectId = ((int)petKinds[i]).ToString();
-                //hack LocalizationDataを取得する前に初期化してしまうから一生初期化できない
                 if (_fileManager.LocalizationData.TryGetValue(objectId, out string[]? translateResources))
                 {
                     petKindComboBox.Items.Add(translateResources[1]);
@@ -212,7 +211,7 @@ namespace CKCharaDataEditor.Control
             {
                 while (Encoding.UTF8.GetByteCount(text) > 64)
                 {
-                    text = text.Substring(0, text.Length - 1);
+                    text = text[..^1];
                 }
                 petNameTextBox.Text = text;
                 petNameTextBox.SelectionStart = text.Length; // キャレット位置を末尾に設定

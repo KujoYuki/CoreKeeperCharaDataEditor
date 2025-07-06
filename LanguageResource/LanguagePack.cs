@@ -42,7 +42,6 @@ namespace LanguageResource
 
             if (!File.Exists(localizationPath) || !File.Exists(objectIdPath))
             {
-                // hack 例外をロガーに投げる
                 //string errorMessage = $"インストールフォルダ内の指定されたファイルが見つかりません。\n" +
                 //    $"パスを確認するかゲームを再インストールしてください。";
                 
@@ -101,7 +100,7 @@ namespace LanguageResource
         private static List<string[]> FixLineFeed(List<string[]> languageResources)
         {
             string lastKey = @"youAreInGuestMode";
-            for(int i = 0; i < languageResources.Count(); i++)
+            for(int i = 0; i < languageResources.Count; i++)
             {
                 string[] keyResource = languageResources[i];
                 if (keyResource[0]==lastKey)

@@ -2,6 +2,8 @@
 
 namespace CKCharaDataEditor.Model.Food
 {
+    //hack 料理アイテムとしてのクラスにしItemを継承させない。ToItem()で変換する
+    //Ingradientクラスは統合せずに残す。食材定義もIngradientで残す。
     public record Food : Item
     {
         public override int objectID

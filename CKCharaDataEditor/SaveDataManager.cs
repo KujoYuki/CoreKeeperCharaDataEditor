@@ -1,4 +1,5 @@
 ﻿using CKCharaDataEditor.Model;
+using CKCharaDataEditor.Model.Food;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Resource;
@@ -216,17 +217,17 @@ namespace CKCharaDataEditor
             return true;
         }
 
-        public void CalculateRecepeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
+        public void CalculateRecipeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
         {
-            int[] allFoodID = StaticResource.AllIngredients.Select(c => c.objectID).ToArray();
-            List<Tuple<int, int>> allPairs = allFoodID // hack Variation内の順序決定アルゴリズムが不明のため、実際の順番は前後している場合がある
+            int[] allFoodID = Recipe.AllIngredients.Select(c => c.objectID).ToArray();
+            List<Tuple<int, int>> allIngredientPairs = allFoodID
                 .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
                 .ToList();
-            allRecipeTempVariationCount = allPairs.Count;
+            allRecipeTempVariationCount = allIngredientPairs.Count;
 
             // 料理のコモンとレアのカテゴリIDリスト
-            List<int> allCookedCategoryId = StaticResource.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
+            List<int> allCookedCategoryId = Recipe.AllCookedBaseCategories
+                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })   // Epicはレシピに載らないため除外
                 .OrderBy(id => id)
                 .ToList();
             List<Tuple<int, int>> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
@@ -235,21 +236,21 @@ namespace CKCharaDataEditor
                 .Where(o => o.variation > 0 && (uint)o.variation <= uint.MaxValue)   // variationが0か32bitで表現できない場合は除外
                 .Select(c => c!.variation)
                 .Distinct()
-                .Select(v =>
+                .Select(variation =>
                 {
-                    Form1.ReverseCalcurateVariation(v, out int materialA, out int materialB);
+                    Recipe.UnpackVariation(variation, out int materialA, out int materialB);
                     return Tuple.Create(Math.Min(materialA, materialB), Math.Max(materialA, materialB));
                 })
                 .Where(pair => allFoodID.Contains(pair.Item1) && allFoodID.Contains(pair.Item2))    // 食材以外を食材とするレシピの除外
                 .ToList();
 
             userRecipeCount = allUserRecipeTempVariation.Count;
-            exceptRecipe = allPairs.Except(allUserRecipeTempVariation).ToList();    //未作成の組み合わせ
+            exceptRecipe = allIngredientPairs.Except(allUserRecipeTempVariation).ToList();    //未作成の組み合わせ
         }
 
         public void ListUncreatedRecipes()
         {
-            CalculateRecepeCounts(out int userRecipeCount, out int allRecipeCount, out var exceptRecipes);
+            CalculateRecipeCounts(out int userRecipeCount, out int allRecipeCount, out var exceptRecipes);
             double cookRate = (double)userRecipeCount / allRecipeCount;
 
             DialogResult outputResult = MessageBox.Show($"現在のレシピ網羅率は {cookRate:P2} %です。" +
@@ -261,8 +262,8 @@ namespace CKCharaDataEditor
                 var foodBuilder = new StringBuilder();
                 foreach ((var foodA, var foodB) in exceptRecipes)
                 {
-                    string FoodA = StaticResource.AllIngredients.Single(f => f.objectID == foodA).DisplayName;
-                    string FoodB = StaticResource.AllIngredients.Single(f => f.objectID == foodB).DisplayName;
+                    string FoodA = Recipe.AllIngredients.Single(f => f.objectID == foodA).DisplayName;
+                    string FoodB = Recipe.AllIngredients.Single(f => f.objectID == foodB).DisplayName;
                     foodBuilder.AppendLine($"{FoodA} + {FoodB}");
                 }
 
@@ -284,7 +285,7 @@ namespace CKCharaDataEditor
 
         public void DeleteAllRecipes()
         {
-            var allCookedCategoryId = StaticResource.AllCookedBaseCategories
+            var allCookedCategoryId = Recipe.AllCookedBaseCategories
                 .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare, c.objectID + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToList();
@@ -356,9 +357,10 @@ namespace CKCharaDataEditor
             File.WriteAllText(SaveDataPath, changedJson);
         }
 
-        internal void CopyItem(Item item)
+        internal Item CopyItem(int index)
         {
-            _copiedItem = item;
+            _copiedItem = Items[index];
+            return _copiedItem;
         }
 
         internal Item PasteItem()
@@ -478,6 +480,34 @@ namespace CKCharaDataEditor
             valueObj["x"] = x + 1;
             _saveData["lastConnectedServerGuid"]!["Value"] = valueObj;
 
+        }
+
+        /// <summary>
+        /// インベントリ先頭の装備アイテム4つを、アイテムLvごとに20個ずつ複製します。
+        /// </summary>
+        internal void DupeEquipmentEachLv()
+        {
+            Item[] items = Items.Take(4).ToArray();
+
+            // 通常のアイテム枠とポーチのアイテム枠
+            Queue<int> indexes = new Queue<int>(
+                Enumerable.Range(0, 50)
+                    .Concat(Enumerable.Range(87, 10))
+                    .Concat(Enumerable.Range(98, 10))
+                    .Concat(Enumerable.Range(109, 10))
+                    .Concat(Enumerable.Range(120, 10))
+                    );
+            foreach (var item in items)
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Item newItem = item with
+                    {
+                        variation = i
+                    };
+                    WriteItemData(indexes.Dequeue(), newItem);
+                }
+            }
         }
     }
 }

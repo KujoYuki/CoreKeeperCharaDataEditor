@@ -9,7 +9,7 @@ namespace CKCharaDataEditor
     {
         private static FileManager? _instance;
         public static FileManager Instance => _instance ??= new FileManager();
-        public IReadOnlyDictionary<string, string[]> LocalizationData = new Dictionary<string, string[]>();
+        public IReadOnlyDictionary<int, string[]> LocalizationData = new Dictionary<int, string[]>();
         private FileManager()
         {
             _saveFolder = Settings.Default.SaveFolderPath;
@@ -84,7 +84,6 @@ namespace CKCharaDataEditor
             }
             catch (Exception)
             {
-                //todo ロガー出力
                 return string.Empty;
             }
         }
@@ -100,7 +99,6 @@ namespace CKCharaDataEditor
             }
             else
             {
-                //todo ロガー出力
                 return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             }
         }

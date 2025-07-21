@@ -47,19 +47,6 @@ namespace CKCharaDataEditorTest.Model
             return sb.ToString();
         }
 
-        private static int CountOneBits(string binaryString)
-        {
-            int count = 0;
-            foreach (char c in binaryString)
-            {
-                if (c == '1')
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
         public int IngredientA { get; set; }
         public int IngredientB { get; set; }
         public int RecipeId { get; set; }

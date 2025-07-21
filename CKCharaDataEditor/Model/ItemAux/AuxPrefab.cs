@@ -2,13 +2,13 @@
 {
     public record AuxPrefab
     {
-        public AuxPrefab(ulong prefabHash, IEnumerable<AuxStableType> types)
+        public AuxPrefab(ulong prefabHash, List<AuxStableType> types)
         {
             this.prefabHash = prefabHash;
             this.types = types;
         }
 
         public ulong prefabHash { get; set; }
-        public IEnumerable<AuxStableType> types { get; set; }
+        public List<AuxStableType> types { get; set; }
     }
 }

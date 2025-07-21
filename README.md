@@ -4,23 +4,26 @@
 通常の手段では作れない料理の作成やアイテムの編集を目的として制作しています。  
 ダウンロードは[こちら](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases/latest/)から。
 
-## このツールで出来ること
-- キャラインベントリのあらゆるアイテムを編集できます。
-- 任意の食材の組み合わせによる料理を作成します。  
-  - 料理のレア度や個数を変更することが出来ます。  
-  - 自販機アイテムやシーズン料理を食材とした料理を作成することが出来ます。  
+## このツールが持つ機能
+- インベントリ内のあらゆるアイテムを作成できます。  
+  - 所持アイテム個数を変更。  
+  - 装備のアイテムLvと耐久度を変更。  
+  - アイテムの表示名変更。  
+  - 未所持/未入手/データ上のみの存在するアイテムも対象です。  
+- 任意の食材の組み合わせによる料理を作成できます。  
+  - 料理のレア度や個数を指定することが出来ます。  
+  - 自販機アイテムやシーズン料理を食材としての対象です。  
 - 未作成料理の食材の組み合わせをリストアップします。  
-- インベントリ内の全てのアイテム個数を変更できます。  
-- インベントリ内の全ての装備の耐久度を変更できます。  
-- インベントリ内の全てのペットタレントを変更できます。
-- 未取得のアイテムや装備をインベントリに作成できます。
-- ペットスキルの編集ができます。
-  - 5つを超えたスキルの変更と有効/無効の切り替えができます。
-  - 未実装のペットスキルを対象に含みます。
-- 任意の家畜が作成出来ます。  
-- 通常手段で入手不可の未実装アイテムの取得ができます。
-- 任意のバフ/食事効果/装備効果などを任意効果量/効果時間で付与できます。
-- ゲームやmodのバージョンに殆ど関係なく使えます。
+- ペットタレントの編集ができます。  
+  - 5つを超えたスキルの変更と有効/無効の切り替えができます。  
+  - データ上のみ存在する未実装のペットスキルを対象に含みます。  
+- 任意の家畜が作成出来ます。 
+  - 家畜の色や満腹度も対象です。
+- 全てのアイテムの表示名を任意の名前に変更できます。
+- 任意のバフ/食事効果/装備効果などを任意効果量/効果時間で付与できます。  
+  - バニラでは不可能な数値や効果の組み合わせをつけることが出来ます。  
+- キャラクターのスキル経験値を編集できます。
+- **ゲームやmodのバージョンに影響されず、バニラでも使えます。**
 
 
 ![CKCharaDataEditor Overview](Document/images/imageSample.png)  
@@ -55,25 +58,32 @@
 
 ## Summary
 This is an external extension editor for manipulating the inventory content of [Core Keeper](https://store.steampowered.com/app/1621690/Core_Keeper/).  
-It is designed for purposes such as creating dishes that cannot be made by normal means.  
+It is designed for purposes such as creating dishes that cannot be made by normal means and editing items.
 
 ## Features
-- Create dishes using any combination of ingredients.  
-  - You can adjust the rarity and quantity of the dishes.  
-- Create dishes using potions or seasonal dishes as ingredients, and obtain boosted effect values or extended effect durations from the food bonuses.  
-- Note that the game will determine whether certain created items are valid.
+- Can create any items in the inventory.
+  - Change the quantity of possessed items.
+  - Change equipment item level and durability.
+  - Change item display names.
+  - Includes unacquired/unobtained/data-only items.
+- Create dishes using any combination of ingredients.
+  - You can adjust the rarity and quantity of the dishes.
+  - Vending machine items and seasonal dishes can be used as ingredients.
 - List combinations of ingredients for dishes that have not yet been created.
-- Change the quantity of all items in the inventory.
-- Modify the durability of all equipment in the inventory.
-- Modify all pet skills in the inventory.
-- Add unacquired items or equipment to the inventory.
-- Edit pet skills.  
-  - You can change skills and toggle them between enabled/disabled.
-  - Includes unimplemented pet skills.
-- Obtain unimplemented items that cannot be acquired through normal means.
-- Create dishes with negative quantities.
+- Edit pet talents.
+  - You can change skills beyond 5 and toggle them between enabled/disabled.
+  - Includes unimplemented pet skills that exist only in data.
+- Can create any cattle.
+  - Includes cattle color and satiety levels.
+- Can change the display name of all items to any name.
 - You can add any buff/meal effect/equipment effect, etc. with any amount/duration.
-- Can be used regardless of the game or mod version in most cases.
+  - Allows combinations of values and effects impossible in vanilla.
+- Can edit character skill experience points.
+- **Can be used regardless of the game or mod version, and works with vanilla.**
+
+## Game Operation During Data Editing
+Please close the game while this tool is rewriting data.
+Since character data is being rewritten externally, content rewritten while the game is running may be overwritten and invalidated by the game's save process when the game exits.
 
 ## Disclaimer
 ### 1. The software may be blocked by your security software or Windows upon startup.
@@ -91,6 +101,7 @@ In short, this is a tool aimed at post-game completionists.
 
 ## System Requirements
 .NET Runtime version 8.0 or later must be installed.
+Display size scaling must be set to 100%.
 
 ## 仕組みと解説
 Explanation is in Japanese only  

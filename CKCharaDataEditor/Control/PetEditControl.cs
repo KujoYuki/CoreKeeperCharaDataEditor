@@ -1,25 +1,22 @@
-﻿using CKCharaDataEditor.Model.Items;
-using CKCharaDataEditor.Model.ItemAux;
+﻿using CKCharaDataEditor.Model.ItemAux;
+using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.Pet;
-using System.ComponentModel;
+using CKCharaDataEditor.Resource;
 using System.Data;
-using System.Text;
 
 namespace CKCharaDataEditor.Control
 {
-    public partial class PetEditControl : UserControl, INotifyPropertyChanged
+    public partial class PetEditControl : UserControl
     {
         private FileManager _fileManager = FileManager.Instance;
 
         public PetEditControl()
         {
             InitializeComponent();
-            InitControl();
+            LoadPetKind();
         }
 
         private PetBattleType _battleType = PetBattleType.Undefined;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
 
         private Pet _pet = Pet.Default;
         public Pet PetItem
@@ -36,19 +33,16 @@ namespace CKCharaDataEditor.Control
             }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        public void LoadPetKind()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void InitControl()
-        {
+            petKindComboBox.BeginUpdate();
             var petKinds = Enum.GetValues<PetType>();
+
+            petKindComboBox.Items.Clear();
             for (int i = 0; i < petKinds.Length; i++)
             {
-                string objectId = ((int)petKinds[i]).ToString();
-                //hack LocalizationDataを取得する前に初期化してしまうから一生初期化できない
-                if (_fileManager.LocalizationData.TryGetValue(objectId, out string[]? translateResources))
+                int objectId = (int)petKinds[i];
+                if (_fileManager.LocalizationData.TryGetValue(objectId, out string[]? translateResources))  //hack 初期化時点では辞書初期化がまだ実行されていない
                 {
                     petKindComboBox.Items.Add(translateResources[1]);
                 }
@@ -57,6 +51,7 @@ namespace CKCharaDataEditor.Control
                     petKindComboBox.Items.Add(petKinds[i].ToString());
                 }
             }
+            petKindComboBox.EndUpdate();
         }
 
         public void LoadPet(Pet petItem)
@@ -83,7 +78,7 @@ namespace CKCharaDataEditor.Control
             }
             else
             {
-                ResetPetTab();
+                PetItem = Pet.Default;
             }
 
         }
@@ -100,31 +95,8 @@ namespace CKCharaDataEditor.Control
             }
         }
 
-        public void ResetPetTab()
-        {
-            petColorComboBox.SelectedIndex = -1;
-            petExpNumeric.Value = 0;
-            petNameTextBox.Text = string.Empty;
-            battleTypeLabel.Text = string.Empty;
-
-            var petTalentControls = petTalentTableLayoutPanel.Controls.Cast<PetTalentControl>()
-                .OrderBy(control => control.SlotNo)
-                .ToList();
-            foreach (var control in petTalentControls)
-            {
-                control.Reset();
-            }
-            petKindComboBox.SelectedIndex = -1;
-        }
-
         private void petKindComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (((ComboBox)sender).SelectedIndex is -1)
-            {
-                battleTypeLabel.Text = "--";
-                return;
-            }
-
             var allPetType = Enum.GetValues<PetType>();
             Dictionary<int, PetType> petTabDic = Enumerable.Range(0, allPetType.Length)
                 .Select(i => (i, allPetType[i]))
@@ -153,8 +125,16 @@ namespace CKCharaDataEditor.Control
             }
 
             // 多色ペット判定
-            var colorPets = PetResource.ColorSelectablePets.Select(k => k.ToString());
-            if (colorPets.Contains(petKindComboBox.SelectedItem?.ToString()))
+            List<(int objectID, string DisplayName)> colorPet = [];
+            foreach (int ID in PetResource.ColorSelectablePets.Select(k => (int)k).ToArray())
+            {
+                string displayName = _fileManager.LocalizationData.TryGetValue(ID, out string[]? translateResources)
+                    ? translateResources[1]
+                    : PetResource.PetDic[ID].objectName;
+                colorPet.Add((ID, displayName));
+            }
+            int selectedPetId = colorPet.SingleOrDefault(pet=>pet.DisplayName == petKindComboBox.SelectedItem?.ToString()).objectID;
+            if (colorPet.Select(cp=>cp.objectID).Contains(selectedPetId))
             {
                 foreach (var color in Enum.GetValues<PetColor>())
                 {
@@ -163,7 +143,7 @@ namespace CKCharaDataEditor.Control
             }
             else
             {
-                // スライム系
+                // スライムJrなど一色しかない系
                 petColorComboBox.Items.Add(PetResource.ColorDict[(allPetType[petKindComboBox.SelectedIndex], PetColor.Color_0)]);
             }
             petColorComboBox.SelectedIndex = 0;
@@ -205,17 +185,9 @@ namespace CKCharaDataEditor.Control
 
         private void petNameTextBox_TextChanged(object sender, EventArgs e)
         {
-            string text = petNameTextBox.Text;
-            byte[] bytes = Encoding.UTF8.GetBytes(text);
-            // ペット名が64バイトを超えたら溢れた分を削除する
-            if (bytes.Length > 64)
+            if (sender is TextBox textBox)
             {
-                while (Encoding.UTF8.GetByteCount(text) > 64)
-                {
-                    text = text.Substring(0, text.Length - 1);
-                }
-                petNameTextBox.Text = text;
-                petNameTextBox.SelectionStart = text.Length; // キャレット位置を末尾に設定
+                StaticResource.SanitizeTextBoxText(textBox);
             }
         }
     }

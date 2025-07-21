@@ -16,20 +16,20 @@ namespace CKCharaDataEditorTest
         public void VariationAlgorithmTest()
         {
             // ハートベリー + 爆弾ピーマン
-            string calcResult = Form1.CalculateVariation(8003, 8009).ToString();
-            Assert.AreEqual(524885827.ToString(), calcResult);
+            int calcResult = CKCharaDataEditor.Model.Food.Recipe.CalculateVariation(8003, 8009);
+            Assert.AreEqual(524885827, calcResult);
 
             // ハートベリー + 爆弾ピーマン 逆ver
-            calcResult = Form1.CalculateVariation(8009, 8003).ToString();
-            Assert.AreEqual(524885827.ToString(), calcResult);
+            calcResult = CKCharaDataEditor.Model.Food.Recipe.CalculateVariation(8009, 8003);
+            Assert.AreEqual(524885827, calcResult);
 
             // 金色の発光チューリップ + スピリットベール
-            calcResult = Form1.CalculateVariation(8101, 9717).ToString();
-            Assert.AreEqual(636821413.ToString(), calcResult);
+            calcResult = CKCharaDataEditor.Model.Food.Recipe.CalculateVariation(8101, 9717);
+            Assert.AreEqual(636821413, calcResult);
 
             // 冬のクッキー + イビルアイキャンディー
-            calcResult = Form1.CalculateVariation(9613, 9608).ToString();
-            Assert.AreEqual(630007176.ToString(), calcResult);
+            calcResult = CKCharaDataEditor.Model.Food.Recipe.CalculateVariation(9613, 9608);
+            Assert.AreEqual(630007176, calcResult);
         }
 
         [TestMethod]

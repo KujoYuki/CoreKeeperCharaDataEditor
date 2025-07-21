@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             advancedTab = new TabPage();
+            dupeEquipmentEachLv = new Button();
             auxIndexNumericUpDown = new NumericUpDown();
             variationNumericUpDown = new NumericUpDown();
             variationUpdateCountNumericUpDown = new NumericUpDown();
@@ -85,6 +86,9 @@
             cattleNameTextBox = new TextBox();
             label15 = new Label();
             label7 = new Label();
+            otherTab = new TabPage();
+            DisplayNameTextBox = new TextBox();
+            label18 = new Label();
             label1 = new Label();
             saveSlotNoComboBox = new ComboBox();
             saveFolderBrowserDialog = new FolderBrowserDialog();
@@ -112,6 +116,7 @@
             AboutToolStripMenuItem = new ToolStripMenuItem();
             toolTipCattleStomach = new ToolTip(components);
             toolTipCattleMeal = new ToolTip(components);
+            lastConnectedWorldLabel = new Label();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
@@ -125,6 +130,7 @@
             cattleTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
+            otherTab.SuspendLayout();
             menuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -134,6 +140,7 @@
             itemEditTabControl.Controls.Add(foodTab);
             itemEditTabControl.Controls.Add(petTab);
             itemEditTabControl.Controls.Add(cattleTab);
+            itemEditTabControl.Controls.Add(otherTab);
             itemEditTabControl.Location = new Point(304, 146);
             itemEditTabControl.MinimumSize = new Size(650, 300);
             itemEditTabControl.Name = "itemEditTabControl";
@@ -143,6 +150,7 @@
             // 
             // advancedTab
             // 
+            advancedTab.Controls.Add(dupeEquipmentEachLv);
             advancedTab.Controls.Add(auxIndexNumericUpDown);
             advancedTab.Controls.Add(variationNumericUpDown);
             advancedTab.Controls.Add(variationUpdateCountNumericUpDown);
@@ -175,9 +183,19 @@
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
             // 
+            // dupeEquipmentEachLv
+            // 
+            dupeEquipmentEachLv.Location = new Point(121, 216);
+            dupeEquipmentEachLv.Name = "dupeEquipmentEachLv";
+            dupeEquipmentEachLv.Size = new Size(152, 23);
+            dupeEquipmentEachLv.TabIndex = 36;
+            dupeEquipmentEachLv.Text = "装備のLv別制作（４）";
+            dupeEquipmentEachLv.UseVisualStyleBackColor = true;
+            dupeEquipmentEachLv.Visible = false;
+            dupeEquipmentEachLv.Click += dupeEquipmentEachLv_Click;
+            // 
             // auxIndexNumericUpDown
             // 
-            auxIndexNumericUpDown.Enabled = false;
             auxIndexNumericUpDown.Location = new Point(488, 89);
             auxIndexNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             auxIndexNumericUpDown.Name = "auxIndexNumericUpDown";
@@ -196,7 +214,6 @@
             // 
             // variationUpdateCountNumericUpDown
             // 
-            variationUpdateCountNumericUpDown.Enabled = false;
             variationUpdateCountNumericUpDown.Location = new Point(488, 28);
             variationUpdateCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             variationUpdateCountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
@@ -616,8 +633,8 @@
             // mealNumericUpDown
             // 
             mealNumericUpDown.Location = new Point(180, 137);
-            mealNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            mealNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            mealNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            mealNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             mealNumericUpDown.Name = "mealNumericUpDown";
             mealNumericUpDown.Size = new Size(120, 23);
             mealNumericUpDown.TabIndex = 11;
@@ -682,8 +699,8 @@
             // stomachNumericUpDown
             // 
             stomachNumericUpDown.Location = new Point(9, 137);
-            stomachNumericUpDown.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            stomachNumericUpDown.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            stomachNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            stomachNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             stomachNumericUpDown.Name = "stomachNumericUpDown";
             stomachNumericUpDown.Size = new Size(120, 23);
             stomachNumericUpDown.TabIndex = 4;
@@ -713,6 +730,35 @@
             label7.Size = new Size(31, 15);
             label7.TabIndex = 0;
             label7.Text = "名前";
+            // 
+            // otherTab
+            // 
+            otherTab.Controls.Add(DisplayNameTextBox);
+            otherTab.Controls.Add(label18);
+            otherTab.Location = new Point(4, 24);
+            otherTab.Name = "otherTab";
+            otherTab.Padding = new Padding(3);
+            otherTab.Size = new Size(642, 276);
+            otherTab.TabIndex = 4;
+            otherTab.Text = "その他";
+            otherTab.UseVisualStyleBackColor = true;
+            // 
+            // DisplayNameTextBox
+            // 
+            DisplayNameTextBox.Location = new Point(17, 38);
+            DisplayNameTextBox.Name = "DisplayNameTextBox";
+            DisplayNameTextBox.Size = new Size(333, 23);
+            DisplayNameTextBox.TabIndex = 1;
+            DisplayNameTextBox.TextChanged += DisplayNameTextBox_TextChanged;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(17, 20);
+            label18.Name = "label18";
+            label18.Size = new Size(113, 15);
+            label18.TabIndex = 0;
+            label18.Text = "ユーザー定義の表示名";
             // 
             // label1
             // 
@@ -915,10 +961,23 @@
             AboutToolStripMenuItem.Text = "バージョン情報(&A)";
             AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
+            // lastConnectedWorldLabel
+            // 
+            lastConnectedWorldLabel.AutoSize = true;
+            lastConnectedWorldLabel.ForeColor = Color.Purple;
+            lastConnectedWorldLabel.Location = new Point(592, 59);
+            lastConnectedWorldLabel.Name = "lastConnectedWorldLabel";
+            lastConnectedWorldLabel.Size = new Size(142, 15);
+            lastConnectedWorldLabel.TabIndex = 26;
+            lastConnectedWorldLabel.Text = "lastConnectedWorldLabel";
+            lastConnectedWorldLabel.Visible = false;
+            lastConnectedWorldLabel.Click += lastConnectedWorldLabel_Click;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(967, 508);
+            Controls.Add(lastConnectedWorldLabel);
             Controls.Add(clearedFlagLabel);
             Controls.Add(label14);
             Controls.Add(itemListBox);
@@ -958,6 +1017,8 @@
             cattleTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).EndInit();
+            otherTab.ResumeLayout(false);
+            otherTab.PerformLayout();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             ResumeLayout(false);
@@ -1048,5 +1109,10 @@
         private NumericUpDown variationUpdateCountNumericUpDown;
         private NumericUpDown variationNumericUpDown;
         private NumericUpDown auxIndexNumericUpDown;
+        private Button dupeEquipmentEachLv;
+        private TabPage otherTab;
+        private TextBox DisplayNameTextBox;
+        private Label label18;
+        private Label lastConnectedWorldLabel;
     }
 }

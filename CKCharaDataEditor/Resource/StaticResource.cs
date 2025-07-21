@@ -1,4 +1,4 @@
-﻿using CKCharaDataEditor.Model.Items;
+﻿using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -13,109 +13,9 @@ namespace CKCharaDataEditor.Resource
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
 
-        public static IReadOnlyCollection<Ingredient> AllCookedBaseCategories { get; } =
-        [
-            new(9500, "CookedSoup", "スープ", IngredientRoots.Cooked),
-            new(9501, "CookedPudding", "プリン", IngredientRoots.Cooked),
-            new(9502, "CookedSalad", "サラダ", IngredientRoots.Cooked),
-            new(9503, "CookedWrap", "ピーマンラップ", IngredientRoots.Cooked),
-            new(9504, "CookedSteak", "ステーキ", IngredientRoots.Cooked),
-            new(9505, "CookedCheese", "チーズ", IngredientRoots.Cooked),
-            new(9506, "CookedDipSnack", "ディップスナック", IngredientRoots.Cooked),
-            new(9507, "CookedSushi", "スシ", IngredientRoots.Cooked),
-            new(9508, "CookedFishBalls", "つみれ", IngredientRoots.Cooked),
-            new(9509, "CookedFillet", "フィレ", IngredientRoots.Cooked),
-            new(9510, "CookedCereal", "シリアル", IngredientRoots.Cooked),
-            new(9511, "CookedSmoothie", "スムージー", IngredientRoots.Cooked),
-            new(9512, "CookedSandwich", "サンドイッチ", IngredientRoots.Cooked),
-            new(9513, "CookedPanCurry", "カレー", IngredientRoots.Cooked),
-            new(9514, "CookedCake", "ケーキ", IngredientRoots.Cooked),
-        ];
-
-        public static IReadOnlyCollection<Ingredient> AllIngredients { get; } =
-        [
-            new(1645,"LarvaMeat","幼虫肉", IngredientRoots.None),
-            new(1646,"GoldenLarvaMeat","金色の幼虫肉", IngredientRoots.None),
-            new(5500,"Mushroom","きのこ", IngredientRoots.Harvest),
-            new(5502,"GiantMushroom2","ジャンボマッシュルーム", IngredientRoots.Harvest),
-            new(5503,"AmberLarva2","幼虫の琥珀", IngredientRoots.None),
-            new(7901,"Meat","霜降り肉", IngredientRoots.None),
-            new(7902,"Egg","ドードーの卵", IngredientRoots.None),
-            new(8003,"HeartBerry","ハートベリー", IngredientRoots.Harvest),
-            new(8006,"GlowingTulipFlower","発光チューリップ", IngredientRoots.Harvest),
-            new(8009,"BombPepper","爆弾ピーマン", IngredientRoots.Harvest),
-            new(8012,"Carrock","キャロック", IngredientRoots.Harvest),
-            new(8015,"Puffungi","カビキノコ", IngredientRoots.Harvest),
-            new(8024,"BloatOat","ボウチョウ麦", IngredientRoots.Harvest),
-            new(8027,"Pewpaya","ピュパイヤ", IngredientRoots.Harvest),
-            new(8030,"Pinegrapple","パイグラップル", IngredientRoots.Harvest),
-            new(8033,"Grumpkin","ふきげんカボチャ", IngredientRoots.Harvest),
-            new(8036,"Sunrice","サンライス", IngredientRoots.Harvest),
-            new(8039,"Lunacorn","ルナコーン", IngredientRoots.Harvest),
-            new(8100,"HeartBerryRare","金色のハートベリー", IngredientRoots.Harvest, true),
-            new(8101,"GlowingTulipFlowerRare","金色の発光チューリップ", IngredientRoots.Harvest, true),
-            new(8102,"BombPepperRare","金色の爆弾ピーマン", IngredientRoots.Harvest, true),
-            new(8103,"CarrockRare","金色のキャロック", IngredientRoots.Harvest, true),
-            new(8104,"PuffungiRare","金色のカビキノコ", IngredientRoots.Harvest, true),
-            new(8105,"BloatOatRare","金色のボウチョウ麦", IngredientRoots.Harvest, true),
-            new(8106,"PewpayaRare","金色のピュパイヤ", IngredientRoots.Harvest, true),
-            new(8107,"PinegrappleRare","金色のパイグラップル", IngredientRoots.Harvest, true),
-            new(8108,"GrumpkinRare","金色のふきげんガボチャ", IngredientRoots.Harvest, true),
-            new(8109, "SunriceRare", "金色のサンライス", IngredientRoots.Harvest, true),
-            new(8110, "LunacornRare", "金色のルナコーン", IngredientRoots.Harvest, true),
-            new(9618,"AtlantianWormHeart","アトラスワームの心臓", IngredientRoots.Fish),
-            new(9700,"OrangeCaveGuppy","オレンジ色の洞窟グッピー", IngredientRoots.Fish),
-            new(9701,"BlueCaveGuppy","青色の洞窟グッピー", IngredientRoots.Fish),
-            new(9702,"RockJaw","ロックジョー", IngredientRoots.Fish),
-            new(9703,"GemCrab","宝石ガニ", IngredientRoots.Fish),
-            new(9704,"DaggerFin","カミソリウオ", IngredientRoots.Fish),
-            new(9705,"PinkPalaceFish","モモイロキュウデンギョ", IngredientRoots.Fish),
-            new(9706,"TealPalaceFish","アオミドリキュウデンギョ", IngredientRoots.Fish),
-            new(9707,"CrownSquid","大王イカ", IngredientRoots.Fish),
-            new(9708,"YellowBlisterHead","イエローブリスターヘッド", IngredientRoots.Fish),
-            new(9709,"GreenBlisterHead","緑色のブリスターヘッド", IngredientRoots.Fish),
-            new(9710,"DevilWorm","デビルワーム", IngredientRoots.Fish),
-            new(9711,"VampireEel","吸血ウナギ", IngredientRoots.Fish),
-            new(9712,"MoldShark","カビザメ", IngredientRoots.Fish),
-            new(9713,"RotFish","ロットフィッシュ", IngredientRoots.Fish),
-            new(9714,"BlackSteelUrchin","クロガネウニ", IngredientRoots.Fish),
-            new(9715,"AzureFeatherFish","空色のハネウオ", IngredientRoots.Fish),
-            new(9716,"EmeraldFeatherFish","翡翠色のハネウオ", IngredientRoots.Fish),
-            new(9717,"SpiritVeil","スピリットベール", IngredientRoots.Fish),
-            new(9718,"AstralJelly","星クラゲ", IngredientRoots.Fish),
-            new(9719,"BottomTracer","ボトムトレーサー", IngredientRoots.Fish),
-            new(9720,"SilverTorrentDart","銀色のダート", IngredientRoots.Fish),
-            new(9721,"GoldenTorrentDart","金色のダート", IngredientRoots.Fish),
-            new(9722,"PinkCoralotl","ピンクサンゴウオ", IngredientRoots.Fish),
-            new(9723,"WhiteCoralotl","シロサンゴウオ", IngredientRoots.Fish),
-            new(9724,"SolidSpikeback","ハードスパイクバック", IngredientRoots.Fish),
-            new(9725,"SandySpikeback","サンドスパイクバック", IngredientRoots.Fish),
-            new(9726,"GreyDuneTail","グレイデューンテール", IngredientRoots.Fish),
-            new(9727,"BrownDuneTail","ブラウンデューンテール", IngredientRoots.Fish),
-            new(9728,"TornisKingfish","トーニスキングフィッシュ", IngredientRoots.Fish),
-            new(9729,"DarkLavaEater","ダークラヴァイーター", IngredientRoots.Fish),
-            new(9730,"BrightLavaEater","ブライトラヴァイーター", IngredientRoots.Fish),
-            new(9731,"VerdantDragonfish","グリーンドラゴンフィッシュ", IngredientRoots.Fish),
-            new(9732,"ElderDragonfish","エルダードラゴンフィッシュ", IngredientRoots.Fish),
-            new(9733,"StarlightNautilus","スターライトノーチラス", IngredientRoots.Fish, true),
-            new(9734,"AngleFish","緑柱石のアングルフィッシュ", IngredientRoots.Fish),
-            new(9735,"Deepstalker","玲瓏なディープストーカー", IngredientRoots.Fish),
-            new(9736,"CosmicForm","宇宙の形状", IngredientRoots.Fish),
-            new(9737,"GoldenAngleFish","碧玉のアングルフィッシュ", IngredientRoots.Fish),
-            new(9738,"GoldenDeepstalker","華麗なディープストーカー", IngredientRoots.Fish),
-            new(9739,"TerraTrilobite","陸三葉虫", IngredientRoots.Fish),
-            new(9740,"LithoTrilobite","岩三葉虫", IngredientRoots.Fish),
-            new(9741,"PinkhornPico","ピンク角のピコ", IngredientRoots.Fish),
-            new(9742,"GreenhornPico","緑角のピコ", IngredientRoots.Fish),
-            new(9743,"RiftianLampfish","亀裂のランプフィッシュ", IngredientRoots.Fish),
-        ];
-
-        public static IReadOnlyCollection<Ingredient> ObsoleteIngredients { get; } =
-        [
-            new(5501,"GiantMushroom2","ジャンボマッシュルーム(古)", IngredientRoots.Harvest & IngredientRoots.Deprecated),
-            new(5607,"AmberLarva2","幼虫の琥珀(古)", IngredientRoots.None & IngredientRoots.Deprecated),
-        ];
-
+        /// <summary>
+        /// 固有スロット名と色の辞書。
+        /// </summary>
         public static IReadOnlyDictionary<int, (string Segment, Brush Color)> ExtendSlotName
             = new Dictionary<int, (string Segment, Brush Color)>
             {
@@ -160,5 +60,22 @@ namespace CKCharaDataEditor.Resource
                 {109, ("Pouch_C", Brushes.BurlyWood)},
                 {120, ("Pouch_D", Brushes.BurlyWood)},
             };
+
+        /// <summary>
+        /// TextBoxのTextが64バイトを超えていたら末尾から削除して64バイト以内に収める
+        /// </summary>
+        public static void SanitizeTextBoxText(TextBox textBox)
+        {
+            string text = textBox.Text;
+            while (Encoding.UTF8.GetByteCount(text) > 64)
+            {
+                text = text[..^1];
+            }
+            if (textBox.Text != text)
+            {
+                textBox.Text = text;
+                textBox.SelectionStart = text.Length; // キャレット位置を末尾に設定
+            }
+        }
     }
 }

@@ -31,6 +31,12 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConditionForm));
             dataGridView = new DataGridView();
+            ConditionId = new DataGridViewTextBoxColumn();
+            Value = new DataGridViewTextBoxColumn();
+            Infinity = new DataGridViewCheckBoxColumn();
+            Duration = new DataGridViewTextBoxColumn();
+            Timer = new DataGridViewTextBoxColumn();
+            Description = new DataGridViewComboBoxColumn();
             label1 = new Label();
             createBackupButton = new Button();
             overrideConditionsButton = new Button();
@@ -43,12 +49,6 @@
             deleteSelectedRowButton = new Button();
             addNewRowButton = new Button();
             conditionListLinkLabel = new LinkLabel();
-            ConditionId = new DataGridViewTextBoxColumn();
-            Value = new DataGridViewTextBoxColumn();
-            Infinity = new DataGridViewCheckBoxColumn();
-            Duration = new DataGridViewTextBoxColumn();
-            Timer = new DataGridViewTextBoxColumn();
-            Description = new DataGridViewComboBoxColumn();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
@@ -70,6 +70,59 @@
             dataGridView.Size = new Size(744, 389);
             dataGridView.TabIndex = 0;
             dataGridView.CellValidating += dataGridView_CellValidating;
+            // 
+            // ConditionId
+            // 
+            ConditionId.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            ConditionId.FillWeight = 105.964462F;
+            ConditionId.HeaderText = "Id";
+            ConditionId.MaxInputLength = 3;
+            ConditionId.Name = "ConditionId";
+            ConditionId.ReadOnly = true;
+            ConditionId.SortMode = DataGridViewColumnSortMode.NotSortable;
+            ConditionId.Width = 23;
+            // 
+            // Value
+            // 
+            Value.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Value.FillWeight = 105.964462F;
+            Value.HeaderText = "効果量";
+            Value.Name = "Value";
+            Value.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Value.Width = 49;
+            // 
+            // Infinity
+            // 
+            Infinity.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Infinity.FillWeight = 76.1421356F;
+            Infinity.HeaderText = "永続化";
+            Infinity.Name = "Infinity";
+            Infinity.SortMode = DataGridViewColumnSortMode.Automatic;
+            Infinity.Width = 68;
+            // 
+            // Duration
+            // 
+            Duration.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Duration.FillWeight = 105.964462F;
+            Duration.HeaderText = "持続時間";
+            Duration.Name = "Duration";
+            Duration.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Duration.Width = 61;
+            // 
+            // Timer
+            // 
+            Timer.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            Timer.FillWeight = 105.964462F;
+            Timer.HeaderText = "残り時間";
+            Timer.Name = "Timer";
+            Timer.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Timer.Width = 57;
+            // 
+            // Description
+            // 
+            Description.HeaderText = "効果内容";
+            Description.Name = "Description";
+            Description.Resizable = DataGridViewTriState.True;
             // 
             // label1
             // 
@@ -192,59 +245,6 @@
             conditionListLinkLabel.Text = "ConditionIdの一覧";
             conditionListLinkLabel.LinkClicked += conditionListLinkLabel_LinkClicked;
             // 
-            // ConditionId
-            // 
-            ConditionId.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            ConditionId.FillWeight = 105.964462F;
-            ConditionId.HeaderText = "Id";
-            ConditionId.MaxInputLength = 3;
-            ConditionId.Name = "ConditionId";
-            ConditionId.ReadOnly = true;
-            ConditionId.SortMode = DataGridViewColumnSortMode.NotSortable;
-            ConditionId.Width = 23;
-            // 
-            // Value
-            // 
-            Value.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Value.FillWeight = 105.964462F;
-            Value.HeaderText = "効果量";
-            Value.Name = "Value";
-            Value.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Value.Width = 49;
-            // 
-            // Infinity
-            // 
-            Infinity.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Infinity.FillWeight = 76.1421356F;
-            Infinity.HeaderText = "永続化";
-            Infinity.Name = "Infinity";
-            Infinity.SortMode = DataGridViewColumnSortMode.Automatic;
-            Infinity.Width = 68;
-            // 
-            // Duration
-            // 
-            Duration.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Duration.FillWeight = 105.964462F;
-            Duration.HeaderText = "持続時間";
-            Duration.Name = "Duration";
-            Duration.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Duration.Width = 61;
-            // 
-            // Timer
-            // 
-            Timer.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Timer.FillWeight = 105.964462F;
-            Timer.HeaderText = "残り時間";
-            Timer.Name = "Timer";
-            Timer.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Timer.Width = 57;
-            // 
-            // Description
-            // 
-            Description.HeaderText = "効果内容";
-            Description.Name = "Description";
-            Description.Resizable = DataGridViewTriState.True;
-            // 
             // ConditionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -265,6 +265,7 @@
             MinimumSize = new Size(975, 471);
             Name = "ConditionForm";
             Text = "コンディション値";
+            FormClosing += ConditionForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();

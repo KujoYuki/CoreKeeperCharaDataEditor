@@ -6,7 +6,7 @@ namespace CKCharaDataEditor.Model.ItemAux
 {
     public record ItemAuxData
     {
-        public AuxPrefabManager? AuxPrefabManager = null;
+        public AuxPrefabManager AuxPrefabManager;
 
         #region Property
         public int index { get; set; }
@@ -14,13 +14,23 @@ namespace CKCharaDataEditor.Model.ItemAux
         {
             get
             {
-                if (AuxPrefabManager is null)
+                if (AuxPrefabManager == AuxPrefabManager.Default)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return AuxPrefabManager.ToInnerJsonString(StaticResource.SerializerOption);
             }
-            set { }
+            set
+            {
+                try
+                {
+                    AuxPrefabManager = new AuxPrefabManager(JsonNode.Parse(value)!.AsObject());
+                }
+                catch (Exception ex)
+                {
+                    throw new ArgumentException($"補助データのフォーマットが違います。\n{value}\n{ex.StackTrace}");
+                }
+            }
         }
         #endregion
 
@@ -29,11 +39,8 @@ namespace CKCharaDataEditor.Model.ItemAux
         public ItemAuxData(int index, string data)
         {
             this.index = index;
-            this.data = data;
-            if (data != "")
-            {
-                AuxPrefabManager = new(JsonNode.Parse(data)!.AsObject());
-            }
+            AuxPrefabManager = (data is "") ? AuxPrefabManager.Default.DeepCopy()
+                : new AuxPrefabManager(JsonNode.Parse(data)!.AsObject());
         }
 
         public ItemAuxData(int index, AuxPrefabManager prefabManager)
@@ -43,6 +50,7 @@ namespace CKCharaDataEditor.Model.ItemAux
             this.data = prefabManager.GetJsonString();
         }
 
+        [Obsolete("Petクラスの責務であるため、代替のちに廃止する")]
         public void GetPetData(out string Name, out int Color, out List<PetTalent> Talents)
         {
             if (AuxPrefabManager is null)
@@ -55,25 +63,6 @@ namespace CKCharaDataEditor.Model.ItemAux
             Talents = AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)!
                 .Select(str => new PetTalent(str))
                 .ToList();
-        }
-
-        public void GetCattleData(out string Name, out int MealCount, out bool? Breeding)
-        {
-            if (AuxPrefabManager is null)
-            {
-                throw new NullReferenceException("aux data is empty.");
-            }
-            Name = AuxPrefabManager.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.Single();
-            MealCount = int.Parse(AuxPrefabManager.GetData(AuxHash.CattleMealGroupHash, AuxHash.CattleMealHash)!.Single());
-            if (AuxPrefabManager.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash) is null)
-            {
-                Breeding = null;
-                return;
-            }
-            else
-            {
-                Breeding = AuxPrefabManager.GetData(AuxHash.CattleBreedingGroupHash, AuxHash.CattleBreedingHash)!.Single() == "True";
-            }
         }
     }
 }

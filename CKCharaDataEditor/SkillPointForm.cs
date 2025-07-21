@@ -20,7 +20,7 @@ namespace CKCharaDataEditor
             foreach (var skillPointControl in skillTableLayoutPanel.Controls.Cast<SkillPointNumeric>())
             {
                 int id = skillPointControl.SkillID;
-                skillPointControl.Point = skills.SingleOrDefault(x => x.skillID == id)!.value;
+                skillPointControl.Point = skills.SingleOrDefault(x => x.skillID == id)?.value ?? 0;
             }
         }
 

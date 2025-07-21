@@ -1,5 +1,5 @@
 ﻿using CKCharaDataEditor.Model;
-using CKCharaDataEditor.Resource;
+using CKCharaDataEditor.Model.Food;
 using System.Text;
 
 namespace CKCharaDataEditorTest
@@ -13,17 +13,17 @@ namespace CKCharaDataEditorTest
         internal const string RecipeFile = "analyzedRecipe.csv";
 
         // 全ての食材と料理の表示名を取得
-        internal static readonly List<(int objectID, string DisplayName)> Ingredients = StaticResource.AllIngredients
-            .Concat(StaticResource.ObsoleteIngredients)   // レシピには載らないが料理は作成できるため含める
-            .Select(item => (objectID: item.objectID, DisplayName: item.DisplayName))
+        internal static readonly List<(int objectID, string DisplayName)> Ingredients = Recipe.AllIngredients
+            .Concat(Recipe.ObsoleteIngredients)   // レシピには載らないが料理は作成できるため含める
+            .Select(item => (item.objectID, item.DisplayName))
             .ToList();
 
         // Id=>DisplayNameの辞書
-        internal static readonly Dictionary<int, string> FoodDic = StaticResource.AllCookedBaseCategories
+        internal static readonly Dictionary<int, string> FoodDic = Recipe.AllCookedBaseCategories
             .Select(item =>
             {
                 return new[] { item.objectID, item.objectID + (int)CookRarity.Rare, item.objectID + (int)CookRarity.Epic }
-                .Select(id => (objectID: id, DisplayName: item.DisplayName));
+                .Select(id => (objectID: id, item.objectName));
             })
             .SelectMany(food => food).ToList()
             .Concat(Ingredients)

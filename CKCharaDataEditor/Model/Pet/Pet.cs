@@ -36,11 +36,11 @@ namespace CKCharaDataEditor.Model.Pet
         {
             get
             {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.FirstOrDefault()!;
+                return DisplayName;
             }
             set
             {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [value]);
+                DisplayName = value;
             }
         }
 
@@ -48,12 +48,12 @@ namespace CKCharaDataEditor.Model.Pet
         {
             get
             {
-                string colorNum = Aux.AuxPrefabManager!.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash)!.FirstOrDefault()!;
+                string colorNum = Aux.AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash)!.FirstOrDefault()!;
                 return  (PetColor)Convert.ToInt32(colorNum);
             }
             set
             {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)value).ToString()]);
+                Aux.AuxPrefabManager.UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)value).ToString()]);
             }
         }
 
@@ -61,12 +61,12 @@ namespace CKCharaDataEditor.Model.Pet
         {
             get
             {
-                return Aux.AuxPrefabManager!.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)!
+                return Aux.AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)!
                     .Select(str => new PetTalent(str)).ToArray();
             }
             set
             {
-                Aux.AuxPrefabManager!.UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash,
+                Aux.AuxPrefabManager.UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash,
                     value.Select(t => t.ToJsonString()));
             }
         }

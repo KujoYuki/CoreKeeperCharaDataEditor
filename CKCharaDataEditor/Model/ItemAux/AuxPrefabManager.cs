@@ -9,7 +9,7 @@ namespace CKCharaDataEditor.Model.ItemAux
     /// </summary>
     public class AuxPrefabManager
     {
-        public List<AuxPrefab>? Prefabs { get; private set; }
+        public List<AuxPrefab> Prefabs { get; private set; }
 
         public AuxPrefabManager(JsonObject json)
         {
@@ -24,6 +24,11 @@ namespace CKCharaDataEditor.Model.ItemAux
             Prefabs = prefabs;
         }
 
+        public bool HasData(ulong prefabHash, ulong stableTypeHash)
+        {
+            return Prefabs?.Any(p => p.prefabHash == prefabHash && p.types.Any(t => t.stableTypeHash == stableTypeHash)) ?? false;
+        }
+
         //Addメソッドを利用した無からの作成
         public void AddPrefab(IEnumerable<AuxPrefab> prefabs)
         {
@@ -36,7 +41,7 @@ namespace CKCharaDataEditor.Model.ItemAux
             if (prefab != null)
             {
                 var updatedTypes = prefab.types.Append(stableType);
-                prefab.types = updatedTypes;
+                prefab.types = updatedTypes.ToList();
             }
             else
             {
@@ -65,11 +70,52 @@ namespace CKCharaDataEditor.Model.ItemAux
             }
         }
 
+        public void DeletePrefab(ulong prefabHash, ulong stableTypeHash)
+        {
+            bool? exist = Prefabs.Where(p => p.prefabHash == prefabHash)
+                .SelectMany(p => p.types)
+                .Where(s => s.stableTypeHash == stableTypeHash)
+                .Any();
+            if (exist == false)
+            {
+                throw new KeyNotFoundException($"対象のハッシュが存在しません。\n" +
+                    $"prefabHash:{prefabHash}\nstableTypeHash:{stableTypeHash}");
+            }
+
+            // stableTypeHashに対応するデータを削除
+            int prefabIndex = Prefabs.FindIndex(p => p.prefabHash == prefabHash);
+            var prefab = Prefabs[prefabIndex];
+
+            int stableTypeIndex = prefab.types.FindIndex(s => s.stableTypeHash == stableTypeHash);
+            Prefabs[prefabIndex].types.RemoveAt(stableTypeIndex);
+
+            //Prefab内に他のtypesが残っていなければ削除
+            if (Prefabs[prefabIndex].types.Count == 0)
+            {
+                Prefabs.RemoveAt(prefabIndex);
+            }
+        }
+
         public void UpdatePet(string petName, PetColor petColor, IEnumerable<PetTalent> petTalents)
         {
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetColorHash, [((int)petColor).ToString()]);
             UpdateData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash, petTalents.Select(t => t.ToJsonString()));
             UpdateData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash, [petName]);
+        }
+
+        public bool TryGetData(ulong prefabHash, ulong stableTypeHash, out IEnumerable<string>? data)
+        {
+            try
+            {
+                data = Prefabs?.SingleOrDefault(p => p.prefabHash == prefabHash)?.types
+                .SingleOrDefault(s => s.stableTypeHash == stableTypeHash)?.data;
+                return data is not null;
+            }
+            catch (Exception)
+            {
+                data = null;
+                return false;
+            }
         }
 
         public IEnumerable<string> GetData(ulong prefabHash, ulong stableTypeHash)
@@ -89,11 +135,11 @@ namespace CKCharaDataEditor.Model.ItemAux
         public static AuxPrefabManager CreatePet(string petName, int color, IEnumerable<PetTalent> talents)
         {
             var prefabs = new List<AuxPrefab>();
-            var petNameStable = new AuxStableType(AuxHash.ItemNameHash, new[] { petName });
-            prefabs.Add(new AuxPrefab(AuxHash.ItemNameGroupHash, new[] { petNameStable }));
-            var petColorStable = new AuxStableType(AuxHash.PetColorHash, new[] { color.ToString() });
+            var petNameStable = new AuxStableType(AuxHash.ItemNameHash, [petName]);
+            prefabs.Add(new AuxPrefab(AuxHash.ItemNameGroupHash, [petNameStable]));
+            var petColorStable = new AuxStableType(AuxHash.PetColorHash, [color.ToString()]);
             var petTalentsStable = new AuxStableType(AuxHash.PetTalentsHash, talents.Select(t => t.ToJsonString()));
-            prefabs.Add(new AuxPrefab(AuxHash.PetGroupHash, new[] { petColorStable, petTalentsStable }));
+            prefabs.Add(new AuxPrefab(AuxHash.PetGroupHash, [petColorStable, petTalentsStable]));
             return new AuxPrefabManager(prefabs);
         }
 
@@ -102,6 +148,10 @@ namespace CKCharaDataEditor.Model.ItemAux
             if (Prefabs is null)
             {
                 return new JsonObject().ToJsonString();
+            }
+            if (Prefabs.Count == 0)
+            {
+                return string.Empty;
             }
             var jsonObject = new JsonObject
             {
@@ -115,6 +165,10 @@ namespace CKCharaDataEditor.Model.ItemAux
 
         public string ToInnerJsonString(JsonSerializerOptions options)
         {
+            if (Prefabs.Count is 0)
+            {
+                return string.Empty;
+            }
             var jsonObject = new JsonObject
             {
                 ["prefabs"] = new JsonArray(
@@ -123,6 +177,25 @@ namespace CKCharaDataEditor.Model.ItemAux
             };
             return jsonObject
                 .ToJsonString(options);
+        }
+
+        public static readonly  AuxPrefabManager Default  = new AuxPrefabManager(new JsonObject
+        {
+            ["prefabs"] = new JsonArray()
+        });
+
+        public AuxPrefabManager DeepCopy()
+        {
+            var copiedPrefabs = Prefabs
+                .Select(prefab => new AuxPrefab(
+                    prefab.prefabHash,
+                    prefab.types
+                        .Select(type => new AuxStableType(type.stableTypeHash, type.data.ToList()))
+                        .ToList()
+                ))
+                .ToList();
+
+            return new AuxPrefabManager(copiedPrefabs);
         }
     }
 }

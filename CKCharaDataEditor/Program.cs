@@ -41,7 +41,7 @@ namespace CKCharaDataEditor
         private static void LogException(Exception ex)
         {
             // ログファイルに追記
-            File.AppendAllText("ErrorStackTrace.txt", DateTime.Now + Environment.NewLine + ex.ToString() + Environment.NewLine);
+            File.AppendAllText("ErrorStackTrace.log", DateTime.Now + Environment.NewLine + ex.ToString() + Environment.NewLine);
         }
 
         static Program()

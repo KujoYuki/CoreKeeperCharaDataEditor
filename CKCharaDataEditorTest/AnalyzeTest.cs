@@ -22,14 +22,14 @@ namespace CKCharaDataEditorTest
             JsonObject _saveData = JsonNode.Parse(saveDataContents)!.AsObject();
 
             // 料理のコモンとレアのカテゴリIDリスト
-            List<int> allCookedCategoryId = StaticResource.AllCookedBaseCategories
+            List<int> allCookedCategoryId = CKCharaDataEditor.Model.Food.Recipe.AllCookedBaseCategories
                 .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })
                 .OrderBy(id => id)
                 .ToList();
 
             // 全ての食材と料理の表示名を取得
-            var ingredients = StaticResource.AllIngredients
-                .Concat(StaticResource.ObsoleteIngredients)   // レシピには載らないが料理は作成できるため含める
+            var ingredients = CKCharaDataEditor.Model.Food.Recipe.AllIngredients
+                .Concat(CKCharaDataEditor.Model.Food.Recipe.ObsoleteIngredients)   // レシピには載らないが料理は作成できるため含める
                 .Select(item => (objectID: item.objectID, DisplayName: item.DisplayName))
                 .ToList();
 
@@ -50,7 +50,7 @@ namespace CKCharaDataEditorTest
                 // 食材に対しての検証
                 .Where(r =>
                 {
-                    Form1.ReverseCalcurateVariation(r.variation, out int ingredientA, out int ingredientB);
+                    CKCharaDataEditor.Model.Food.Recipe.UnpackVariation(r.variation, out int ingredientA, out int ingredientB);
                     int[] ingredients = [ingredientA, ingredientB];
                     foreach (var ingredient in ingredients)
                     {
@@ -65,7 +65,7 @@ namespace CKCharaDataEditorTest
                 .Select(r =>
                 {
                     // csv用レコードに変換
-                    Form1.ReverseCalcurateVariation(r.variation, out int ingredientA, out int ingredientB);
+                    CKCharaDataEditor.Model.Food.Recipe.UnpackVariation(r.variation, out int ingredientA, out int ingredientB);
                     return new Recipe(ingredientA, ingredientB, r.objectID);
                 })
                 .OrderBy(r => r.IngredientA)

@@ -4,22 +4,24 @@ namespace CKCharaDataEditor.Model.Pet
 {
     public class PetResource
     {
-        public static readonly Dictionary<int, (PetType PetId, PetBattleType PetBattleType, bool HasMultiColor)> PetDic = new()
+        private FileManager _fileManager = FileManager.Instance;
+
+        public static readonly Dictionary<int, (PetType PetId, string objectName, PetBattleType PetBattleType, bool HasMultiColor)> PetDic = new()
         {
-            { (int)PetType.PetDog, (PetType.PetDog, PetBattleType.Melee,true) },
-            { (int)PetType.PetCat, (PetType.PetCat, PetBattleType.Range,true) },
-            { (int)PetType.PetBird, (PetType.PetBird, PetBattleType.Buff,true) },
-            { (int)PetType.PetSlimeBlob, (PetType.PetSlimeBlob, PetBattleType.Melee, false) },
-            { (int)PetType.PetBunny, (PetType.PetBunny, PetBattleType.Range, true) },
-            { (int)PetType.PetSlipperySlimeBlob, (PetType.PetSlipperySlimeBlob, PetBattleType.Melee, false) },
-            { (int)PetType.PetPoisonSlimeBlob, (PetType.PetPoisonSlimeBlob, PetBattleType.Melee, false) },
-            { (int)PetType.PetLavaSlimeBlob, (PetType.PetLavaSlimeBlob, PetBattleType.Melee, false) },
-            { (int)PetType.PetPrinceSlimeBlob, (PetType.PetPrinceSlimeBlob, PetBattleType.Melee, false) },
-            { (int)PetType.PetMoth, (PetType.PetMoth, PetBattleType.Buff, true) },
-            { (int)PetType.PetTardigrade, (PetType.PetTardigrade, PetBattleType.Melee, true) },
-            { (int)PetType.PetMagic, (PetType.PetMagic, PetBattleType.Buff, false) },
-            { (int)PetType.PetElectric, (PetType.PetElectric, PetBattleType.Melee, false) },
-            { (int)PetType.PetWarlock, (PetType.PetWarlock, PetBattleType.Buff, true) },
+            { (int)PetType.PetDog, (PetType.PetDog,PetType.PetDog.ToString(), PetBattleType.Melee,true) },
+            { (int)PetType.PetCat, (PetType.PetCat, PetType.PetCat.ToString(), PetBattleType.Range, true) },
+            { (int)PetType.PetBird, (PetType.PetBird, PetType.PetBird.ToString(), PetBattleType.Buff, true) },
+            { (int)PetType.PetSlimeBlob, (PetType.PetSlimeBlob, PetType.PetSlimeBlob.ToString(), PetBattleType.Melee, false) },
+            { (int)PetType.PetBunny, (PetType.PetBunny, PetType.PetBunny.ToString(), PetBattleType.Range, true) },
+            { (int)PetType.PetSlipperySlimeBlob, (PetType.PetSlipperySlimeBlob, PetType.PetSlipperySlimeBlob.ToString(), PetBattleType.Melee, false) },
+            { (int)PetType.PetPoisonSlimeBlob, (PetType.PetPoisonSlimeBlob, PetType.PetPoisonSlimeBlob.ToString(), PetBattleType.Melee, false) },
+            { (int)PetType.PetLavaSlimeBlob, (PetType.PetLavaSlimeBlob, PetType.PetLavaSlimeBlob.ToString(), PetBattleType.Melee, false) },
+            { (int)PetType.PetPrinceSlimeBlob, (PetType.PetPrinceSlimeBlob, PetType.PetPrinceSlimeBlob.ToString(), PetBattleType.Melee, false) },
+            { (int)PetType.PetMoth, (PetType.PetMoth, PetType.PetMoth.ToString(), PetBattleType.Buff, true) },
+            { (int)PetType.PetTardigrade, (PetType.PetTardigrade, PetType.PetTardigrade.ToString(), PetBattleType.Melee, true) },
+            { (int)PetType.PetMagic, (PetType.PetMagic, PetType.PetMagic.ToString(), PetBattleType.Buff, false) },
+            { (int)PetType.PetElectric, (PetType.PetElectric, PetType.PetElectric.ToString(), PetBattleType.Melee, false) },
+            { (int)PetType.PetWarlock, (PetType.PetWarlock, PetType.PetWarlock.ToString(), PetBattleType.Buff, true) },
         };
 
         /// <summary>
@@ -29,11 +31,11 @@ namespace CKCharaDataEditor.Model.Pet
             new List<(int Id, string MeleeRangeDisplayName, string BuffDisplayName, string MeleeRangeDescription, string BuffDescription)>
             {
                 (0, "ジャンプ攻撃", "ダイブボム", "近接攻撃スピード+30.0%", "飼い主へのバフ:近接攻撃スピード+3.0%"),
-                (1, "Missing", "群衆", "遠距離攻撃スピード+30.0%", "飼い主へのバフ:遠距離攻撃スピード+3.0%"),
+                (1, "ジャンプ攻撃", "群衆", "遠距離攻撃スピード+30.0%", "飼い主へのバフ:遠距離攻撃スピード+3.0%"),
                 (2, "ポインタープレイ", "鷹の精神", "クリティカルヒット確率+10%", "飼い主へのバフ:クリティカルヒット確率+3%"),
                 (3, "スキンブレイク", "白鶴拳", "クリティカルヒットダメージ+30%", "飼い主へのバフ:クリティカルヒットダメージ+10%"),
                 (4, "威嚇の逆毛", "羽の力", "物理近接ダメージ+10%", "飼い主へのバフ:物理近接ダメージ+3.0%"),
-                (5, "Missing", "羽の発射物", "物理遠距離ダメージ+10.0%", "飼い主へのバフ:物理遠距離ダメージ+3.0%"),
+                (5, "威嚇の逆毛", "羽の発射物", "物理遠距離ダメージ+10.0%", "飼い主へのバフ:物理遠距離ダメージ+3.0%"),
                 (6, "マウンティング", "支配本能", "ボスへの与ダメージ+15%", "飼い主へのバフ:ボスへの与ダメージ+4%"),
                 (7, "リードオフ", "三重苦", "ヒット時にダメージが3倍になる確率7%", "飼い主へのバフ:ヒット時にダメージが3倍になる確率+2%"),
                 (8, "燃え盛る怒り", "フェニックス", "ヒット時に燃焼ダメージ+40", "飼い主へのバフ:ヒット時に燃焼ダメージ+20"),

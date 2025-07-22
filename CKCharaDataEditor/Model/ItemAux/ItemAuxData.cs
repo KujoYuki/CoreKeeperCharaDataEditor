@@ -49,20 +49,5 @@ namespace CKCharaDataEditor.Model.ItemAux
             AuxPrefabManager = prefabManager;
             this.data = prefabManager.GetJsonString();
         }
-
-        [Obsolete("Petクラスの責務であるため、代替のちに廃止する")]
-        public void GetPetData(out string Name, out int Color, out List<PetTalent> Talents)
-        {
-            if (AuxPrefabManager is null)
-            {
-                throw new NullReferenceException("aux data is empty.");
-            }
-            Name = AuxPrefabManager.GetData(AuxHash.ItemNameGroupHash, AuxHash.ItemNameHash)!.Single();
-            Color = int.Parse(AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash)!.Single());
-
-            Talents = AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)!
-                .Select(str => new PetTalent(str))
-                .ToList();
-        }
     }
 }

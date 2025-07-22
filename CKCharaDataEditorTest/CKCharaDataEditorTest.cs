@@ -1,8 +1,6 @@
 using CKCharaDataEditor;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Pet;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace CKCharaDataEditorTest
@@ -49,31 +47,6 @@ namespace CKCharaDataEditorTest
                 .ToList();
             Assert.AreEqual(9, talents.Count);
             Assert.AreEqual(5, talents.Count(t => t.Points == 1));
-        }
-
-        [TestMethod]
-        public void AssemblePetDataTest()
-        {
-            var aux = new ItemAuxData(10, LawPetData);  //index‚Í”CˆÓ‚Ì’l
-            aux.GetPetData(out string name, out int color, out var Talents);
-
-            var manager = new AuxPrefabManager(new List<AuxPrefab>());
-            manager.AddPrefab([new AuxPrefab(AuxHash.PetGroupHash, [])]);
-            manager.AddPrefab([new AuxPrefab(AuxHash.ItemNameGroupHash, [])]);
-            var petColor = new AuxStableType(AuxHash.PetColorHash, [color.ToString()]);
-            var petTalent = new AuxStableType(AuxHash.PetTalentsHash, Talents.Select(t => t.ToJsonString()));
-            var petName = new AuxStableType(AuxHash.ItemNameHash, [name]);
-            manager.AddStableType(AuxHash.PetGroupHash, petColor);
-            manager.AddStableType(AuxHash.PetGroupHash, petTalent);
-            manager.AddStableType(AuxHash.ItemNameGroupHash, petName);
-            
-            JsonSerializerOptions serializerOptionWrite = new()
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            };
-            string assemblePetData = manager.ToInnerJsonString(serializerOptionWrite);
-
-            Assert.AreEqual(LawPetData, assemblePetData);
         }
     }
 }

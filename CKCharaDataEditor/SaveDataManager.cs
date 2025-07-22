@@ -310,7 +310,7 @@ namespace CKCharaDataEditor
 
         public static void BackUpConditions(IEnumerable<Condition> conditions, string filePath)
         {
-            conditions = conditions.OrderBy(c => c.Id).ToList();
+            conditions = conditions.OrderBy(c => c.Id);
             // 必要あらば例外処理
 
             var conditionsNode = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
@@ -490,7 +490,7 @@ namespace CKCharaDataEditor
             Item[] items = Items.Take(4).ToArray();
 
             // 通常のアイテム枠とポーチのアイテム枠
-            Queue<int> indexes = new Queue<int>(
+            Queue<int> indexes = new(
                 Enumerable.Range(0, 50)
                     .Concat(Enumerable.Range(87, 10))
                     .Concat(Enumerable.Range(98, 10))
@@ -507,6 +507,50 @@ namespace CKCharaDataEditor
                     };
                     WriteItemData(indexes.Dequeue(), newItem);
                 }
+            }
+        }
+
+        public void ListupUnobtainedItem()
+        {
+            if (FileManager.Instance.LocalizationData.Count is 0)
+            {
+                MessageBox.Show("言語リソースのパスが設定されていません。\n処理を中断します", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            StringBuilder outputText = new("objectID\tアイテム名\n");
+
+            List<int> discoveredEquipIds = _saveData["discoveredObjects2"]!.AsArray()
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Select(obj => obj.objectID)
+                .Distinct()
+                .Order()
+                .ToList();
+            List<int> allEquip = FileManager.Instance.LocalizationData.ToList()
+                .Select(kv => kv.Key)
+                .Order()
+                .ToList();
+            var unobtainedEquipIds = allEquip.Except(discoveredEquipIds)
+                .Where(objectID => objectID > 3000 && objectID >= 3400) // 敵モブアイテムを除外
+                .Select(objectID =>
+                {
+                    string displayName = FileManager.Instance.LocalizationData.TryGetValue(objectID, out string[]? translateResources) ?
+                        translateResources[1] : $"アイテム名が取得できませんでした。";
+                    outputText.AppendLine($"{objectID}\t{displayName}");
+                    return (objectID: objectID, displayName: displayName);
+                })
+                .ToList();
+
+            using SaveFileDialog saveFileDialog = new();
+            saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            saveFileDialog.DefaultExt = "txt";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.FileName = "UnobtainedItem.txt";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = saveFileDialog.FileName;
+                File.WriteAllText(path, outputText.ToString());
+                MessageBox.Show($"{unobtainedEquipIds.Count} の未発見アイテムを出力しました。");
             }
         }
     }

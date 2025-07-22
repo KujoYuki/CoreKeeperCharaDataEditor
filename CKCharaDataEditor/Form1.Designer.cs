@@ -87,6 +87,7 @@
             label15 = new Label();
             label7 = new Label();
             otherTab = new TabPage();
+            ListupUnobtainedEquipButton = new Button();
             DisplayNameTextBox = new TextBox();
             label18 = new Label();
             label1 = new Label();
@@ -117,6 +118,7 @@
             toolTipCattleStomach = new ToolTip(components);
             toolTipCattleMeal = new ToolTip(components);
             lastConnectedWorldLabel = new Label();
+            worldEditButton = new Button();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
@@ -733,6 +735,7 @@
             // 
             // otherTab
             // 
+            otherTab.Controls.Add(ListupUnobtainedEquipButton);
             otherTab.Controls.Add(DisplayNameTextBox);
             otherTab.Controls.Add(label18);
             otherTab.Location = new Point(4, 24);
@@ -742,6 +745,16 @@
             otherTab.TabIndex = 4;
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
+            // 
+            // ListupUnobtainedEquipButton
+            // 
+            ListupUnobtainedEquipButton.Location = new Point(17, 105);
+            ListupUnobtainedEquipButton.Name = "ListupUnobtainedEquipButton";
+            ListupUnobtainedEquipButton.Size = new Size(149, 23);
+            ListupUnobtainedEquipButton.TabIndex = 2;
+            ListupUnobtainedEquipButton.Text = "未発見アイテム一覧を出力";
+            ListupUnobtainedEquipButton.UseVisualStyleBackColor = true;
+            ListupUnobtainedEquipButton.Click += ListupUnobtainedEquipButton_Click;
             // 
             // DisplayNameTextBox
             // 
@@ -973,10 +986,21 @@
             lastConnectedWorldLabel.Visible = false;
             lastConnectedWorldLabel.Click += lastConnectedWorldLabel_Click;
             // 
+            // worldEditButton
+            // 
+            worldEditButton.Location = new Point(318, 85);
+            worldEditButton.Name = "worldEditButton";
+            worldEditButton.Size = new Size(137, 23);
+            worldEditButton.TabIndex = 27;
+            worldEditButton.Text = "ワールド設定変更";
+            worldEditButton.UseVisualStyleBackColor = true;
+            worldEditButton.Click += worldEditButton_Click;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(967, 508);
+            Controls.Add(worldEditButton);
             Controls.Add(lastConnectedWorldLabel);
             Controls.Add(clearedFlagLabel);
             Controls.Add(label14);
@@ -1114,5 +1138,7 @@
         private TextBox DisplayNameTextBox;
         private Label label18;
         private Label lastConnectedWorldLabel;
+        private Button worldEditButton;
+        private Button ListupUnobtainedEquipButton;
     }
 }

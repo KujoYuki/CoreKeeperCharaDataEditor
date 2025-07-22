@@ -57,12 +57,12 @@ namespace CKCharaDataEditor.Model.Pet
             }
         }
 
-        public PetTalent[] Talents
+        public List<PetTalent> Talents
         {
             get
             {
                 return Aux.AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetTalentsHash)!
-                    .Select(str => new PetTalent(str)).ToArray();
+                    .Select(str => new PetTalent(str)).ToList();
             }
             set
             {

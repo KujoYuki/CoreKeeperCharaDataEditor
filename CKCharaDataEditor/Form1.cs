@@ -7,7 +7,6 @@ using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Properties;
 using CKCharaDataEditor.Resource;
 using System.Diagnostics;
-using System.Text;
 
 // todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
 // todo ペットも家畜同様リファクタリング
@@ -40,18 +39,17 @@ namespace CKCharaDataEditor
 
         public void Initialize()
         {
+            _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
             InitIngredientCategory();
             InitCookedCategory();
             rarityComboBox.SelectedIndex = 0;
+            InitCattleCategory();
 
-            _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
-            if (_fileManager.SaveFilePaths.Count > 0)
+            if (_fileManager.CharacterFilePaths.Count > 0)
             {
-                string firstSaveDataPath = _fileManager.SaveFilePaths.First().FullName;
+                string firstSaveDataPath = _fileManager.CharacterFilePaths.First().FullName;
                 LoadSlots(firstSaveDataPath);
             }
-
-            InitCattleCategory();
         }
 
         private void CheckUpdate()
@@ -159,7 +157,7 @@ namespace CKCharaDataEditor
         private void LoadSlots(string filePath)
         {
             saveSlotNoComboBox.Items.Clear();
-            foreach (FileInfo savePath in _fileManager.SaveFilePaths)
+            foreach (FileInfo savePath in _fileManager.CharacterFilePaths)
             {
                 // キャラクター名取得
                 _saveDataManager.SaveDataPath = savePath.FullName;
@@ -168,11 +166,11 @@ namespace CKCharaDataEditor
                 if (int.TryParse(fileName, out int saveNoInt))
                 {
                     // ゲーム内でのセーブデータNoは1から始まるため +1
-                    saveSlotNoComboBox.Items.Add((saveNoInt + 1).ToString() + $", {characterName}");
+                    saveSlotNoComboBox.Items.Add($"{(saveNoInt + 1)}, {characterName}");
                 }
                 else
                 {
-                    saveSlotNoComboBox.Items.Add(fileName + $", {characterName}");
+                    saveSlotNoComboBox.Items.Add($"{fileName}, {characterName}");
                 }
             }
             if (saveSlotNoComboBox.Items.Count > 0)
@@ -195,8 +193,8 @@ namespace CKCharaDataEditor
 
         private void LoadItems()
         {
-            if (_fileManager.SaveFilePaths.Count is 0) return;
-            _saveDataManager.SaveDataPath = _fileManager.SaveFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
+            if (_fileManager.CharacterFilePaths.Count is 0) return;
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
             // 開発者向けの最終接続ワールドIDチェック
             if (Program.IsDeveloper)
@@ -230,10 +228,9 @@ namespace CKCharaDataEditor
                     itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
-            itemListBox.EndUpdate();
-
             itemListBox.SelectedIndex = selectedInventoryIndex < itemListBox.Items.Count ? selectedInventoryIndex : itemListBox.Items.Count - 1;
             itemListBox.TopIndex = topIndex < itemListBox.Items.Count ? topIndex : itemListBox.Items.Count - 1;
+            itemListBox.EndUpdate();
 
             LoadPanel();
         }
@@ -273,6 +270,7 @@ namespace CKCharaDataEditor
                 createdNumericNo.Value = amount;
             }
 
+            // ペットの場合はペット情報をセットする
             if (Pet.IsPet(selectedItem.objectID))
             {
                 petEditControl.PetItem = new(selectedItem);
@@ -306,8 +304,8 @@ namespace CKCharaDataEditor
             else
             {
                 // 家畜タブの表示をクリア
-                cattleComboBox.SelectedIndex = -1;
-                cattleColorVariationComboBox.SelectedIndex = -1;
+                cattleComboBox.SelectedIndex = 0;
+                cattleColorVariationComboBox.SelectedIndex = 0;
                 cattleNameTextBox.Text = string.Empty;
                 stomachNumericUpDown.Value = 0;
                 mealNumericUpDown.Value = 0;
@@ -412,7 +410,7 @@ namespace CKCharaDataEditor
                         0 => CookRarity.Common,
                         1 => CookRarity.Rare,
                         2 => CookRarity.Epic,
-                        _ => throw new ArgumentException()
+                        _ => throw new IndexOutOfRangeException()
                     };
                     item = new Recipe(recipeId, ingredientAId, ingredientBId, rarity)
                         .ToItem(amount: Convert.ToInt32(createdNumericNo.Value));
@@ -768,9 +766,9 @@ namespace CKCharaDataEditor
             {
                 _fileManager.SaveFolder = settingsForm.SaveFolderPath;
                 _fileManager.InstallFolder = settingsForm.InstallFolderPath;
-                if (_fileManager.SaveFilePaths.Count > 0)
+                if (_fileManager.CharacterFilePaths.Count > 0)
                 {
-                    LoadSlots(_fileManager.SaveFilePaths[0].FullName);
+                    LoadSlots(_fileManager.CharacterFilePaths[0].FullName);
                 }
             }
         }
@@ -833,6 +831,19 @@ namespace CKCharaDataEditor
             // 最終接続ワールドIDをコピー
             Clipboard.SetText(lastConnectedWorldLabel.Text);
             EnableResultMessage("最終接続ワールドIDをコピーしました。");
+        }
+
+        private void worldEditButton_Click(object sender, EventArgs e)
+        {
+            if (IsRunningGame()) return;
+
+            var worldSettingForm = new WorldSetteingForm();
+            worldSettingForm.ShowDialog();
+        }
+
+        private void ListupUnobtainedEquipButton_Click(object sender, EventArgs e)
+        {
+           　_saveDataManager.ListupUnobtainedItem();
         }
     }
 }

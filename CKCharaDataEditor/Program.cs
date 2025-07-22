@@ -26,7 +26,7 @@ namespace CKCharaDataEditor
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             LogException(e.Exception);
-            MessageBox.Show("スレッド例外が発生しました。\n" + e.Exception.Message);
+            MessageBox.Show("例外が発生しました。\n" + e.Exception.Message);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

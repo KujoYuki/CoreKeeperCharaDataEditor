@@ -14,7 +14,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/KujoYuki/CoreKeeperCharaDataEditor</RepositoryUrl>
     <PackageTags>CoreKeeper</PackageTags>
-    <FileVersion>1.5.1</FileVersion>
+    <FileVersion>1.5.2</FileVersion>
     <AssemblyName>CKCharaDataEditor</AssemblyName>
   </PropertyGroup>
 

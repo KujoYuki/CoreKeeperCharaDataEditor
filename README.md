@@ -17,12 +17,13 @@
 - ペットタレントの編集ができます。  
   - 5つを超えたスキルの変更と有効/無効の切り替えができます。  
   - データ上のみ存在する未実装のペットスキルを対象に含みます。  
-- 任意の家畜が作成出来ます。 
-  - 家畜の色や満腹度も対象です。
-- 全てのアイテムの表示名を任意の名前に変更できます。
+- 任意の家畜が作成出来ます。  
+  - 家畜の色や満腹度も対象です。  
+- 全てのアイテムの表示名を任意の名前に変更できます。  
 - 任意のバフ/食事効果/装備効果などを任意効果量/効果時間で付与できます。  
   - バニラでは不可能な数値や効果の組み合わせをつけることが出来ます。  
-- キャラクターのスキル経験値を編集できます。
+- キャラクターのスキル経験値を編集できます。  
+- 作成済みワールドのワールド名や難易度を後から変更出来ます。  
 - **ゲームやmodのバージョンに影響されず、バニラでも使えます。**
 
 
@@ -37,12 +38,15 @@
 その後のゲーム本体の終了時の保存処理により再上書きされ無効になることがあります。
 
 ## 免責事項
-### 1. 起動時にお使いのセキュリティソフトやWindowsによりブロックされることがあります。  
-これは、デジタル証明書の無い実行ファイルを動かす際の既定動作であり仕様です。  
-証明書の取得と維持は開発者による有償対応が必要になるため、この規模のプログラムに対して作者は取得していません。
-### 2. 本ソフトはキャラクターデータのインベントリを直接編集します。  
-また、上級者向けの機能として料理に限らない全てのアイテムの編集機能を持ちます。  
-データの破損が紛失が起きても責任は負いかねます。    
+### 1. 起動時にお使いのセキュリティソフトによりブロックされることがあります。  
+本ソフトはWindowsのAppDataフォルダ以下のセーブデータがある階層を直接編集します。  
+このため、ウイルスソフトと誤判定されることがあります。  
+誤判定を回避するためのセキュリティ証明書の取得と維持は開発者による有償対応が必要になるため、この規模のプログラムに対して作者は取得していません。  
+DL前にセキュリティソフトのフィルタリングや例外設定をするなどしてください。  
+
+### 2. 過剰な値のパラメータ変更については自己責任です。
+本ソフトは事実上、全てのアイテムの編集機能を持ちます。  
+データの破損や紛失が起きても責任は負いかねます。    
 **必ずバックアップをとってください。**  
 
 ## 制限事項
@@ -86,10 +90,11 @@ Please close the game while this tool is rewriting data.
 Since character data is being rewritten externally, content rewritten while the game is running may be overwritten and invalidated by the game's save process when the game exits.
 
 ## Disclaimer
-### 1. The software may be blocked by your security software or Windows upon startup.
-This is the default behavior when running an executable file without a digital certificate. Obtaining and maintaining a certificate requires paid support from the developer, which is not feasible for a program of this scale.
-### 2. This software directly edits the inventory of character data.
-Additionally, as an advanced feature, it allows editing of all items, not limited to food. The author is not responsible for any data corruption or loss that may occur.
+### 1. The software may be blocked by your security software upon startup.
+This software directly edits the save data hierarchy under the Windows AppData folder. Therefore, it may be falsely detected by antivirus software. Obtaining and maintaining a security certificate to avoid false positives requires paid support from the developer, which the author has not obtained for a program of this scale. Please configure your security software's filtering or exception settings before downloading.
+
+### 2. Excessive parameter changes are at your own risk.
+This software effectively has the ability to edit all items. The author is not responsible for any data corruption or loss that may occur.
 **Please make sure to back up your data.**
 
 ## Limitations

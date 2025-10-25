@@ -9,9 +9,7 @@ using CKCharaDataEditor.Resource;
 using System.Diagnostics;
 
 // todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
-// todo ペットも家畜同様リファクタリング
 // todo ペット、家畜の色コントロールを当該の色にする
-// todo テーブルレイアウトパネルによるレイアウト調整
 
 namespace CKCharaDataEditor
 {
@@ -146,9 +144,9 @@ namespace CKCharaDataEditor
             {
                 string objectName = cattleComboBox.Items[i]!.ToString()!;
                 int objectID = cattles[objectName];
-                if (_fileManager.LocalizationData.TryGetValue(objectID, out string[]? translateResources))
+                if (_fileManager.LocalizationData.TryGetValue(objectID, out var translateResources))
                 {
-                    string displayName = translateResources[1];
+                    string displayName = translateResources.DisplayName;
                     cattleComboBox.Items[i] = displayName;
                 }
             }
@@ -536,7 +534,7 @@ namespace CKCharaDataEditor
             if (!IsLegalSaveData()) return;
             if (IsRunningGame()) return;
 
-            var conditionForm = new ConditionForm();
+            using var conditionForm = new ConditionForm();
             conditionForm.ShowDialog();
         }
 
@@ -594,9 +592,9 @@ namespace CKCharaDataEditor
         private string TranslateObjectName(Item item)
         {
             string displayName = item.objectName;
-            if (_fileManager.LocalizationData.TryGetValue(item.objectID, out string[]? displayResource))
+            if (_fileManager.LocalizationData.TryGetValue(item.objectID, out var displayResource))
             {
-                displayName = displayResource[1];
+                displayName = displayResource.DisplayName;
             }
             if (Recipe.IsCookedItem(item.objectID))
             {
@@ -666,7 +664,7 @@ namespace CKCharaDataEditor
             if (!IsLegalSaveData()) return;
             if (IsRunningGame()) return;
 
-            var skillPointForm = new SkillPointForm();
+            using var skillPointForm = new SkillPointForm();
             skillPointForm.ShowDialog();
         }
 
@@ -760,7 +758,7 @@ namespace CKCharaDataEditor
 
         private void FilePathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var settingsForm = new SettingForm();
+            using var settingsForm = new SettingForm();
             settingsForm.ShowDialog();
             if (settingsForm.DialogResult is DialogResult.OK)
             {
@@ -775,7 +773,7 @@ namespace CKCharaDataEditor
 
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var versionForm = new AboutBox();
+            using var versionForm = new AboutBox();
             versionForm.ShowDialog();
         }
 
@@ -837,13 +835,41 @@ namespace CKCharaDataEditor
         {
             if (IsRunningGame()) return;
 
-            var worldSettingForm = new WorldSetteingForm();
+            using var worldSettingForm = new WorldSetteingForm();
             worldSettingForm.ShowDialog();
         }
 
         private void ListupUnobtainedEquipButton_Click(object sender, EventArgs e)
         {
-           　_saveDataManager.ListupUnobtainedItem();
+            _saveDataManager.ListupUnobtainedItem();
+        }
+
+        private void mapButton_Click(object sender, EventArgs e)
+        {
+            // パス設定が間違えてる場合は警告を出す
+            if (_fileManager.CanOpenCharaFiles())
+            {
+                using var mapForm = new MapForm();
+                mapForm.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("設定からセーブデータパスを指定してください。\nマップ表示はゲーム内の定義データから行います。", "注意");
+            }
+        }
+
+        private void dropButton_Click(object sender, EventArgs e)
+        {
+            // パス設定が間違えてる場合は警告を出す
+            if (_fileManager.CanOpenLootFiles())
+            {
+                using var dropForm = new DropForm();
+                _ = dropForm.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("設定からインストールパスを指定してください。\nドロップ率計算はゲーム内の定義データから行います。", "注意");
+            }
         }
     }
 }

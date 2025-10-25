@@ -24,6 +24,8 @@
   - バニラでは不可能な数値や効果の組み合わせをつけることが出来ます。  
 - キャラクターのスキル経験値を編集できます。  
 - 作成済みワールドのワールド名や難易度を後から変更出来ます。  
+- キャラごとに参加したことがあるワールドのマップ画像を取得出来ます。
+- アイテムのドロップテーブルの確認と取得確率の計算が出来ます。
 - **ゲームやmodのバージョンに影響されず、バニラでも使えます。**
 
 
@@ -31,7 +33,8 @@
 ![EditPet OverView](Document/images/imageEditPet.png)
 ![EditCondition Overview](Document/images/imageCondition.png)
 ![EditSkillExp Overview](Document/images/imageEditSkill.png)
-
+![MapView Overview](Document/images/mapView.png)
+![DropTable Overview](Document/images/dropTable.png)
 ## データ編集時のゲーム操作について
 本ツールによってデータを書き換える最中はゲーム本体を終了させてください。  
 外部からキャラデータの書き換えを行っているため、ゲーム起動中に書き換えた内容は、  
@@ -83,6 +86,8 @@ It is designed for purposes such as creating dishes that cannot be made by norma
 - You can add any buff/meal effect/equipment effect, etc. with any amount/duration.
   - Allows combinations of values and effects impossible in vanilla.
 - Can edit character skill experience points.
+- Retrieve map images of worlds each character has participated in.
+- View item drop tables and calculate acquisition probabilities.
 - **Can be used regardless of the game or mod version, and works with vanilla.**
 
 ## Game Operation During Data Editing

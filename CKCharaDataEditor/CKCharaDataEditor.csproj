@@ -14,8 +14,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/KujoYuki/CoreKeeperCharaDataEditor</RepositoryUrl>
     <PackageTags>CoreKeeper</PackageTags>
-    <FileVersion>1.5.2</FileVersion>
+    <FileVersion>1.5.3</FileVersion>
     <AssemblyName>CKCharaDataEditor</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

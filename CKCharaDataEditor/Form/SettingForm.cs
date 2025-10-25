@@ -38,7 +38,6 @@
                     MessageBox.Show($"指定されたフォルダ内にリソースが存在しません。正しいパスを入力してください。\nPath:{value}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
             }
         }
 

@@ -41,8 +41,8 @@ namespace CKCharaDataEditor.Control
             {
                 int objectId = (int)petKind;
                 petKindComboBox.Items.Add(
-                    _fileManager.LocalizationData.TryGetValue(objectId, out string[]? translateResources)
-                        ? translateResources[1]
+                    _fileManager.LocalizationData.TryGetValue(objectId, out var translateResources)
+                        ? translateResources.DisplayName
                         : petKind.ToString()
                 );
             }

@@ -119,6 +119,8 @@
             toolTipCattleMeal = new ToolTip(components);
             lastConnectedWorldLabel = new Label();
             worldEditButton = new Button();
+            mapButton = new Button();
+            dropButton = new Button();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
@@ -996,10 +998,32 @@
             worldEditButton.UseVisualStyleBackColor = true;
             worldEditButton.Click += worldEditButton_Click;
             // 
+            // mapButton
+            // 
+            mapButton.Location = new Point(465, 85);
+            mapButton.Name = "mapButton";
+            mapButton.Size = new Size(137, 23);
+            mapButton.TabIndex = 28;
+            mapButton.Text = "マップ閲覧";
+            mapButton.UseVisualStyleBackColor = true;
+            mapButton.Click += mapButton_Click;
+            // 
+            // dropButton
+            // 
+            dropButton.Location = new Point(613, 85);
+            dropButton.Name = "dropButton";
+            dropButton.Size = new Size(137, 23);
+            dropButton.TabIndex = 29;
+            dropButton.Text = "ドロップ率計算機";
+            dropButton.UseVisualStyleBackColor = true;
+            dropButton.Click += dropButton_Click;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(967, 508);
+            Controls.Add(dropButton);
+            Controls.Add(mapButton);
             Controls.Add(worldEditButton);
             Controls.Add(lastConnectedWorldLabel);
             Controls.Add(clearedFlagLabel);
@@ -1140,5 +1164,7 @@
         private Label lastConnectedWorldLabel;
         private Button worldEditButton;
         private Button ListupUnobtainedEquipButton;
+        private Button mapButton;
+        private Button dropButton;
     }
 }

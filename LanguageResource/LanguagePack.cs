@@ -16,7 +16,7 @@ namespace LanguageResource
         static void Main(string[] args)
         {
             var dic = CreateLanguageDictionary(YukisInstallPath);
-            var outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value[0]}\t{pair.Value[1]}").ToList();
+            var outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
 
             // 新規TSVファイルに出力
             string outputPath = Path.Combine(Environment.CurrentDirectory, "LanguageResource.tsv");
@@ -35,18 +35,18 @@ namespace LanguageResource
         /// <param name="installPath"></param>
         /// <returns>KeyはobjectId, Valueは[0]でobjectName, [1]で日本語表示名</returns>
         /// <exception cref="FileNotFoundException"></exception>
-        public static IReadOnlyDictionary<int, string[]> CreateLanguageDictionary(string installPath)
+        public static IReadOnlyDictionary<int, (string key, string displayString)> CreateLanguageDictionary(string installPath)
         {
-            string localizationPath = Path.Combine(installPath, @"localization\Localization Template.csv");
             string objectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");
+            string localizationPath = Path.Combine(installPath, @"localization\Localization Template.csv");
 
             if (!File.Exists(localizationPath) || !File.Exists(objectIdPath))
             {
-                // 言語リソースファイルが見つからない場合は、空の辞書を返す
-                return new Dictionary<int, string[]>();
+                // リソースファイルが見つからない場合は、空の辞書を返す
+                return new Dictionary<int, (string, string)>();
             }
 
-            var objectIdDic = File.ReadAllText(objectIdPath).Trim()
+            Dictionary<string, int> objectIdDic = File.ReadAllText(objectIdPath).Trim()
                 .Replace("{", string.Empty).Replace("}", string.Empty).Replace(":", ",").Replace("\"", string.Empty).Replace("\t", string.Empty)
                 .Split("\n")
                 .Where(line => !string.IsNullOrEmpty(line))
@@ -54,7 +54,7 @@ namespace LanguageResource
                 .Skip(1) // Noneをスキップ
                 .ToDictionary(line => line[0], line => int.Parse(line[1]));
 
-            var languageResourceOrigin = File.ReadAllLines(localizationPath)
+            List<string[]> languageResourceOrigin = File.ReadAllLines(localizationPath)
                 .Skip(1)
                 .Select(line => line.Split('\t'))
                 .ToList(); // ヘッダーをスキップ
@@ -73,10 +73,18 @@ namespace LanguageResource
                     string objectId = objectIdDic.TryGetValue(key, out int id) ? id.ToString() : $"{key}"; // IDが見つからない場合はKeyを使用
                     // 本来はobjectIdとvariationのタプルでキーを参照しに良くのが正しいが、開発チームの消し忘れリソースも多いの。
                     // それにvariation違いでkeyが変わるアイテムが少数過ぎるし、コアキ側の実装がEAの頃から中途半端に変わってるのが悪い。
-                    string language = words[8]; // 8 is Japanese translation column
-                    return new string[] { objectId, key, language };
+                    string displayString = words[8]; // 8 is Japanese translation column
+                    return (objectId, (key, displayString));
                 })
-                .ToDictionary(words => words[0], words => new string[] { words[1], words[2] });
+                .ToDictionary();
+
+            // 例外的に、大人の事情でリソースが完全に使いまわされているアイテムを手動で追加する
+            (string id, string key, string originResourceId)[] remakedItem = [("5502", "GiantMushroom2", "5501"), ("5503", "AmberLarva2", "5607")];
+            foreach (var item in remakedItem)
+            {
+                string displayString = trancelation[item.originResourceId].displayString;
+                trancelation.Add(item.id, (item.key, displayString));
+            }
 
             var outputDic = trancelation
                 .Where(line => int.TryParse(line.Key, out _))

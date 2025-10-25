@@ -67,9 +67,11 @@
             dataGridView.Name = "dataGridView";
             dataGridView.RowHeadersVisible = false;
             dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView.Size = new Size(744, 389);
+            dataGridView.Size = new Size(676, 376);
             dataGridView.TabIndex = 0;
+            dataGridView.CellFormatting += dataGridView_CellFormatting;
             dataGridView.CellValidating += dataGridView_CellValidating;
+            dataGridView.CellValueChanged += dataGridView_CellValueChanged;
             // 
             // ConditionId
             // 
@@ -136,7 +138,7 @@
             // createBackupButton
             // 
             createBackupButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            createBackupButton.Location = new Point(761, 59);
+            createBackupButton.Location = new Point(693, 59);
             createBackupButton.Name = "createBackupButton";
             createBackupButton.Size = new Size(186, 23);
             createBackupButton.TabIndex = 2;
@@ -147,7 +149,7 @@
             // overrideConditionsButton
             // 
             overrideConditionsButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            overrideConditionsButton.Location = new Point(761, 323);
+            overrideConditionsButton.Location = new Point(693, 323);
             overrideConditionsButton.Name = "overrideConditionsButton";
             overrideConditionsButton.Size = new Size(186, 23);
             overrideConditionsButton.TabIndex = 3;
@@ -158,7 +160,7 @@
             // loadBackupButton
             // 
             loadBackupButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            loadBackupButton.Location = new Point(761, 30);
+            loadBackupButton.Location = new Point(693, 30);
             loadBackupButton.Name = "loadBackupButton";
             loadBackupButton.Size = new Size(186, 23);
             loadBackupButton.TabIndex = 4;
@@ -180,7 +182,7 @@
             // 
             aboudConditionIdLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             aboudConditionIdLinkLabel.AutoSize = true;
-            aboudConditionIdLinkLabel.Location = new Point(762, 168);
+            aboudConditionIdLinkLabel.Location = new Point(694, 168);
             aboudConditionIdLinkLabel.Name = "aboudConditionIdLinkLabel";
             aboudConditionIdLinkLabel.Size = new Size(108, 15);
             aboudConditionIdLinkLabel.TabIndex = 5;
@@ -193,7 +195,7 @@
             DataGridErrorTextLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             DataGridErrorTextLabel.AutoSize = true;
             DataGridErrorTextLabel.ForeColor = Color.Red;
-            DataGridErrorTextLabel.Location = new Point(14, 419);
+            DataGridErrorTextLabel.Location = new Point(14, 406);
             DataGridErrorTextLabel.Name = "DataGridErrorTextLabel";
             DataGridErrorTextLabel.Size = new Size(127, 15);
             DataGridErrorTextLabel.TabIndex = 6;
@@ -204,7 +206,7 @@
             // 
             updateConditionsLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             updateConditionsLabel.AutoSize = true;
-            updateConditionsLabel.Location = new Point(762, 362);
+            updateConditionsLabel.Location = new Point(694, 362);
             updateConditionsLabel.Name = "updateConditionsLabel";
             updateConditionsLabel.Size = new Size(129, 15);
             updateConditionsLabel.TabIndex = 7;
@@ -214,7 +216,7 @@
             // deleteSelectedRowButton
             // 
             deleteSelectedRowButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            deleteSelectedRowButton.Location = new Point(761, 125);
+            deleteSelectedRowButton.Location = new Point(693, 125);
             deleteSelectedRowButton.Name = "deleteSelectedRowButton";
             deleteSelectedRowButton.Size = new Size(186, 23);
             deleteSelectedRowButton.TabIndex = 8;
@@ -225,7 +227,7 @@
             // addNewRowButton
             // 
             addNewRowButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            addNewRowButton.Location = new Point(761, 96);
+            addNewRowButton.Location = new Point(693, 96);
             addNewRowButton.Name = "addNewRowButton";
             addNewRowButton.Size = new Size(186, 23);
             addNewRowButton.TabIndex = 9;
@@ -237,7 +239,7 @@
             // 
             conditionListLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             conditionListLinkLabel.AutoSize = true;
-            conditionListLinkLabel.Location = new Point(762, 201);
+            conditionListLinkLabel.Location = new Point(694, 201);
             conditionListLinkLabel.Name = "conditionListLinkLabel";
             conditionListLinkLabel.Size = new Size(103, 15);
             conditionListLinkLabel.TabIndex = 10;
@@ -249,7 +251,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(959, 451);
+            ClientSize = new Size(891, 438);
             Controls.Add(conditionListLinkLabel);
             Controls.Add(addNewRowButton);
             Controls.Add(deleteSelectedRowButton);
@@ -262,7 +264,7 @@
             Controls.Add(label1);
             Controls.Add(dataGridView);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(975, 471);
+            MinimumSize = new Size(775, 470);
             Name = "ConditionForm";
             Text = "コンディション値";
             FormClosing += ConditionForm_FormClosing;

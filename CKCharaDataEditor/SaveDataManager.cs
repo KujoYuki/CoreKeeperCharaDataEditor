@@ -406,20 +406,20 @@ namespace CKCharaDataEditor
 
         internal string GetCharacterName()
         {
+            var byteNameList = new List<byte>();
             var byteName = _saveData["characterCustomization"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
-            var byteList = new List<byte>();
-            foreach (var byteEntry in byteName)
+            var additionalName = _saveData["characterCustomization"]!["name"]!["bytes"]!.AsObject();
+
+            foreach (var byteEntry in byteName.Concat(additionalName))
             {
                 // 値を取得し、バイトデータに変換
                 if (byteEntry.Value is JsonValue byteValue && byteValue.TryGetValue<byte>(out byte byteData))
                 {
-                    // ASCII値が0の場合は終端とみなして終了
-                    if (byteData == 0) break;
-
-                    byteList.Add(byteData);
+                    byteNameList.Add(byteData);
                 }
             }
-            string characterName = Encoding.UTF8.GetString(byteList.ToArray());
+
+            string characterName = Encoding.UTF8.GetString(byteNameList.ToArray());
             return characterName;
         }
 
@@ -427,6 +427,25 @@ namespace CKCharaDataEditor
         {
             var version = _saveData["version"]!.GetValue<int>();
             return version;
+        }
+
+        internal IEnumerable<Guid> GetJoinedMapIds()
+        {
+            var mapGuids = _saveData["servers"]!.AsArray()
+                .Select(guidObj => new Guid(guidObj!.AsObject()["serverGuid"]!.ToString()));
+            return mapGuids;
+        }
+
+        internal void DeleteMapId(Guid targetMapId)
+        {
+            var joinedServersArray = _saveData["servers"]!.AsArray();
+            var filteredServers = joinedServersArray
+                .Where(mapIds => mapIds!.AsObject()["serverGuid"]!.ToString() != targetMapId.ToString().Replace("-",""))
+                .ToList();
+            _saveData["servers"] = JsonNode.Parse(JsonSerializer.Serialize(filteredServers, StaticResource.SerializerOption));
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+            File.WriteAllText(SaveDataPath, changedJson);
         }
 
         internal Guid GetLastConnnectedServerId()
@@ -533,8 +552,8 @@ namespace CKCharaDataEditor
                 .Where(objectID => objectID > 3000 && objectID >= 3400) // 敵モブアイテムを除外
                 .Select(objectID =>
                 {
-                    string displayName = FileManager.Instance.LocalizationData.TryGetValue(objectID, out string[]? translateResources) ?
-                        translateResources[1] : $"アイテム名が取得できませんでした。";
+                    string displayName = FileManager.Instance.LocalizationData.TryGetValue(objectID, out var translateResources) ?
+                        translateResources.DisplayName : $"アイテム名が取得できませんでした。";
                     outputText.AppendLine($"{objectID}\t{displayName}");
                     return (objectID: objectID, displayName: displayName);
                 })

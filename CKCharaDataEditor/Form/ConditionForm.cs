@@ -104,6 +104,8 @@ namespace CKCharaDataEditor
 
         private void dataGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
             string headerName = dataGridView.Columns[e.ColumnIndex].Name;
             string formattedValue = e.FormattedValue?.ToString()!;
             string formatErrorText = string.Empty;
@@ -248,6 +250,40 @@ namespace CKCharaDataEditor
             Settings.Default.ConditonFormSizeWidth = this.Size.Width;
             Settings.Default.ConditonFormSizeHeight = this.Size.Height;
             Settings.Default.Save();
+        }
+
+        private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            var colName = dataGridView.Columns[e.ColumnIndex];
+            switch (colName)
+            {
+                case { Name: "Timer" }:
+                    e.Value = ((double)e.Value!).ToString("F1");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            var colName = dataGridView.Columns[e.ColumnIndex];
+            var row = dataGridView.Rows[e.RowIndex];
+            var cell = row.Cells[e.ColumnIndex];
+            switch (colName)
+            {
+                case { Name: "Infinity" }:
+                    if ((bool)cell.Value)
+                    {
+                        // 永続化が有効な場合にDurationを自動で"--"にする
+                        row.Cells["Duration"].Value = "--";
+                        row.Cells["Timer"].Value = -1d;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

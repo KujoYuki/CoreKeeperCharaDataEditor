@@ -40,7 +40,7 @@
 39,MovementSpeedDecrease,移動スピード x/10%
 40,StarvingHealthDecrease,空腹による最大体力減少 x%
 41,WellFedHealthIncrease,満腹時の最大体力増加 x%
-42,StarvingDamageDecrease,空腹によるダメージと最大体力減少 x%
+42,StarvingDamageDecrease,空腹によるダメージと最大体力減少 x/10%
 43,WellFedDamageIncrease,満腹時のダメージと最大体力増加 x%
 44,HealthAdditionPercentage,体力 x%
 45,OrangeGlow,光度 x

@@ -30,19 +30,18 @@
         {
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropForm));
             lootTableListBox = new ListBox();
             label1 = new Label();
             label2 = new Label();
             lootDataGridView = new DataGridView();
-            objectID = new DataGridViewTextBoxColumn();
-            ItemName = new DataGridViewTextBoxColumn();
-            Amount = new DataGridViewTextBoxColumn();
-            Weight = new DataGridViewTextBoxColumn();
-            RollPerDop = new DataGridViewTextBoxColumn();
-            GuaranteedRoll = new DataGridViewTextBoxColumn();
             label3 = new Label();
             groupBox1 = new GroupBox();
+            playerCountNumericUpDown = new NumericUpDown();
             increasedChanceToGetFish = new NumericUpDown();
             label13 = new Label();
             increasedChanceToGetFishLoot = new NumericUpDown();
@@ -65,15 +64,24 @@
             tryRollsDataGridView = new DataGridView();
             TryCount = new DataGridViewTextBoxColumn();
             Rate = new DataGridViewTextBoxColumn();
-            playerCountComboBox = new ComboBox();
             label5 = new Label();
             worldModeComboBox = new ComboBox();
             label4 = new Label();
-            label11 = new Label();
+            lootIdExplaneLabel = new Label();
             lootIdLabel = new Label();
             skillNotFishToolTip = new ToolTip(components);
+            copyTableButton = new Button();
+            label12 = new Label();
+            searchIdTextBox = new TextBox();
+            objectID = new DataGridViewTextBoxColumn();
+            ItemName = new DataGridViewTextBoxColumn();
+            Amount = new DataGridViewTextBoxColumn();
+            Weight = new DataGridViewTextBoxColumn();
+            RollPerDop = new DataGridViewTextBoxColumn();
+            GuaranteedRoll = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)lootDataGridView).BeginInit();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)playerCountNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)increasedChanceToGetFish).BeginInit();
             ((System.ComponentModel.ISupportInitialize)increasedChanceToGetFishLoot).BeginInit();
             ((System.ComponentModel.ISupportInitialize)decimalPlacesNumericUpDown).BeginInit();
@@ -128,55 +136,6 @@
             lootDataGridView.CellEnter += lootDataGridView_CellEnter;
             lootDataGridView.CellFormatting += lootDataGridView_CellFormatting;
             // 
-            // objectID
-            // 
-            objectID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            objectID.DefaultCellStyle = dataGridViewCellStyle1;
-            objectID.HeaderText = "objectID";
-            objectID.Name = "objectID";
-            objectID.ReadOnly = true;
-            objectID.Width = 76;
-            // 
-            // ItemName
-            // 
-            ItemName.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            ItemName.HeaderText = "アイテム名";
-            ItemName.Name = "ItemName";
-            ItemName.ReadOnly = true;
-            ItemName.Width = 63;
-            // 
-            // Amount
-            // 
-            Amount.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Amount.HeaderText = "個数";
-            Amount.Name = "Amount";
-            Amount.ReadOnly = true;
-            Amount.Width = 52;
-            // 
-            // Weight
-            // 
-            Weight.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Weight.HeaderText = "ウェイト";
-            Weight.Name = "Weight";
-            Weight.ReadOnly = true;
-            Weight.Width = 53;
-            // 
-            // RollPerDop
-            // 
-            RollPerDop.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            RollPerDop.HeaderText = "通常抽選枠確率[%]";
-            RollPerDop.Name = "RollPerDop";
-            RollPerDop.ReadOnly = true;
-            RollPerDop.Width = 96;
-            // 
-            // GuaranteedRoll
-            // 
-            GuaranteedRoll.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            GuaranteedRoll.HeaderText = "保証抽選枠確率[%]";
-            GuaranteedRoll.Name = "GuaranteedRoll";
-            GuaranteedRoll.ReadOnly = true;
-            // 
             // label3
             // 
             label3.AutoSize = true;
@@ -187,6 +146,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(playerCountNumericUpDown);
             groupBox1.Controls.Add(increasedChanceToGetFish);
             groupBox1.Controls.Add(label13);
             groupBox1.Controls.Add(increasedChanceToGetFishLoot);
@@ -207,7 +167,6 @@
             groupBox1.Controls.Add(decimalPlacesNumericUpDown);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(tryRollsDataGridView);
-            groupBox1.Controls.Add(playerCountComboBox);
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(worldModeComboBox);
             groupBox1.Controls.Add(label4);
@@ -217,6 +176,17 @@
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "試行回数シミュレート";
+            // 
+            // playerCountNumericUpDown
+            // 
+            playerCountNumericUpDown.Location = new Point(276, 60);
+            playerCountNumericUpDown.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
+            playerCountNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            playerCountNumericUpDown.Name = "playerCountNumericUpDown";
+            playerCountNumericUpDown.Size = new Size(47, 23);
+            playerCountNumericUpDown.TabIndex = 26;
+            playerCountNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            playerCountNumericUpDown.ValueChanged += playerCountNumericUpDown_ValueChanged;
             // 
             // increasedChanceToGetFish
             // 
@@ -430,16 +400,6 @@
             Rate.Name = "Rate";
             Rate.ReadOnly = true;
             // 
-            // playerCountComboBox
-            // 
-            playerCountComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            playerCountComboBox.FormattingEnabled = true;
-            playerCountComboBox.Location = new Point(276, 60);
-            playerCountComboBox.Name = "playerCountComboBox";
-            playerCountComboBox.Size = new Size(48, 23);
-            playerCountComboBox.TabIndex = 3;
-            playerCountComboBox.SelectedIndexChanged += playerCountComboBox_SelectedIndexChanged;
-            // 
             // label5
             // 
             label5.AutoSize = true;
@@ -469,23 +429,25 @@
             label4.TabIndex = 0;
             label4.Text = "ワールド難易度";
             // 
-            // label11
+            // lootIdExplaneLabel
             // 
-            label11.AutoSize = true;
-            label11.Location = new Point(12, 627);
-            label11.Name = "label11";
-            label11.Size = new Size(45, 15);
-            label11.TabIndex = 7;
-            label11.Text = "LootID:";
+            lootIdExplaneLabel.AutoSize = true;
+            lootIdExplaneLabel.Location = new Point(201, 627);
+            lootIdExplaneLabel.Name = "lootIdExplaneLabel";
+            lootIdExplaneLabel.Size = new Size(45, 15);
+            lootIdExplaneLabel.TabIndex = 7;
+            lootIdExplaneLabel.Text = "LootID:";
+            lootIdExplaneLabel.Visible = false;
             // 
             // lootIdLabel
             // 
             lootIdLabel.AutoSize = true;
-            lootIdLabel.Location = new Point(63, 627);
+            lootIdLabel.Location = new Point(252, 627);
             lootIdLabel.Name = "lootIdLabel";
             lootIdLabel.Size = new Size(36, 15);
             lootIdLabel.TabIndex = 8;
             lootIdLabel.Text = "None";
+            lootIdLabel.Visible = false;
             // 
             // skillNotFishToolTip
             // 
@@ -494,13 +456,102 @@
             skillNotFishToolTip.InitialDelay = 100;
             skillNotFishToolTip.ReshowDelay = 20;
             // 
+            // copyTableButton
+            // 
+            copyTableButton.Location = new Point(408, 619);
+            copyTableButton.Name = "copyTableButton";
+            copyTableButton.Size = new Size(140, 23);
+            copyTableButton.TabIndex = 9;
+            copyTableButton.Text = "テーブルコピー(wiki用)";
+            copyTableButton.UseVisualStyleBackColor = true;
+            copyTableButton.Visible = false;
+            copyTableButton.Click += copyTableButton_Click;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(12, 627);
+            label12.Name = "label12";
+            label12.Size = new Size(88, 15);
+            label12.TabIndex = 10;
+            label12.Text = "objectIDで検索:";
+            // 
+            // searchIdTextBox
+            // 
+            searchIdTextBox.Location = new Point(95, 624);
+            searchIdTextBox.Name = "searchIdTextBox";
+            searchIdTextBox.Size = new Size(100, 23);
+            searchIdTextBox.TabIndex = 11;
+            searchIdTextBox.TextChanged += searchIdTextBox_TextChanged;
+            // 
+            // objectID
+            // 
+            objectID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            objectID.DefaultCellStyle = dataGridViewCellStyle1;
+            objectID.HeaderText = "objectID";
+            objectID.Name = "objectID";
+            objectID.ReadOnly = true;
+            objectID.Width = 76;
+            // 
+            // ItemName
+            // 
+            ItemName.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            ItemName.HeaderText = "アイテム名";
+            ItemName.Name = "ItemName";
+            ItemName.ReadOnly = true;
+            ItemName.Width = 80;
+            // 
+            // Amount
+            // 
+            Amount.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Amount.DefaultCellStyle = dataGridViewCellStyle2;
+            Amount.HeaderText = "個数";
+            Amount.Name = "Amount";
+            Amount.ReadOnly = true;
+            Amount.Width = 56;
+            // 
+            // Weight
+            // 
+            Weight.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Weight.DefaultCellStyle = dataGridViewCellStyle3;
+            Weight.HeaderText = "ウェイト";
+            Weight.Name = "Weight";
+            Weight.ReadOnly = true;
+            Weight.Width = 65;
+            // 
+            // RollPerDop
+            // 
+            RollPerDop.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RollPerDop.DefaultCellStyle = dataGridViewCellStyle4;
+            RollPerDop.HeaderText = "通常抽選枠確率[%]";
+            RollPerDop.Name = "RollPerDop";
+            RollPerDop.ReadOnly = true;
+            RollPerDop.Width = 96;
+            // 
+            // GuaranteedRoll
+            // 
+            GuaranteedRoll.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            GuaranteedRoll.DefaultCellStyle = dataGridViewCellStyle5;
+            GuaranteedRoll.HeaderText = "保証抽選枠確率[%]";
+            GuaranteedRoll.Name = "GuaranteedRoll";
+            GuaranteedRoll.ReadOnly = true;
+            // 
             // DropForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(955, 664);
+            Controls.Add(searchIdTextBox);
+            Controls.Add(label12);
+            Controls.Add(copyTableButton);
             Controls.Add(lootIdLabel);
-            Controls.Add(label11);
+            Controls.Add(lootIdExplaneLabel);
             Controls.Add(groupBox1);
             Controls.Add(label3);
             Controls.Add(lootDataGridView);
@@ -515,6 +566,7 @@
             ((System.ComponentModel.ISupportInitialize)lootDataGridView).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)playerCountNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)increasedChanceToGetFish).EndInit();
             ((System.ComponentModel.ISupportInitialize)increasedChanceToGetFishLoot).EndInit();
             ((System.ComponentModel.ISupportInitialize)decimalPlacesNumericUpDown).EndInit();
@@ -533,7 +585,6 @@
         private GroupBox groupBox1;
         private Label label4;
         private ComboBox worldModeComboBox;
-        private ComboBox playerCountComboBox;
         private Label label5;
         private DataGridView tryRollsDataGridView;
         private Label label7;
@@ -553,18 +604,22 @@
         private Label label20;
         private DataGridViewTextBoxColumn TryCount;
         private DataGridViewTextBoxColumn Rate;
-        private DataGridViewTextBoxColumn objectID;
-        private DataGridViewTextBoxColumn ItemName;
-        private DataGridViewTextBoxColumn Amount;
-        private DataGridViewTextBoxColumn Weight;
-        private DataGridViewTextBoxColumn RollPerDop;
-        private DataGridViewTextBoxColumn GuaranteedRoll;
-        private Label label11;
+        private Label lootIdExplaneLabel;
         private Label lootIdLabel;
         private Label notFishLabel;
         private Label label13;
         private NumericUpDown increasedChanceToGetFishLoot;
         private NumericUpDown increasedChanceToGetFish;
         private ToolTip skillNotFishToolTip;
+        private Button copyTableButton;
+        private Label label12;
+        private TextBox searchIdTextBox;
+        private NumericUpDown playerCountNumericUpDown;
+        private DataGridViewTextBoxColumn objectID;
+        private DataGridViewTextBoxColumn ItemName;
+        private DataGridViewTextBoxColumn Amount;
+        private DataGridViewTextBoxColumn Weight;
+        private DataGridViewTextBoxColumn RollPerDop;
+        private DataGridViewTextBoxColumn GuaranteedRoll;
     }
 }

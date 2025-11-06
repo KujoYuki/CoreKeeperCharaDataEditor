@@ -72,7 +72,11 @@ namespace CKCharaDataEditor.Model.Items
             return new SolidBrush(Color.FromArgb(r, g, b));
         }
 
-        public static readonly ReadOnlyDictionary<string, (Biome Biome, TableAction Action)> TableDetails = new(new Dictionary<string, (Biome Biome, TableAction Action)>
+        /// <summary>
+        /// ルートテーブルファイルと描画や計算に関わる情報を定義してセットにする
+        /// アプデにより、新しいテーブルが追加されたら狩値を追加するために、readonlyにはしない
+        /// </summary>
+        public static Dictionary<string, (Biome Biome, TableAction Action)> TableDetails = new Dictionary<string, (Biome Biome, TableAction Action)>
         {
             { "SlimeBlobs" ,(Biome.Dirt, TableAction.Enemy) },
             { "SlimeBoss" ,(Biome.Dirt, TableAction.Boss) },
@@ -128,7 +132,7 @@ namespace CKCharaDataEditor.Model.Items
             { "OasisChest" ,(Biome.Oasis, TableAction.Chest) },
             { "WorldChest" ,(Biome.Dirt, TableAction.Chest) },  // バイオーム不明
             { "WorldChestNature" ,(Biome.Nature, TableAction.Enemy) },
-            { "TreasurePedestal" ,(Biome.Stone, TableAction.Enemy) },    // バイオーム不明
+            { "TreasurePedestal" ,(Biome.Dirt, TableAction.Enemy) },
             { "WoodRoomPedestal" ,(Biome.Dirt, TableAction.Enemy) },
             { "ArcheologistWallLoot" ,(Biome.None, TableAction.Enemy) },
             { "NatureDestructible" ,(Biome.Nature, TableAction.Destructible) },
@@ -137,7 +141,7 @@ namespace CKCharaDataEditor.Model.Items
             { "LargeWoodenNatureDestructable" ,(Biome.Nature, TableAction.Enemy) },
             { "NatureWall" ,(Biome.Nature, TableAction.Wall) },
             { "Grass" ,(Biome.Dirt, TableAction.Destructible) }, // バイオーム不明
-            { "CavelingDestructbile" ,(Biome.Stone, TableAction.Enemy) },   // バイオーム不明
+            { "CavelingDestructbile" ,(Biome.Clay, TableAction.Destructible) },
             { "MoldDungeonChest" ,(Biome.Mold, TableAction.Chest) },
             { "MoldDestructable" ,(Biome.Mold, TableAction.Enemy) },
             { "LargeMoldDestructable" ,(Biome.Mold, TableAction.Enemy) },
@@ -208,11 +212,11 @@ namespace CKCharaDataEditor.Model.Items
             { "OrbitalTurret" ,(Biome.Crystal, TableAction.Enemy) },
             { "AlienEventTerminal" ,(Biome.Crystal, TableAction.Enemy) },
             { "Nilipede" ,(Biome.Crystal, TableAction.Enemy) },
-            { "StarGrub" ,(Biome.Crystal, TableAction.Enemy) }, // バイオーム不明
-            { "HydraBossNature" ,(Biome.Nature, TableAction.Enemy) },
-            { "HydraBossSea" ,(Biome.Sea, TableAction.Enemy) },
-            { "HydraBossDesert" ,(Biome.Desert, TableAction.Enemy) },
-            { "CoreCommander" ,(Biome.Desert, TableAction.Enemy) },
+            { "StarGrub" ,(Biome.Clay, TableAction.Enemy) },
+            { "HydraBossNature" ,(Biome.Nature, TableAction.Boss) },
+            { "HydraBossSea" ,(Biome.Sea, TableAction.Boss) },
+            { "HydraBossDesert" ,(Biome.Desert, TableAction.Boss) },
+            { "CoreCommander" ,(Biome.Desert, TableAction.Boss) },
             { "GoldenBombScarab" ,(Biome.Oasis, TableAction.Enemy) },
             { "PassageWall" ,(Biome.Passage, TableAction.Wall) },
             { "PandoriumCrystal" ,(Biome.Passage, TableAction.Enemy) },
@@ -232,7 +236,7 @@ namespace CKCharaDataEditor.Model.Items
             { "AbioticFactorDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "AbioticFactorLargeDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "AbioticFactorElectroPest" ,(Biome.Stone, TableAction.Enemy) },
-        });
+        };
 
         /// <summary>
         /// ドロップテーブル表示名の追加辞書
@@ -271,7 +275,7 @@ namespace CKCharaDataEditor.Model.Items
             {"OasisChest", "ラクラクーダ牧場のチェスト" },
             {"WorldChest", "音楽の扉(土)" },
             {"WorldChestNature", "音楽の扉(森)" },
-            //{"TreasurePedestal", "" },
+            {"TreasurePedestal", "土のシーンの台座" },
             {"WoodRoomPedestal", "木の家の台座" },
             {"ArcheologistWallLoot", "考古学者(スキル)" },
             {"LargeNatureDestructable", "大きな花の器" },
@@ -359,6 +363,7 @@ namespace CKCharaDataEditor.Model.Items
     }
     public enum TableAction
     {
+        None,
         Enemy,
         Boss,
         Chest,
@@ -366,46 +371,5 @@ namespace CKCharaDataEditor.Model.Items
         FishingLoot,
         Destructible,
         Wall,
-    }
-
-    /// <summary>
-    /// 使用例を示すクラス   hack 不要になったら削除する
-    /// </summary>
-    public class LootTableExample
-    {
-        public static async Task ExampleUsage()
-        {
-            // JSONファイルから読み込み
-            string filePath = @"g:\SteamLibrary\steamapps\common\Core Keeper\CoreKeeper_Data\StreamingAssets\Conf\Loot\CicadaDungeonChest.json";
-
-            try
-            {
-                // ファイルから戦利品テーブルを読み込み
-                LootTable lootTable = await LootTableHelper.LoadFromFileAsync(filePath);
-
-                // 戦利品テーブル情報を表示
-                Console.WriteLine($"戦利品テーブルID: {lootTable.LootTableID}");
-                Console.WriteLine($"ユニークドロップ範囲: {lootTable.UniqueDrops.Min} - {lootTable.UniqueDrops.Max}");
-                Console.WriteLine($"重複不許可: {lootTable.DontAllowDuplicates}");
-                Console.WriteLine($"戦利品数: {lootTable.Loots.Count}");
-
-                // 各戦利品の詳細を表示
-                foreach (var loot in lootTable.Loots)
-                {
-                    Console.WriteLine($"  オブジェクトID: {loot.ObjectID}, 重み: {loot.Weight:F6}, " +
-                                    $"数量: {loot.Amount.Min}-{loot.Amount.Max}, " +
-                                    $"保証ドロップ: {loot.IsOneOfGuaranteedToDrop}");
-                }
-
-                // JSONに変換
-                string json = LootTableHelper.ToJson(lootTable);
-                Console.WriteLine("JSON出力:");
-                Console.WriteLine(json);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"エラー: {ex.Message}");
-            }
-        }
     }
 }

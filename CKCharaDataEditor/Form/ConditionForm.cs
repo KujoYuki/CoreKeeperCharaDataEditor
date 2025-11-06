@@ -9,8 +9,8 @@ namespace CKCharaDataEditor
     {
         readonly SaveDataManager _saveDataManager = SaveDataManager.Instance;
         static readonly List<(int ID, string Description)> ConditionDescriptions = LoadConditionDescriptions();
-
         private List<Condition> Conditions = [];
+        public static List<int> IncreaseHealthMax = [16, 199, 200, 201, 212, 218, 242, 284, 300, 301];
 
         public ConditionForm()
         {
@@ -254,11 +254,18 @@ namespace CKCharaDataEditor
 
         private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var colName = dataGridView.Columns[e.ColumnIndex];
-            switch (colName)
+            DataGridViewColumn col = dataGridView.Columns[e.ColumnIndex];
+            double value;
+            switch (col)
             {
+                case { Name: "Duration" }:
+                    if (e.Value!.ToString() == "--") break;
+                    double.TryParse(e.Value!.ToString(), out value);
+                    e.Value = value.ToString("F1");
+                    break;
                 case { Name: "Timer" }:
-                    e.Value = ((double)e.Value!).ToString("F1");
+                    double.TryParse(e.Value!.ToString(), out value);
+                    e.Value = value.ToString("F1");
                     break;
                 default:
                     break;
@@ -280,9 +287,28 @@ namespace CKCharaDataEditor
                         row.Cells["Duration"].Value = "--";
                         row.Cells["Timer"].Value = -1d;
                     }
+                    else 
+                    {
+                        // 永続化が無効な場合にDurationを0にする                      
+                        row.Cells["Duration"].Value = 10d;
+                        row.Cells["Timer"].Value = 10d;
+                    }
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void dataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            if (!Program.IsDeveloper)
+            {
+                // 体力最大値増加系のコンディションは編集不可にする
+                int conditionId = Convert.ToInt32(dataGridView.Rows[e.RowIndex].Cells["ConditionId"].Value);
+                if (IncreaseHealthMax.Contains(conditionId))
+                {
+                    dataGridView.Rows[e.RowIndex].ReadOnly = true;
+                }
             }
         }
     }

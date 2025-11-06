@@ -1,15 +1,19 @@
 ﻿using CKCharaDataEditor.Model.Items;
 using System.Data;
 using System.Diagnostics;
+using System.Text;
 
 namespace CKCharaDataEditor
 {
     public partial class DropForm : Form
     {
-        private FileManager _fileManager = FileManager.Instance;
-        private List<LootTable> _lootTables = [];
-        private Func<int, double>? CalculateChancePerRoll;    // ドロップ期待値計算式(n回やって少なくともm個取得できる)
-        private const double DropUpperLimit = 0.9; // 複数回シミュレートにおける計算上限確率
+        FileManager _fileManager = FileManager.Instance;
+        List<LootTable> _lootTables = [];
+        Func<int, double>? CalculateChancePerRoll;    // ドロップ期待値計算式(n回やって少なくともm個取得できる)
+        const double DropUpperLimit = 0.9;      // 複数回シミュレートにおける計算上限確率
+        List<int> _searchResultIndexes = [];    // 検索結果のドロップテーブルインデックスリスト
+        int _searchingId = -1;
+        bool _suppressCalculate = true;
 
         public DropForm()
         {
@@ -24,12 +28,15 @@ namespace CKCharaDataEditor
             {
                 col.HeaderCell.Style.WrapMode = DataGridViewTriState.False;
             }
-            string[] selectablePlayerCounts = Enumerable.Range(1, 8).Select(i => i.ToString()).ToArray();
-            playerCountComboBox.Items.AddRange(selectablePlayerCounts);
-            playerCountComboBox.SelectedIndex = 0;
             worldModeComboBox.SelectedIndex = 0;
 
             skillNotFishToolTip.SetToolTip(notFishLabel, "魚以外のアイテムが釣れる確率を上昇させる確率");
+            if (Program.IsDeveloper)
+            {
+                copyTableButton.Visible = true;
+                lootIdExplaneLabel.Visible = true;
+                lootIdLabel.Visible = true;
+            }
         }
 
         private async void LoadLootFiles()
@@ -54,7 +61,8 @@ namespace CKCharaDataEditor
                 // 最初のアイテムを選択状態にする
                 lootTableListBox.SelectedIndex = 0;
             }
-
+            _suppressCalculate = false;
+            SimurateTrialCounts();
         }
 
         private void lootTableListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -64,8 +72,9 @@ namespace CKCharaDataEditor
             lootIdLabel.Text = table.LootTableID.ToString();
 
             // ドロップテーブルの表示
-            var orderedLootItems = table.Loots.OrderByDescending(loot => loot.IsOneOfGuaranteedToDrop)
-                    .ThenBy(loot => loot.ObjectID);
+            var orderedLootItems = table.Loots
+                .OrderByDescending(loot => loot.IsOneOfGuaranteedToDrop)
+                .ThenByDescending(loot => loot.RollPerDrop);
             foreach (LootItem item in orderedLootItems)
             {
                 string displayName = item.ObjectID.ToString();
@@ -77,10 +86,20 @@ namespace CKCharaDataEditor
                                           item.GuaranteedRollPerDrop * 100f);
             }
 
+            // 検索中のアイテムが含まれてる場合、ハイライト表示する
+            var highLightRow = lootDataGridView.Rows
+                .Cast<DataGridViewRow>()
+                .FirstOrDefault(row => Convert.ToInt32(row.Cells["objectID"].Value) == _searchingId);
+            if (highLightRow is not null)
+            {
+                lootDataGridView.ClearSelection();
+                highLightRow.Selected = true;
+                lootDataGridView.CurrentCell = highLightRow.Cells[0];
+                // CellEnterイベントが自動で発生してシミュレートが走る
+            }
+
             // 抽選枠数の表示
             guaranteedRollCountLabel.Text = table.Loots.Exists(item => item.IsOneOfGuaranteedToDrop) ? "1" : "0";
-
-            SimurateTrialCounts();
         }
 
         private void lootDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -89,7 +108,6 @@ namespace CKCharaDataEditor
             switch (colName)
             {
                 case { Name: "objectID" }:
-                    lootDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
                     if ((int)e.Value! == 0)
                     {
                         // ObjectIDが0の場合は空欄にする
@@ -103,15 +121,8 @@ namespace CKCharaDataEditor
                         e.Value = "なし";
                     }
                     break;
-                case { Name: "Amount" }:
-                    lootDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    break;
                 case { Name: "Weight" }:
-                    lootDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
                     e.Value = ((double)e.Value!).ToString("F3");
-                    break;
-                case { Name: "RollPerDrop" }:
-                    lootDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
                     break;
                 case { Name: "RollPerDop" }:
                 case { Name: "GuaranteedRoll" }:
@@ -138,7 +149,7 @@ namespace CKCharaDataEditor
             SimurateTrialCounts();
         }
 
-        private void playerCountComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void playerCountNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
             SimurateTrialCounts();
         }
@@ -158,7 +169,12 @@ namespace CKCharaDataEditor
         /// </summary>
         private void SimurateTrialCounts()
         {
-            if (lootDataGridView.CurrentCell is null || _lootTables.Count is 0) return;
+            if (_suppressCalculate ||
+                lootDataGridView.CurrentCell is null ||
+                _lootTables.Count is 0)
+            {
+                return;
+            }
 
             LootTable selectedTable = _lootTables[lootTableListBox.SelectedIndex];
             int selectedRowIndex = lootDataGridView.CurrentCell.RowIndex;
@@ -168,7 +184,6 @@ namespace CKCharaDataEditor
             string fileName = lootTableListBox.SelectedItem!.ToString()!;
             TableAction tableAction = LootTableHelper.TableDetails[fileName].Action;
             DropRange dropRange = selectedTable.UniqueDrops.Copy();
-            string correctRollRange;
 
             // Bossテーブルの場合の補正
             if (tableAction is TableAction.Boss)
@@ -178,18 +193,16 @@ namespace CKCharaDataEditor
                     baseRollCountRatio *= 1.5f;
 
                 // プレイヤー人数による補正
-                int playerCount = Convert.ToInt32(playerCountComboBox.SelectedItem);
-                // hack 2-3人プレイ時の補正が不明なため暫定値を使用。そのうち検証する
-                baseRollCountRatio *= 1 + (playerCount - 1) * 0.5f;                            // 仮: 1人あたり0.5倍増加と仮定
-                //baseRollCount = Math.Pow(1.5f * baseRollCount, playerCount);    // 仮: プレイヤー人数に応じて指数関数的に増加すると仮定
+                int playerCount = Convert.ToInt32(playerCountNumericUpDown.Value);
+                baseRollCountRatio *= 1 + (playerCount - 1) * 0.5f;
                 dropRange *= baseRollCountRatio;
             }
 
             // 正しい抽選枠数の表示
-            correctRollRange = dropRange.IsSingleValue ?
+            string correctRollRangeDisplay = dropRange.IsSingleValue ?
                 dropRange.Min.ToString() :
-                $"{dropRange.Min * baseRollCountRatio} - {dropRange.Max * baseRollCountRatio}";
-            normalRollCountLabel.Text = correctRollRange;
+                $"{dropRange.Min} - {dropRange.Max}";
+            normalRollCountLabel.Text = correctRollRangeDisplay;
 
             double ratePerLootRoll = dropRange.GetAverage();
             int correctedRollCount = Convert.ToInt32(Math.Round(ratePerLootRoll));
@@ -288,8 +301,12 @@ namespace CKCharaDataEditor
                 itemText = additionalDisplayName;
             }
 
-            // その他の情報取得
-            (Biome Biome, TableAction Action) otherLootInfo = LootTableHelper.TableDetails[fileName];
+            // 未定義のドロップテーブル情報を追加（アプデ追加対策）
+            if (!LootTableHelper.TableDetails.TryGetValue(fileName, out var otherLootInfo))
+            {
+                otherLootInfo = (Biome.None, TableAction.None);
+                LootTableHelper.TableDetails[fileName] = otherLootInfo;
+            }
 
             // 背景色を設定する
             e.DrawBackground();
@@ -298,6 +315,12 @@ namespace CKCharaDataEditor
                 // 選択中のアイテムの背景色を変更
                 e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
                 e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
+            }
+            else if (_searchResultIndexes.Contains(e.Index))
+            {
+                // 検索結果のアイテムの背景色を変更
+                e.Graphics.FillRectangle(Brushes.Yellow, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
             else
             {
@@ -346,13 +369,13 @@ namespace CKCharaDataEditor
                         e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Passage], e.Bounds);
                         break;
                     // 通常のアイテムの背景色を変更
+                    case Biome.None:
                     default:
                         e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
                         e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
                         break;
                 }
                 e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
-
             }
             e.DrawFocusRectangle();
         }
@@ -360,6 +383,76 @@ namespace CKCharaDataEditor
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/Document/dropItems.md") { UseShellExecute = true });
+        }
+
+        /// <summary>
+        /// wiki編集用にドロップテーブルをコピー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void copyTableButton_Click(object sender, EventArgs e)
+        {
+            LootTable table = _lootTables[lootTableListBox.SelectedIndex];
+            table.Loots = table.Loots.OrderByDescending(loot => loot.IsOneOfGuaranteedToDrop)
+                .ThenByDescending(loot => loot.GuaranteedRollPerDrop)
+                .ThenByDescending(loot => loot.RollPerDrop).ToList();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"抽選回数 {table.UniqueDrops}");
+            string hasGuaranteed = table.Loots.Exists(item => item.IsOneOfGuaranteedToDrop) ? "あり" : "なし";
+            sb.AppendLine($"保証抽選 {hasGuaranteed}");
+            sb.AppendLine("|>|アイテム|通常抽選確率[%]|保証抽選確率[%]|h");
+            foreach (var item in table.Loots)
+            {
+                string itemName = item.ObjectID.ToString();
+                if (_fileManager.LocalizationData.TryGetValue(item.ObjectID, out var translateResources))
+                {
+                    itemName = translateResources.DisplayName;
+                }
+                if (itemName == "0")
+                {
+                    itemName = "なし";
+                }
+                if (item.Amount.Max != 1)
+                {
+                    itemName += $" x{item.Amount}";
+                }
+                string normalRate = (item.RollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}");
+                string guaranteedRate = item.IsOneOfGuaranteedToDrop ? (item.GuaranteedRollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}") : "----";
+                sb.AppendLine($"|| {itemName} | {normalRate} | {guaranteedRate} |");
+            }
+            sb.AppendLine("(ver 1.1.2.6)");
+            Clipboard.SetText(sb.ToString());
+        }
+
+        /// <summary>
+        /// objectgIDでのアイテム検索
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void searchIdTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _searchResultIndexes.Clear();
+            string searchText = searchIdTextBox.Text.Trim();
+            if (!int.TryParse(searchText, out _searchingId))
+            {
+                return;
+            }
+
+            // 検索IDを持つドロップテーブルをハイライトする
+            for (int i = 0; i < _lootTables.Count; i++)
+            {
+                LootTable table = _lootTables[i];
+                if (table.Loots.Any(loot => loot.ObjectID == _searchingId))
+                {
+                    _searchResultIndexes.Add(i);
+                }
+            }
+            if (_searchResultIndexes.Count > 0)
+            {
+                // 最初の検索結果を選択状態にする
+                lootTableListBox.SelectedIndex = _searchResultIndexes.FirstOrDefault();
+                lootTableListBox.Refresh();
+            }
         }
     }
 }

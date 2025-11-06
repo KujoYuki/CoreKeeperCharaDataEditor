@@ -3,6 +3,7 @@ using CKCharaDataEditor.Model.Food;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Resource;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -205,7 +206,8 @@ namespace CKCharaDataEditor
         {
             int? increasedHealthNullable = _saveData["conditionsList"]?.AsArray()
                 .Select(x => JsonSerializer.Deserialize<Condition>(x, StaticResource.SerializerOption))
-                .SingleOrDefault(c => c?.Id == 16)?.Value;
+                .Where(c => ConditionForm.IncreaseHealthMax.Contains(c!.Id))
+                .Sum(c => c!.Value);
             if (increasedHealthNullable is null)
             {
                 increasedHealth = 0;
@@ -352,6 +354,7 @@ namespace CKCharaDataEditor
                 conditions.Add(new(210, 2, double.PositiveInfinity, -1));
             }
             _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
+            _saveData["characterType"] = 1;
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);

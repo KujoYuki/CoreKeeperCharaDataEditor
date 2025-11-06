@@ -467,7 +467,11 @@ namespace CKCharaDataEditor
                 amountNumericUpDown.Value = amountConst.Value;
             }
             var aux = new ItemAuxData(Convert.ToInt32(auxIndexNumericUpDown.Value), auxDataTextBox.Text);
-            return new(objectID: int.Parse((objectIdTextBox.Text)),
+            if (!int.TryParse(objectIdTextBox.Text, out int objectId))
+            {
+                return Item.Default;
+            }
+            return new(objectID: objectId,
                 amount: Convert.ToInt32(amountNumericUpDown.Value),
                 variation: Convert.ToInt32(variationNumericUpDown.Value),
                 variationUpdateCount: Convert.ToInt32(variationUpdateCountNumericUpDown.Value),
@@ -475,8 +479,6 @@ namespace CKCharaDataEditor
                 aux: aux,
                 locked: objectLockedCheckBox.Checked);
         }
-
-
 
         private async void EnableResultMessage(string message)
         {

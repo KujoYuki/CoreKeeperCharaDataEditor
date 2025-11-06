@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConditionForm));
             dataGridView = new DataGridView();
             ConditionId = new DataGridViewTextBoxColumn();
@@ -72,6 +75,7 @@
             dataGridView.CellFormatting += dataGridView_CellFormatting;
             dataGridView.CellValidating += dataGridView_CellValidating;
             dataGridView.CellValueChanged += dataGridView_CellValueChanged;
+            dataGridView.RowsAdded += dataGridView_RowsAdded;
             // 
             // ConditionId
             // 
@@ -87,6 +91,8 @@
             // Value
             // 
             Value.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Value.DefaultCellStyle = dataGridViewCellStyle2;
             Value.FillWeight = 105.964462F;
             Value.HeaderText = "効果量";
             Value.Name = "Value";
@@ -105,6 +111,8 @@
             // Duration
             // 
             Duration.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Duration.DefaultCellStyle = dataGridViewCellStyle3;
             Duration.FillWeight = 105.964462F;
             Duration.HeaderText = "持続時間";
             Duration.Name = "Duration";
@@ -114,6 +122,8 @@
             // Timer
             // 
             Timer.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Timer.DefaultCellStyle = dataGridViewCellStyle4;
             Timer.FillWeight = 105.964462F;
             Timer.HeaderText = "残り時間";
             Timer.Name = "Timer";

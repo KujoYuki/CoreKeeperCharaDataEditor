@@ -3,7 +3,6 @@ using CKCharaDataEditor.Model.Food;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Resource;
-using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -219,54 +218,42 @@ namespace CKCharaDataEditor
             return true;
         }
 
-        public void CalculateRecipeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
+        public void CalculateRecipeCounts(out int userCreateRecipeCount, out List<Recipe> exceptRecipe)
         {
-            int[] allFoodID = Recipe.AllIngredients.Select(c => c.objectID).ToArray();
-            List<Tuple<int, int>> allIngredientPairs = allFoodID
-                .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
-                .ToList();
-            allRecipeTempVariationCount = allIngredientPairs.Count;
+            int[] allFoodID = RecipeHelper.AllIngredients.Select(c => c.objectID).ToArray();
 
-            // 料理のコモンとレアのカテゴリIDリスト
-            List<int> allCookedCategoryId = Recipe.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })   // Epicはレシピに載らないため除外
-                .OrderBy(id => id)
-                .ToList();
-            List<Tuple<int, int>> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
+            List<Recipe> discoveredUserRecipe = _saveData["discoveredObjects2"]!.AsArray()
                 .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
-                .Where(o => allCookedCategoryId.Contains(o.objectID))   // 非料理アイテムは除外
-                .Where(o => o.variation > 0 && (uint)o.variation <= uint.MaxValue)   // variationが0か32bitで表現できない場合は除外
-                .Select(c => c!.variation)
-                .Distinct()
-                .Select(variation =>
-                {
-                    Recipe.UnpackVariation(variation, out int materialA, out int materialB);
-                    return Tuple.Create(Math.Min(materialA, materialB), Math.Max(materialA, materialB));
-                })
-                .Where(pair => allFoodID.Contains(pair.Item1) && allFoodID.Contains(pair.Item2))    // 食材以外を食材とするレシピの除外
+                .Where(o => RecipeHelper.CookedFoodAllIds.Contains(o.objectID))   // 料理アイテムに絞り込み
+                .Where(o => o.variation > 0 && (uint)o.variation <= uint.MaxValue)   // variationが0か32bitで表現できない場合は除外。（非正規料理はこの範囲になることがある）
+                .Select(dicoverdObj => new Recipe(dicoverdObj))
+                //.Distinct() //hack 重複排除は不要？テスト時に不具合があれば戻す
                 .ToList();
 
-            userRecipeCount = allUserRecipeTempVariation.Count;
-            exceptRecipe = allIngredientPairs.Except(allUserRecipeTempVariation).ToList();    //未作成の組み合わせ
+            userCreateRecipeCount = RecipeHelper.AllRecipes
+                .Intersect(discoveredUserRecipe, new RecipeComparer())  // 等価比較を明示的指定
+                .Count();
+            exceptRecipe = RecipeHelper.AllRecipes
+                .Except(discoveredUserRecipe, new RecipeComparer())
+                .ToList();    //未作成のレシピ
         }
 
         public void ListUncreatedRecipes()
         {
-            CalculateRecipeCounts(out int userRecipeCount, out int allRecipeCount, out var exceptRecipes);
-            double cookRate = (double)userRecipeCount / allRecipeCount;
+            CalculateRecipeCounts(out int userRecipeCount, out var exceptRecipes);
+            double cookRate = (double)userRecipeCount / RecipeHelper.AllRecipes.Count;
 
             DialogResult outputResult = MessageBox.Show($"現在のレシピ網羅率は {cookRate:P2} %です。" +
-                $"（{userRecipeCount} / {allRecipeCount}）\n" +
-                $"※ゲーム内レシピブックとカウントが異なる場合があります。\n\n" +
-                $"一度も調理していない組み合わせを出力しますか？", "", MessageBoxButtons.YesNo);
-            if (outputResult is DialogResult.Yes)
+                $"（{userRecipeCount} / {RecipeHelper.AllRecipes.Count}）\n\n" +
+                $"未取得のレシピを出力しますか？", "", MessageBoxButtons.YesNo);
+            if (outputResult is DialogResult.Yes && exceptRecipes.Count() > 0)
             {
                 var foodBuilder = new StringBuilder();
-                foreach ((var foodA, var foodB) in exceptRecipes)
+                foreach (var recipe in exceptRecipes)
                 {
-                    string FoodA = Recipe.AllIngredients.Single(f => f.objectID == foodA).DisplayName;
-                    string FoodB = Recipe.AllIngredients.Single(f => f.objectID == foodB).DisplayName;
-                    foodBuilder.AppendLine($"{FoodA} + {FoodB}");
+                    string primaryIngredientDisplayName = RecipeHelper.AllIngredientsWithObsolute.Single(i => i.objectID == recipe.PrimaryIngredient).DisplayName;
+                    string secondaryIngredientDisplayName = RecipeHelper.AllIngredientsWithObsolute.Single(i => i.objectID == recipe.SecondaryIngredient).DisplayName;
+                    foodBuilder.AppendLine($"{primaryIngredientDisplayName} + {secondaryIngredientDisplayName}");
                 }
 
                 using SaveFileDialog saveFileDialog = new();
@@ -282,20 +269,47 @@ namespace CKCharaDataEditor
                     MessageBox.Show($"{exceptRecipes.Count} 通りのレシピを出力しました。");
                 }
             }
-            //todo 全レシピ追加 全組み合わせの勝敗表からカテゴリを自動で決定させる:要食材勝敗テーブルのアルゴリズム解明
         }
 
         public void DeleteAllRecipes()
         {
-            var allCookedCategoryId = Recipe.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare, c.objectID + (int)CookRarity.Epic })
-                .OrderBy(id => id)
-                .ToList();
-            var discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()
+            List<DiscoveredObjects> discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()
                 .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
-                .Where(obj => !allCookedCategoryId.Contains(obj.objectID))
+                .Where(obj => !RecipeHelper.CookedFoodAllIds.Contains(obj.objectID))
                 .ToList();
             _saveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(discoveredObjectWithoutRecipe, StaticResource.SerializerOption));
+            // データ書き込み
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+            File.WriteAllText(SaveDataPath, changedJson);
+        }
+
+        /// <summary>
+        /// 全てのレシピを発見済みにする
+        /// </summary>
+        internal void AddAllRecipes()
+        {
+            var allRecipe = RecipeHelper.AllRecipes
+                .Select(r =>
+                {
+                    // 高レアリティ版も追加する
+                    Recipe higherRarityRecipe = r.Rarity switch
+                    {
+                        CookRarity.Common => r with { Rarity = CookRarity.Rare },
+                        CookRarity.Rare => r with { Rarity = CookRarity.Epic },
+                        _ => throw new ArgumentException("RecipeHelper.AllRecipes was strange."),
+                    };
+                    return new Recipe[] { r, higherRarityRecipe };
+                })
+                .SelectMany(recipes => recipes.Select(recipe => recipe.ToDiscoveredObjects()))
+                .ToList();
+            List<DiscoveredObjects> discoveredObjectWithAllRecipe = _saveData["discoveredObjects2"]!.AsArray()
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Where(obj => !RecipeHelper.CookedFoodAllIds.Contains(obj.objectID))    // 既にあるレシピを全て除外し
+                .Concat(allRecipe)                                                      // 全レシピを追加する
+                .ToList();
+
+            _saveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(discoveredObjectWithAllRecipe, StaticResource.SerializerOption));
             // データ書き込み
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);

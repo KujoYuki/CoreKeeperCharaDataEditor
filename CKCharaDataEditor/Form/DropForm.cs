@@ -270,7 +270,7 @@ namespace CKCharaDataEditor
                     break;
                 case { Name: "Rate" }:
                     tryRollsDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    e.Value = ((double)e.Value!).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}");    //hack 小数点以下の表示変更を受け入れられるようにする
+                    e.Value = ((double)e.Value!).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}");
                     break;
                 default:
                     break;
@@ -420,7 +420,7 @@ namespace CKCharaDataEditor
                 string guaranteedRate = item.IsOneOfGuaranteedToDrop ? (item.GuaranteedRollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}") : "----";
                 sb.AppendLine($"|| {itemName} | {normalRate} | {guaranteedRate} |");
             }
-            sb.AppendLine("(ver 1.1.2.6)");
+            sb.AppendLine($"(ver {AboutBox.GameVersion})");
             Clipboard.SetText(sb.ToString());
         }
 

@@ -1,4 +1,5 @@
 ﻿using CKCharaDataEditor.Resource;
+using System.ComponentModel;
 using System.Data;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -11,6 +12,8 @@ namespace CKCharaDataEditor
         private JsonObject _saveData = [];
 
         private string _saveDataPath = string.Empty;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string SaveDataPath
         {
             get => _saveDataPath;

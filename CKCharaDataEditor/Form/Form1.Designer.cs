@@ -58,6 +58,8 @@
             label9 = new Label();
             labelVariation = new Label();
             foodTab = new TabPage();
+            groupBox1 = new GroupBox();
+            addAllRecipeButton = new Button();
             deleteDiscoveredReciepesButton = new Button();
             listUncreatedRecipesButton = new Button();
             rarityComboBox = new ComboBox();
@@ -68,9 +70,9 @@
             toMaxButton = new Button();
             label10 = new Label();
             createdNumericNo = new NumericUpDown();
-            ingredientComboBoxB = new ComboBox();
+            secondaryIngredientComboBox = new ComboBox();
             label5 = new Label();
-            ingredientComboBoxA = new ComboBox();
+            primaryIngredientComboBox = new ComboBox();
             label4 = new Label();
             petTab = new TabPage();
             petEditControl = new CKCharaDataEditor.Control.PetEditControl();
@@ -129,6 +131,7 @@
             ((System.ComponentModel.ISupportInitialize)amountNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)amountConst).BeginInit();
             foodTab.SuspendLayout();
+            groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
             petTab.SuspendLayout();
             cattleTab.SuspendLayout();
@@ -425,8 +428,7 @@
             // 
             // foodTab
             // 
-            foodTab.Controls.Add(deleteDiscoveredReciepesButton);
-            foodTab.Controls.Add(listUncreatedRecipesButton);
+            foodTab.Controls.Add(groupBox1);
             foodTab.Controls.Add(rarityComboBox);
             foodTab.Controls.Add(cookedCategoryComboBox);
             foodTab.Controls.Add(label12);
@@ -435,9 +437,9 @@
             foodTab.Controls.Add(toMaxButton);
             foodTab.Controls.Add(label10);
             foodTab.Controls.Add(createdNumericNo);
-            foodTab.Controls.Add(ingredientComboBoxB);
+            foodTab.Controls.Add(secondaryIngredientComboBox);
             foodTab.Controls.Add(label5);
-            foodTab.Controls.Add(ingredientComboBoxA);
+            foodTab.Controls.Add(primaryIngredientComboBox);
             foodTab.Controls.Add(label4);
             foodTab.Location = new Point(4, 24);
             foodTab.Name = "foodTab";
@@ -447,12 +449,35 @@
             foodTab.Text = "料理作成";
             foodTab.UseVisualStyleBackColor = true;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(addAllRecipeButton);
+            groupBox1.Controls.Add(deleteDiscoveredReciepesButton);
+            groupBox1.Controls.Add(listUncreatedRecipesButton);
+            groupBox1.Location = new Point(346, 121);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(184, 140);
+            groupBox1.TabIndex = 24;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "レシピ";
+            // 
+            // addAllRecipeButton
+            // 
+            addAllRecipeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            addAllRecipeButton.Location = new Point(21, 90);
+            addAllRecipeButton.Name = "addAllRecipeButton";
+            addAllRecipeButton.Size = new Size(147, 23);
+            addAllRecipeButton.TabIndex = 20;
+            addAllRecipeButton.Text = "全てのレシピを追加";
+            addAllRecipeButton.UseVisualStyleBackColor = true;
+            addAllRecipeButton.Click += addAllRecipeButton_Click;
+            // 
             // deleteDiscoveredReciepesButton
             // 
             deleteDiscoveredReciepesButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            deleteDiscoveredReciepesButton.Location = new Point(307, 166);
+            deleteDiscoveredReciepesButton.Location = new Point(21, 61);
             deleteDiscoveredReciepesButton.Name = "deleteDiscoveredReciepesButton";
-            deleteDiscoveredReciepesButton.Size = new Size(223, 23);
+            deleteDiscoveredReciepesButton.Size = new Size(147, 23);
             deleteDiscoveredReciepesButton.TabIndex = 19;
             deleteDiscoveredReciepesButton.Text = "発見済みレシピの初期化";
             deleteDiscoveredReciepesButton.UseVisualStyleBackColor = true;
@@ -461,24 +486,26 @@
             // listUncreatedRecipesButton
             // 
             listUncreatedRecipesButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            listUncreatedRecipesButton.Location = new Point(307, 137);
+            listUncreatedRecipesButton.Location = new Point(21, 29);
             listUncreatedRecipesButton.Name = "listUncreatedRecipesButton";
-            listUncreatedRecipesButton.Size = new Size(223, 23);
+            listUncreatedRecipesButton.Size = new Size(147, 23);
             listUncreatedRecipesButton.TabIndex = 18;
-            listUncreatedRecipesButton.Text = "未作成料理の組み合わせ調査";
+            listUncreatedRecipesButton.Text = "未作成のレシピを列挙";
             listUncreatedRecipesButton.UseVisualStyleBackColor = true;
             listUncreatedRecipesButton.Click += listUncreatedRecipesButton_Click;
             // 
             // rarityComboBox
             // 
             rarityComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            rarityComboBox.DrawMode = DrawMode.OwnerDrawFixed;
             rarityComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             rarityComboBox.FormattingEnabled = true;
             rarityComboBox.Items.AddRange(new object[] { "コモン", "レア", "エピック" });
             rarityComboBox.Location = new Point(289, 81);
             rarityComboBox.Name = "rarityComboBox";
-            rarityComboBox.Size = new Size(241, 23);
+            rarityComboBox.Size = new Size(241, 24);
             rarityComboBox.TabIndex = 17;
+            rarityComboBox.DrawItem += rarityComboBox_DrawItem;
             // 
             // cookedCategoryComboBox
             // 
@@ -554,16 +581,17 @@
             createdNumericNo.TabIndex = 8;
             createdNumericNo.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
-            // ingredientComboBoxB
+            // secondaryIngredientComboBox
             // 
-            ingredientComboBoxB.DrawMode = DrawMode.OwnerDrawFixed;
-            ingredientComboBoxB.DropDownStyle = ComboBoxStyle.DropDownList;
-            ingredientComboBoxB.FormattingEnabled = true;
-            ingredientComboBoxB.Location = new Point(6, 81);
-            ingredientComboBoxB.Name = "ingredientComboBoxB";
-            ingredientComboBoxB.Size = new Size(252, 24);
-            ingredientComboBoxB.TabIndex = 9;
-            ingredientComboBoxB.DrawItem += ingredientComboBoxB_DrawItem;
+            secondaryIngredientComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+            secondaryIngredientComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            secondaryIngredientComboBox.FormattingEnabled = true;
+            secondaryIngredientComboBox.Location = new Point(6, 81);
+            secondaryIngredientComboBox.Name = "secondaryIngredientComboBox";
+            secondaryIngredientComboBox.Size = new Size(252, 24);
+            secondaryIngredientComboBox.TabIndex = 9;
+            secondaryIngredientComboBox.DrawItem += ingredientComboBoxB_DrawItem;
+            secondaryIngredientComboBox.SelectedIndexChanged += ingredientComboBox_SelectedIndexChanged;
             // 
             // label5
             // 
@@ -574,16 +602,17 @@
             label5.TabIndex = 10;
             label5.Text = "食材その2";
             // 
-            // ingredientComboBoxA
+            // primaryIngredientComboBox
             // 
-            ingredientComboBoxA.DrawMode = DrawMode.OwnerDrawFixed;
-            ingredientComboBoxA.DropDownStyle = ComboBoxStyle.DropDownList;
-            ingredientComboBoxA.FormattingEnabled = true;
-            ingredientComboBoxA.Location = new Point(6, 30);
-            ingredientComboBoxA.Name = "ingredientComboBoxA";
-            ingredientComboBoxA.Size = new Size(252, 24);
-            ingredientComboBoxA.TabIndex = 8;
-            ingredientComboBoxA.DrawItem += ingredientComboBoxA_DrawItem;
+            primaryIngredientComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+            primaryIngredientComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            primaryIngredientComboBox.FormattingEnabled = true;
+            primaryIngredientComboBox.Location = new Point(6, 30);
+            primaryIngredientComboBox.Name = "primaryIngredientComboBox";
+            primaryIngredientComboBox.Size = new Size(252, 24);
+            primaryIngredientComboBox.TabIndex = 8;
+            primaryIngredientComboBox.DrawItem += ingredientComboBoxA_DrawItem;
+            primaryIngredientComboBox.SelectedIndexChanged += ingredientComboBox_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -1059,6 +1088,7 @@
             ((System.ComponentModel.ISupportInitialize)amountConst).EndInit();
             foodTab.ResumeLayout(false);
             foodTab.PerformLayout();
+            groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).EndInit();
             petTab.ResumeLayout(false);
             cattleTab.ResumeLayout(false);
@@ -1082,9 +1112,9 @@
         private ComboBox saveSlotNoComboBox;
         private FolderBrowserDialog saveFolderBrowserDialog;
         private Label itemSlotLabel;
-        private ComboBox ingredientComboBoxB;
+        private ComboBox secondaryIngredientComboBox;
         private Label label5;
-        private ComboBox ingredientComboBoxA;
+        private ComboBox primaryIngredientComboBox;
         private Label label4;
         private TextBox objectIdTextBox;
         private Label label6;
@@ -1166,5 +1196,7 @@
         private Button ListupUnobtainedEquipButton;
         private Button mapButton;
         private Button dropButton;
+        private Button addAllRecipeButton;
+        private GroupBox groupBox1;
     }
 }

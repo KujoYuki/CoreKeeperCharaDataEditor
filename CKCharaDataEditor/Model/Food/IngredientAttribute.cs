@@ -1,7 +1,10 @@
 ﻿namespace CKCharaDataEditor.Model.Food
 {
+    /// <summary>
+    /// 食材の属性を定義したもの
+    /// </summary>
     [Flags]
-    public enum IngredientRoots
+    public enum IngredientAttribute
     {
         None,
         Harvest,

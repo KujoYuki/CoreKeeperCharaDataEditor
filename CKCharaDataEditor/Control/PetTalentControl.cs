@@ -1,4 +1,5 @@
 ﻿using CKCharaDataEditor.Model.Pet;
+using System.ComponentModel;
 
 namespace CKCharaDataEditor.Control
 {
@@ -13,6 +14,7 @@ namespace CKCharaDataEditor.Control
         }
 
         private int _slotNo;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SlotNo
         {
             get { return _slotNo; }
@@ -24,6 +26,7 @@ namespace CKCharaDataEditor.Control
         }
 
         private PetTalent _petTalent = PetTalent.Default;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public PetTalent Talent
         {
             get
@@ -39,6 +42,7 @@ namespace CKCharaDataEditor.Control
         }
 
         static PetBattleType _battleType = PetBattleType.Undefined;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public PetBattleType BattleType
         {
             get => _battleType;

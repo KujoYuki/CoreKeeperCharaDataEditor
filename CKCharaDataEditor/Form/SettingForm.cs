@@ -1,10 +1,13 @@
-﻿namespace CKCharaDataEditor
+﻿using System.ComponentModel;
+
+namespace CKCharaDataEditor
 {
     public partial class SettingForm : Form
     {
         private FileManager _fileManager = FileManager.Instance;
 
         private string _saveFolderPath = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string SaveFolderPath
         {
             get => _saveFolderPath;
@@ -23,6 +26,7 @@
         }
 
         private string _installFolderPath = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string InstallFolderPath
         {
             get => _installFolderPath;

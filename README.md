@@ -13,7 +13,7 @@
 - 任意の食材の組み合わせによる料理を作成できます。  
   - 料理のレア度や個数を指定することが出来ます。  
   - 自販機アイテムやシーズン料理を食材としての対象です。  
-- 未作成料理の食材の組み合わせをリストアップします。  
+  - 未取得のレシピをリストアップ、または追加が出来ます。  
 - ペットタレントの編集ができます。  
   - 5つを超えたスキルの変更と有効/無効の切り替えができます。  
   - データ上のみ存在する未実装のペットスキルを対象に含みます。  
@@ -60,7 +60,6 @@ DL前にセキュリティソフトのフィルタリングや例外設定をす
 要はクリア後のやりこみ勢向けツールになります。
 
 ## 動作環境
-.NET 8.0以降のランタイムパッケージがインストールされていること。
 使用するディスプレイサイズの拡大率が100%で設定されていること。
 
 ## Summary
@@ -110,7 +109,6 @@ The following users may experience restricted functionality in this tool:
 In short, this is a tool aimed at post-game completionists.
 
 ## System Requirements
-.NET Runtime version 8.0 or later must be installed.
 Display size scaling must be set to 100%.
 
 ## 仕組みと解説

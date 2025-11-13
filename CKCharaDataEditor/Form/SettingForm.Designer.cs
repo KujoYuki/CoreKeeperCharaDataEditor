@@ -95,7 +95,7 @@
             label2.Name = "label2";
             label2.Size = new Size(289, 15);
             label2.TabIndex = 8;
-            label2.Text = "インストールフォルダパス（翻訳リソースの取得に仕様します）";
+            label2.Text = "インストールフォルダパス（翻訳リソースの取得に使用します）";
             // 
             // saveFolderBrowserDialog
             // 

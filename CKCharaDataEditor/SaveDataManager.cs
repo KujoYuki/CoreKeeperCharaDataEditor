@@ -219,11 +219,11 @@ namespace CKCharaDataEditor
             return true;
         }
 
-        public void CalculateRecipeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<Tuple<int, int>> exceptRecipe)
+        public void CalculateRecipeCounts(out int userRecipeCount, out int allRecipeTempVariationCount, out List<(int First, int Second)> exceptRecipe)
         {
             int[] allFoodID = Recipe.AllIngredients.Select(c => c.objectID).ToArray();
-            List<Tuple<int, int>> allIngredientPairs = allFoodID
-                .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => Tuple.Create(Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
+            List<(int First, int Second)> allIngredientPairs = allFoodID
+                .SelectMany((ID, index) => allFoodID.Skip(index), (ID1, ID2) => (Math.Min(ID1, ID2), Math.Max(ID1, ID2)))
                 .ToList();
             allRecipeTempVariationCount = allIngredientPairs.Count;
 
@@ -232,7 +232,7 @@ namespace CKCharaDataEditor
                 .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })   // Epicはレシピに載らないため除外
                 .OrderBy(id => id)
                 .ToList();
-            List<Tuple<int, int>> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
+            List<(int First, int Second)> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
                 .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
                 .Where(o => allCookedCategoryId.Contains(o.objectID))   // 非料理アイテムは除外
                 .Where(o => o.variation > 0 && (uint)o.variation <= uint.MaxValue)   // variationが0か32bitで表現できない場合は除外
@@ -241,7 +241,7 @@ namespace CKCharaDataEditor
                 .Select(variation =>
                 {
                     Recipe.UnpackVariation(variation, out int materialA, out int materialB);
-                    return Tuple.Create(Math.Min(materialA, materialB), Math.Max(materialA, materialB));
+                    return (Math.Min(materialA, materialB), Math.Max(materialA, materialB));
                 })
                 .Where(pair => allFoodID.Contains(pair.Item1) && allFoodID.Contains(pair.Item2))    // 食材以外を食材とするレシピの除外
                 .ToList();

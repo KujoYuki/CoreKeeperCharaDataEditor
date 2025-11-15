@@ -254,8 +254,8 @@ namespace CKCharaDataEditor
             if (Recipe.IsCookedItem(selectedItem.objectID))
             {
                 Recipe food = new(selectedItem);
-                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.IngredientA)?.DisplayName;
-                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.IngredientB)?.DisplayName;
+                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.PrimaryIngredient)?.DisplayName;
+                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.SecondaryIngredient)?.DisplayName;
                 cookedCategoryComboBox.SelectedIndex =
                     Array.IndexOf(Recipe.AllCookedBaseCategories.Select(c => c.BaseRecipeID).ToArray(), food.BaseRecipeID);
                 rarityComboBox.SelectedIndex = food.Rarity switch
@@ -399,10 +399,10 @@ namespace CKCharaDataEditor
             switch (itemEditTabControl.SelectedTab?.Name)
             {
                 case "foodTab":
-                    // undone レア度と食材の組み合わせからObjectIdを先に決定する
+                    // hack レア度と食材の組み合わせからObjectIdを先に決定する
                     int recipeId = Recipe.AllCookedBaseCategories.ElementAt(cookedCategoryComboBox.SelectedIndex).objectID;
-                    int ingredientAId = _ingredientCategories[ingredientComboBoxA.SelectedIndex].objectID;
-                    int ingredientBId = _ingredientCategories[ingredientComboBoxB.SelectedIndex].objectID;
+                    int PrimaryIngredientId = _ingredientCategories[ingredientComboBoxA.SelectedIndex].objectID;
+                    int SecondaryIngredientId = _ingredientCategories[ingredientComboBoxB.SelectedIndex].objectID;
                     CookRarity rarity = rarityComboBox.SelectedIndex switch
                     {
                         0 => CookRarity.Common,
@@ -410,7 +410,7 @@ namespace CKCharaDataEditor
                         2 => CookRarity.Epic,
                         _ => throw new IndexOutOfRangeException()
                     };
-                    item = new Recipe(recipeId, ingredientAId, ingredientBId, rarity)
+                    item = new Recipe(recipeId, PrimaryIngredientId, SecondaryIngredientId, rarity)
                         .ToItem(amount: Convert.ToInt32(createdNumericNo.Value));
                     _saveDataManager.WriteItemData(index, item);
                     result = true;

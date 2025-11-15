@@ -564,6 +564,7 @@
             ingredientComboBoxB.Size = new Size(252, 24);
             ingredientComboBoxB.TabIndex = 9;
             ingredientComboBoxB.DrawItem += ingredientComboBoxB_DrawItem;
+            ingredientComboBoxB.SelectedIndexChanged += ingredientComboBox_SelectedIndexChanged;
             // 
             // label5
             // 
@@ -584,6 +585,7 @@
             ingredientComboBoxA.Size = new Size(252, 24);
             ingredientComboBoxA.TabIndex = 8;
             ingredientComboBoxA.DrawItem += ingredientComboBoxA_DrawItem;
+            ingredientComboBoxA.SelectedIndexChanged += ingredientComboBox_SelectedIndexChanged;
             // 
             // label4
             // 

@@ -102,7 +102,7 @@ namespace CKCharaDataEditor
                 .Select(line =>
                 {
                     string[] words = line.Split(',');
-                    return new Ingredient(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked);
+                    return new Ingredient(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked, CookedFood.Steak);
                 })
                 .ToArray();
             var allingredients = Recipe.AllIngredients.Concat(ingredientCategories)
@@ -127,7 +127,7 @@ namespace CKCharaDataEditor
 
         private void InitCookedCategory()
         {
-            var cookedCategoryNames = Recipe.AllCookedBaseCategories
+            var cookedCategoryNames = Recipe.AllCookedBaseCategories.Values
                 .Select(c => c.DefaultDisplayName)
                 .ToArray();
             cookedCategoryComboBox.Items.AddRange(cookedCategoryNames);
@@ -257,7 +257,7 @@ namespace CKCharaDataEditor
                 ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.PrimaryIngredient)?.DisplayName;
                 ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.SecondaryIngredient)?.DisplayName;
                 cookedCategoryComboBox.SelectedIndex =
-                    Array.IndexOf(Recipe.AllCookedBaseCategories.Select(c => c.BaseRecipeID).ToArray(), food.BaseRecipeID);
+                    Array.IndexOf(Recipe.AllCookedBaseCategories.Values.Select(c => c.BaseRecipeID).ToArray(), food.BaseRecipeID);
                 rarityComboBox.SelectedIndex = food.Rarity switch
                 {
                     CookRarity.Common => 0,
@@ -400,7 +400,7 @@ namespace CKCharaDataEditor
             {
                 case "foodTab":
                     // hack レア度と食材の組み合わせからObjectIdを先に決定する
-                    int recipeId = Recipe.AllCookedBaseCategories.ElementAt(cookedCategoryComboBox.SelectedIndex).objectID;
+                    int recipeId = Recipe.AllCookedBaseCategories.Values.ElementAt(cookedCategoryComboBox.SelectedIndex).objectID;
                     int PrimaryIngredientId = _ingredientCategories[ingredientComboBoxA.SelectedIndex].objectID;
                     int SecondaryIngredientId = _ingredientCategories[ingredientComboBoxB.SelectedIndex].objectID;
                     CookRarity rarity = rarityComboBox.SelectedIndex switch
@@ -559,7 +559,7 @@ namespace CKCharaDataEditor
 
             var displayNames = Recipe.AllIngredients.Select(c => c.DisplayName);
             var goldernNames = Recipe.AllIngredients
-                .Where(i => i.CanMakeRare)
+                .Where(i => Recipe.IngredientShouldBePrimary(i.objectID))
                 .Select(i => i.DisplayName);
 
             // 背景色を設定する
@@ -872,6 +872,11 @@ namespace CKCharaDataEditor
             {
                 MessageBox.Show("設定からインストールパスを指定してください。\nドロップ率計算はゲーム内の定義データから行います。", "注意");
             }
+        }
+
+        private void ingredientComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //hack 調理後の料理カテゴリを自動選択
         }
     }
 }

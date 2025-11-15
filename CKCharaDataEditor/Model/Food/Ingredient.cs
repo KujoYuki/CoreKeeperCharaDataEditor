@@ -7,17 +7,17 @@ namespace CKCharaDataEditor.Model.Food
     {
         public string objectName { get; set; }
         public string DisplayName { get; set; }
-        public bool CanMakeRare { get; set; }
         public IngredientRoots Roots { get; set; }
 
-        public Ingredient(int objectID, string objectName, string displayName, IngredientRoots roots, bool makeRare = false)
+        public CookedFood CookedFood { get; set; }
+
+        public Ingredient(int objectID, string objectName, string displayName, IngredientRoots roots, CookedFood cookedFood)
             : base(objectID, 0)
         {
             this.objectName = objectName;
             DisplayName = displayName;
             Roots = roots;
-            CanMakeRare = makeRare;
-            Roots = roots;
+            CookedFood = cookedFood;
         }
 
         public Item ToItem(int amount = 1)

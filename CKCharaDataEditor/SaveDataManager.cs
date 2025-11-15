@@ -229,7 +229,7 @@ namespace CKCharaDataEditor
 
             // 料理のコモンとレアのカテゴリIDリスト
             List<int> allCookedCategoryId = Recipe.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare })   // Epicはレシピに載らないため除外
+                .SelectMany(c => new[] { c.Value.objectID, c.Value.objectID + (int)CookRarity.Rare })   // Epicはレシピに載らないため除外
                 .OrderBy(id => id)
                 .ToList();
             List<(int First, int Second)> allUserRecipeTempVariation = _saveData["discoveredObjects2"]!.AsArray()
@@ -288,7 +288,7 @@ namespace CKCharaDataEditor
         public void DeleteAllRecipes()
         {
             var allCookedCategoryId = Recipe.AllCookedBaseCategories
-                .SelectMany(c => new[] { c.objectID, c.objectID + (int)CookRarity.Rare, c.objectID + (int)CookRarity.Epic })
+                .SelectMany(c => new[] { c.Value.objectID, c.Value.objectID + (int)CookRarity.Rare, c.Value.objectID + (int)CookRarity.Epic })
                 .OrderBy(id => id)
                 .ToList();
             var discoveredObjectWithoutRecipe = _saveData["discoveredObjects2"]!.AsArray()

@@ -241,7 +241,7 @@ namespace CKCharaDataEditor.Model.Items
         /// <summary>
         /// ドロップテーブル表示名の追加辞書
         /// </summary>
-        public static readonly ReadOnlyDictionary<string, string> AdditionalTableNameDic = new(new Dictionary<string, string>() 
+        public static readonly ReadOnlyDictionary<string, string> AdditionalTableNameDic = new(new Dictionary<string, string>()
         {
             {"SlimeBlobs", "オレンジスライム" },
             {"SlimeBoss", "奇怪生命体グラーチ" },

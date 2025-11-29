@@ -1,5 +1,4 @@
 ﻿using CKCharaDataEditor.Properties;
-using LanguageResource;
 using System.Text.RegularExpressions;
 
 namespace CKCharaDataEditor
@@ -56,7 +55,7 @@ namespace CKCharaDataEditor
                     _installFolder = value;
                     Settings.Default.InstallFolderPath = value;
                     // 言語リソースの初期化
-                    LocalizationData = LanguagePack.CreateLanguageDictionary(value);
+                    LocalizationData = LanguageLoader.CreateLanguageDictionary(value);
                 }
             }
         }
@@ -257,7 +256,7 @@ namespace CKCharaDataEditor
                 return [];
             }
         }
-    
+
         public bool CanOpenCharaFiles()
         {
             var saveFolder = Path.Combine(SaveFolder, "saves");

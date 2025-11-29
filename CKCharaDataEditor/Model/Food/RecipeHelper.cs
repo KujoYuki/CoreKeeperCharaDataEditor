@@ -241,7 +241,7 @@
 
                     int containsRareIngredient = ContainsRareIngredient(primaryIngredientID, secondaryIngredientID);
                     CookRarity rarity = containsRareIngredient > 0 ? CookRarity.Rare : CookRarity.Common;
-                    
+
                     Recipe cookedFoodBase = AllCookedBaseCategories[cookedFood] with
                     {
                         PrimaryIngredient = primaryIngredientID,

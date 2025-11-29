@@ -196,7 +196,7 @@ namespace CKCharaDataEditor
             _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
             // 開発者向けの最終接続ワールドIDチェック
-            if (Program.IsDeveloper)
+            if (Program.IsDeveloper && _saveDataManager.GetCharacterDataVersion() >= 12)
             {
                 lastConnectedWorldLabel.Text = _saveDataManager.GetLastConnnectedServerId().ToString();
             }

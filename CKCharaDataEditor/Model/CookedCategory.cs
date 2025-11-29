@@ -2,7 +2,7 @@
 {
     public record CookedCategory
     {
-        public int objectID {  get; set; }
+        public int objectID { get; set; }
         public string InternalName { get; set; }
         public string JapaneseResource { get; set; }
 

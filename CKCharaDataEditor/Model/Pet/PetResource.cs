@@ -27,7 +27,7 @@ namespace CKCharaDataEditor.Model.Pet
         /// <summary>
         /// TalentIdに対応するBattleTypeごとのTalent名称と効果量説明文
         /// </summary>
-        public static IReadOnlyCollection<(int Id, string MeleeRangeDisplayName, string BuffDisplayName, string MeleeRangeDescription, string BuffDescription)> TalentDescriptionDict = 
+        public static IReadOnlyCollection<(int Id, string MeleeRangeDisplayName, string BuffDisplayName, string MeleeRangeDescription, string BuffDescription)> TalentDescriptionDict =
             new List<(int Id, string MeleeRangeDisplayName, string BuffDisplayName, string MeleeRangeDescription, string BuffDescription)>
             {
                 (0, "ジャンプ攻撃", "ダイブボム", "近接攻撃スピード+30.0%", "飼い主へのバフ:近接攻撃スピード+3.0%"),

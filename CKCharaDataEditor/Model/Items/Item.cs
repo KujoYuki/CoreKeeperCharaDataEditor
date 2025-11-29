@@ -46,7 +46,7 @@ namespace CKCharaDataEditor.Model.Items
         }
 
         public Item(int objectID, int amount, int variation, int variationUpdateCount, string objectName, ItemAuxData aux, bool locked = false)
-            :base(objectID, amount, variation, variationUpdateCount)
+            : base(objectID, amount, variation, variationUpdateCount)
         {
             this.objectName = objectName;
             Aux = aux;

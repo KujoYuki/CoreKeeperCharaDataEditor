@@ -49,7 +49,7 @@ namespace CKCharaDataEditor.Model.Pet
             get
             {
                 string colorNum = Aux.AuxPrefabManager.GetData(AuxHash.PetGroupHash, AuxHash.PetColorHash)!.FirstOrDefault()!;
-                return  (PetColor)Convert.ToInt32(colorNum);
+                return (PetColor)Convert.ToInt32(colorNum);
             }
             set
             {

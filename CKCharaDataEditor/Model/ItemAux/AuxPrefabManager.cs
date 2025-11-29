@@ -1,6 +1,6 @@
-﻿using System.Text.Json.Nodes;
+﻿using CKCharaDataEditor.Model.Pet;
 using System.Text.Json;
-using CKCharaDataEditor.Model.Pet;
+using System.Text.Json.Nodes;
 
 namespace CKCharaDataEditor.Model.ItemAux
 {
@@ -179,7 +179,7 @@ namespace CKCharaDataEditor.Model.ItemAux
                 .ToJsonString(options);
         }
 
-        public static readonly  AuxPrefabManager Default  = new AuxPrefabManager(new JsonObject
+        public static readonly AuxPrefabManager Default = new AuxPrefabManager(new JsonObject
         {
             ["prefabs"] = new JsonArray()
         });

@@ -457,7 +457,7 @@ namespace CKCharaDataEditor
         {
             var joinedServersArray = _saveData["servers"]!.AsArray();
             var filteredServers = joinedServersArray
-                .Where(mapIds => mapIds!.AsObject()["serverGuid"]!.ToString() != targetMapId.ToString().Replace("-",""))
+                .Where(mapIds => mapIds!.AsObject()["serverGuid"]!.ToString() != targetMapId.ToString().Replace("-", ""))
                 .ToList();
             _saveData["servers"] = JsonNode.Parse(JsonSerializer.Serialize(filteredServers, StaticResource.SerializerOption));
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
@@ -471,7 +471,7 @@ namespace CKCharaDataEditor
                 .Select(fourbyte =>
                 {
                     byte[] bytes = new byte[4];
-                    uint values =(fourbyte.Value as JsonValue)!.GetValue<uint>();
+                    uint values = (fourbyte.Value as JsonValue)!.GetValue<uint>();
                     return BitConverter.GetBytes(values).ToArray();
                 })
                 .SelectMany(bytes => bytes)
@@ -483,14 +483,14 @@ namespace CKCharaDataEditor
                 })
                 .ToArray();
 
-            byte[] originalId = RestoreByteOrder(changedOrderWorldId); 
+            byte[] originalId = RestoreByteOrder(changedOrderWorldId);
             return new Guid(originalId);
         }
 
         private static byte[] RestoreByteOrder(byte[] changedbytes)
         {
             byte[] originalId = new byte[16];
-            int[] map = 
+            int[] map =
             [
                 3, 2, 1, 0,    // reverse first 4 bytes
                 5, 4,          // reverse next 2 bytes

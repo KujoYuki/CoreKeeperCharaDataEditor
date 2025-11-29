@@ -8,26 +8,24 @@ namespace LanguageResource
     public class LanguagePack
     {
         const string YukisInstallPath = @"G:\SteamLibrary\steamapps\common\Core Keeper";
+        const int resourceColumnsCount = 9; // リソースファイルのカラム数
 
-        /// <summary>
-        /// 動作確認用に単体でリソースを合成し、tsvファイルにします。
-        /// </summary>
-        /// <param name="args"></param>
-        static void Main(string[] args)
+		/// <summary>
+		/// 動作確認用に単体でリソースを合成し、tsvファイルにします。
+		/// </summary>
+		/// <param name="args"></param>
+		static void Main(string[] args)
         {
             var dic = CreateLanguageDictionary(YukisInstallPath);
-            var outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
+            List<string> outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
 
             // 新規TSVファイルに出力
             string outputPath = Path.Combine(Environment.CurrentDirectory, "LanguageResource.tsv");
-            
-            //依存パッケージが増えるのでShift-JISは使わないことにする
-            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // JISエンコードを追加 
-            //File.WriteAllLines(outputPath, outputNumericLines, Encoding.GetEncoding("Shift-JIS"));
-            
+
             File.WriteAllLines(outputPath, outputNumericLines, Encoding.UTF8);
-            Console.WriteLine($"TSVファイルが出力されました: {outputPath}");
-        }
+			OutPutJapaneseResource();                                           // 全ての言語リソースの日英を抽出。
+			Console.WriteLine($"TSVファイルが出力されました: {outputPath}");
+		}
 
         /// <summary>
         /// 日本語のリソースを取得します。
@@ -38,7 +36,7 @@ namespace LanguageResource
         public static IReadOnlyDictionary<int, (string key, string displayString)> CreateLanguageDictionary(string installPath)
         {
             string objectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");
-            string localizationPath = Path.Combine(installPath, @"localization\Localization Template.csv");
+            string localizationPath = Path.Combine(installPath, @"localization\Localization.csv");
 
             if (!File.Exists(localizationPath) || !File.Exists(objectIdPath))
             {
@@ -63,7 +61,7 @@ namespace LanguageResource
                 .Where(words =>
                 {
                     string key = words[0];
-                    if (words.Length < 16 || !key.StartsWith("Items/") || key.EndsWith("Desc")) return false;
+                    if (words.Length < resourceColumnsCount || !key.StartsWith("Items/") || key.EndsWith("Desc")) return false;
                     return true;
                 })
                 .Distinct()
@@ -73,7 +71,7 @@ namespace LanguageResource
                     string objectId = objectIdDic.TryGetValue(key, out int id) ? id.ToString() : $"{key}"; // IDが見つからない場合はKeyを使用
                     // 本来はobjectIdとvariationのタプルでキーを参照しに良くのが正しいが、開発チームの消し忘れリソースも多いの。
                     // それにvariation違いでkeyが変わるアイテムが少数過ぎるし、コアキ側の実装がEAの頃から中途半端に変わってるのが悪い。
-                    string displayString = words[8]; // 8 is Japanese translation column
+                    string displayString = words[5]; // 5 is Japanese translation column
                     return (objectId, (key, displayString));
                 })
                 .ToDictionary();
@@ -92,7 +90,7 @@ namespace LanguageResource
                 //.Concat(trancelation  // variation値込みで出力する必要があるものや、リソースの切れたKeyを見たい時だけ使う
                 //    .Where(line => !int.TryParse(line.Key, out _))
                 //    .OrderBy(line => line.Key))
-                .ToDictionary(key => int.Parse(key.Key), value=> value.Value);
+                .ToDictionary(key => int.Parse(key.Key), value => value.Value);
 
             return outputDic;
         }
@@ -105,14 +103,14 @@ namespace LanguageResource
         private static List<string[]> FixLineFeed(List<string[]> languageResources)
         {
             string lastKey = @"youAreInGuestMode";
-            for(int i = 0; i < languageResources.Count; i++)
+            for (int i = 0; i < languageResources.Count; i++)
             {
                 string[] keyResource = languageResources[i];
-                if (keyResource[0]==lastKey)
+                if (keyResource[0] == lastKey)
                 {
                     break; // 最後の行に到達したら終了
                 }
-                if (keyResource.Length < 16)
+                if (keyResource.Length < resourceColumnsCount)
                 {
                     if (keyResource.Length is 1 ||
                         (keyResource.Length >= 2 && keyResource[1] is not "Text"))
@@ -136,5 +134,24 @@ namespace LanguageResource
             }
             return languageResources;
         }
-    }
+
+		/// <summary>
+		/// 翻訳用リソースのみを抽出、ただしアイテムに限らず全てのリソースを対象とする。
+		/// </summary>
+		private static void OutPutJapaneseResource()
+        {
+			string localizationPath = Path.Combine(YukisInstallPath, @"localization\Localization.csv");
+            List<string[]> languageResourceTwo = File.ReadAllLines(localizationPath)
+                .Select(line => line.Split('\t'))
+                .ToList();
+
+            List<string> trancelation = FixLineFeed(languageResourceTwo)
+				.Select(words => string.Join("\t", words[0], words[5], words[3]))
+				.ToList();
+			
+            string outputPath = Path.Combine(Environment.CurrentDirectory, "TwoLanguageResource.tsv");
+            File.WriteAllLines(outputPath, trancelation, Encoding.UTF8);
+			Console.WriteLine($"TSVファイルが出力されました: {outputPath}");
+		}
+	}
 }

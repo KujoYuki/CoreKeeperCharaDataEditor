@@ -61,7 +61,7 @@ namespace CKCharaDataEditor.Control
                 case PetBattleType.Melee or PetBattleType.Range:
                     validTalentIds.AddRange(
                         PetResource.TalentDescriptionDict
-                        .Select(set => 
+                        .Select(set =>
                         {
                             var list = new string[] { set.Id.ToString(), set.MeleeRangeDisplayName, set.MeleeRangeDescription };
                             return string.Join(_separator, list);

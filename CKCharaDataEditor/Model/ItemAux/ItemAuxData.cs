@@ -1,5 +1,4 @@
-﻿using CKCharaDataEditor.Model.Pet;
-using CKCharaDataEditor.Resource;
+﻿using CKCharaDataEditor.Resource;
 using System.Text.Json.Nodes;
 
 namespace CKCharaDataEditor.Model.ItemAux

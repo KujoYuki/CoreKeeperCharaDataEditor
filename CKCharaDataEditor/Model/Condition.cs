@@ -15,6 +15,6 @@
             Timer = timer;
         }
 
-        public static Condition Default => new (0, 0, 0.0f, 0.0f);
+        public static Condition Default => new(0, 0, 0.0f, 0.0f);
     }
 }

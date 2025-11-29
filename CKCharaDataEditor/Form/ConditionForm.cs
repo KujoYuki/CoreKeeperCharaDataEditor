@@ -26,7 +26,7 @@ namespace CKCharaDataEditor
                 this.Size = size;
             }
             Conditions = new(_saveDataManager.GetConditions().OrderBy(c => c.Id));
-            ((DataGridViewComboBoxColumn)dataGridView.Columns["Description"]).Items
+            ((DataGridViewComboBoxColumn)dataGridView.Columns["Description"]!).Items
                 .AddRange(ConditionDescriptions.Select(c => c.Description).ToArray());
             LoadConditionsToGrid();
         }
@@ -43,7 +43,7 @@ namespace CKCharaDataEditor
                     return (int.Parse(sprit[0]), $"[{int.Parse(sprit[0])},{sprit[1]}] : {sprit[2]}");
                 })
                 .ToList();
-            return new(dic);
+            return dic;
         }
 
         private void LoadConditionsToGrid()
@@ -86,7 +86,7 @@ namespace CKCharaDataEditor
             if (result is DialogResult.OK)
             {
                 var condtions = SaveDataManager.LoadConditions(openFileDialog.FileName);
-                Conditions = new(condtions);
+                Conditions = condtions;
                 LoadConditionsToGrid();
             }
         }
@@ -155,11 +155,6 @@ namespace CKCharaDataEditor
                         e.Cancel = true;
                     }
                     break;
-                case "Description":
-                    var tmp = dataGridView.Rows[e.RowIndex].Cells["ConditionId"].Value =
-                        ConditionDescriptions.Single(d =>
-                        d.Description == dataGridView.Rows[e.RowIndex].Cells["Description"].EditedFormattedValue.ToString()).ID;
-                    break;
                 default:
                     // 他のカラムに対する検証が必要な場合はここに追加
                     break;
@@ -189,7 +184,7 @@ namespace CKCharaDataEditor
             ShowResultLabel();
 
             var deleteRows = dataGridView.Rows.Cast<DataGridViewRow>()
-                .Where(r => (int)r.Cells["ConditionId"].Value == Condition.Default.Id)
+                .Where(r => (int)r.Cells["ConditionId"].Value! == Condition.Default.Id)
                 .ToList();
             foreach (var row in deleteRows)
             {
@@ -209,7 +204,7 @@ namespace CKCharaDataEditor
                         int id = int.Parse(r.Cells["ConditionId"].Value?.ToString()!);
                         int value = int.Parse(r.Cells["Value"].Value?.ToString()!);
                         double duration = (bool)(r.Cells["Infinity"].Value ?? false) ? double.PositiveInfinity
-                        : double.Parse(r.Cells["Duration"].Value.ToString()!);
+                        : double.Parse(r.Cells["Duration"].Value!.ToString()!);
                         double timer = double.Parse(r.Cells["Timer"].Value?.ToString()!);
                         return new Condition(id, value, duration, timer);
                     }
@@ -281,13 +276,13 @@ namespace CKCharaDataEditor
             switch (colName)
             {
                 case { Name: "Infinity" }:
-                    if ((bool)cell.Value)
+                    if ((bool)cell.Value!)
                     {
                         // 永続化が有効な場合にDurationを自動で"--"にする
                         row.Cells["Duration"].Value = "--";
                         row.Cells["Timer"].Value = -1d;
                     }
-                    else 
+                    else
                     {
                         // 永続化が無効な場合にDurationを0にする                      
                         row.Cells["Duration"].Value = 10d;

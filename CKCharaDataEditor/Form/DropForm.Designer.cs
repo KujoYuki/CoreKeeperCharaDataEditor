@@ -39,6 +39,12 @@
             label1 = new Label();
             label2 = new Label();
             lootDataGridView = new DataGridView();
+            objectID = new DataGridViewTextBoxColumn();
+            ItemName = new DataGridViewTextBoxColumn();
+            Amount = new DataGridViewTextBoxColumn();
+            Weight = new DataGridViewTextBoxColumn();
+            RollPerDop = new DataGridViewTextBoxColumn();
+            GuaranteedRoll = new DataGridViewTextBoxColumn();
             label3 = new Label();
             groupBox1 = new GroupBox();
             playerCountNumericUpDown = new NumericUpDown();
@@ -73,12 +79,6 @@
             copyTableButton = new Button();
             label12 = new Label();
             searchIdTextBox = new TextBox();
-            objectID = new DataGridViewTextBoxColumn();
-            ItemName = new DataGridViewTextBoxColumn();
-            Amount = new DataGridViewTextBoxColumn();
-            Weight = new DataGridViewTextBoxColumn();
-            RollPerDop = new DataGridViewTextBoxColumn();
-            GuaranteedRoll = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)lootDataGridView).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)playerCountNumericUpDown).BeginInit();
@@ -135,6 +135,64 @@
             lootDataGridView.TabIndex = 3;
             lootDataGridView.CellEnter += lootDataGridView_CellEnter;
             lootDataGridView.CellFormatting += lootDataGridView_CellFormatting;
+            // 
+            // objectID
+            // 
+            objectID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            objectID.DefaultCellStyle = dataGridViewCellStyle1;
+            objectID.HeaderText = "objectID";
+            objectID.Name = "objectID";
+            objectID.ReadOnly = true;
+            objectID.Width = 76;
+            // 
+            // ItemName
+            // 
+            ItemName.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            ItemName.HeaderText = "アイテム名";
+            ItemName.Name = "ItemName";
+            ItemName.ReadOnly = true;
+            ItemName.Width = 63;
+            // 
+            // Amount
+            // 
+            Amount.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Amount.DefaultCellStyle = dataGridViewCellStyle2;
+            Amount.HeaderText = "個数";
+            Amount.Name = "Amount";
+            Amount.ReadOnly = true;
+            Amount.Width = 52;
+            // 
+            // Weight
+            // 
+            Weight.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Weight.DefaultCellStyle = dataGridViewCellStyle3;
+            Weight.HeaderText = "ウェイト";
+            Weight.Name = "Weight";
+            Weight.ReadOnly = true;
+            Weight.Width = 53;
+            // 
+            // RollPerDop
+            // 
+            RollPerDop.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RollPerDop.DefaultCellStyle = dataGridViewCellStyle4;
+            RollPerDop.HeaderText = "通常抽選枠確率[%]";
+            RollPerDop.Name = "RollPerDop";
+            RollPerDop.ReadOnly = true;
+            RollPerDop.Width = 96;
+            // 
+            // GuaranteedRoll
+            // 
+            GuaranteedRoll.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            GuaranteedRoll.DefaultCellStyle = dataGridViewCellStyle5;
+            GuaranteedRoll.HeaderText = "保証抽選枠確率[%]";
+            GuaranteedRoll.Name = "GuaranteedRoll";
+            GuaranteedRoll.ReadOnly = true;
             // 
             // label3
             // 
@@ -378,9 +436,11 @@
             tryRollsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             tryRollsDataGridView.Columns.AddRange(new DataGridViewColumn[] { TryCount, Rate });
             tryRollsDataGridView.Location = new Point(365, 22);
+            tryRollsDataGridView.MultiSelect = false;
             tryRollsDataGridView.Name = "tryRollsDataGridView";
             tryRollsDataGridView.ReadOnly = true;
             tryRollsDataGridView.RowHeadersVisible = false;
+            tryRollsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             tryRollsDataGridView.Size = new Size(170, 182);
             tryRollsDataGridView.TabIndex = 4;
             tryRollsDataGridView.CellFormatting += tryRollsDataGridView_CellFormatting;
@@ -483,64 +543,6 @@
             searchIdTextBox.Size = new Size(100, 23);
             searchIdTextBox.TabIndex = 11;
             searchIdTextBox.TextChanged += searchIdTextBox_TextChanged;
-            // 
-            // objectID
-            // 
-            objectID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            objectID.DefaultCellStyle = dataGridViewCellStyle1;
-            objectID.HeaderText = "objectID";
-            objectID.Name = "objectID";
-            objectID.ReadOnly = true;
-            objectID.Width = 76;
-            // 
-            // ItemName
-            // 
-            ItemName.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            ItemName.HeaderText = "アイテム名";
-            ItemName.Name = "ItemName";
-            ItemName.ReadOnly = true;
-            ItemName.Width = 80;
-            // 
-            // Amount
-            // 
-            Amount.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Amount.DefaultCellStyle = dataGridViewCellStyle2;
-            Amount.HeaderText = "個数";
-            Amount.Name = "Amount";
-            Amount.ReadOnly = true;
-            Amount.Width = 56;
-            // 
-            // Weight
-            // 
-            Weight.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Weight.DefaultCellStyle = dataGridViewCellStyle3;
-            Weight.HeaderText = "ウェイト";
-            Weight.Name = "Weight";
-            Weight.ReadOnly = true;
-            Weight.Width = 65;
-            // 
-            // RollPerDop
-            // 
-            RollPerDop.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RollPerDop.DefaultCellStyle = dataGridViewCellStyle4;
-            RollPerDop.HeaderText = "通常抽選枠確率[%]";
-            RollPerDop.Name = "RollPerDop";
-            RollPerDop.ReadOnly = true;
-            RollPerDop.Width = 96;
-            // 
-            // GuaranteedRoll
-            // 
-            GuaranteedRoll.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            GuaranteedRoll.DefaultCellStyle = dataGridViewCellStyle5;
-            GuaranteedRoll.HeaderText = "保証抽選枠確率[%]";
-            GuaranteedRoll.Name = "GuaranteedRoll";
-            GuaranteedRoll.ReadOnly = true;
             // 
             // DropForm
             // 

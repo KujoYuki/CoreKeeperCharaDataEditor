@@ -7,17 +7,20 @@ namespace CKCharaDataEditor.Model.Food
     {
         public string objectName { get; set; }
         public string DisplayName { get; set; }
-        public bool CanMakeRare { get; set; }
-        public IngredientRoots Roots { get; set; }
+        public IngredientAttribute Attribute { get; set; }
 
-        public Ingredient(int objectID, string objectName, string displayName, IngredientRoots roots, bool makeRare = false)
+        /// <summary>
+        /// Primary食材になった場合に調理される料理
+        /// </summary>
+        public CookedFood CookedFood { get; set; }
+
+        public Ingredient(int objectID, string objectName, string displayName, CookedFood cookedFood, IngredientAttribute attribute)
             : base(objectID, 0)
         {
             this.objectName = objectName;
             DisplayName = displayName;
-            Roots = roots;
-            CanMakeRare = makeRare;
-            Roots = roots;
+            CookedFood = cookedFood;
+            Attribute = attribute;
         }
 
         public Item ToItem(int amount = 1)

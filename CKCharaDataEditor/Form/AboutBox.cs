@@ -5,13 +5,14 @@ namespace CKCharaDataEditor
 {
     partial class AboutBox : Form
     {
+        public static string GameVersion = "1.1.2.9";
         public AboutBox()
         {
             InitializeComponent();
             Text = String.Format("バージョン情報");
             labelProductName.Text = AssemblyProduct;
             labelVersion.Text = String.Format("バージョン {0}", FileVersion);
-            labelGameVersion.Text = String.Format("リリース時のゲームバージョン {0}", "1.1.2.8");
+            labelGameVersion.Text = String.Format("リリース時のゲームバージョン {0}", GameVersion);
             labelCopyright.Text = AssemblyCopyright;
             linkLabelRepositoryUrl.Links.Add(0, linkLabelRepositoryUrl.Text.Length, "https://github.com/KujoYuki/CoreKeeperCharaDataEditor");
             textBoxDescription.Text = "詳細な使い方や仕様についてはリポジトリのドキュメントをチェックしてください。\r\n" +

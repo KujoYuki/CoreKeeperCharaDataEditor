@@ -2,6 +2,7 @@
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Resource;
+using System.ComponentModel;
 using System.Data;
 
 namespace CKCharaDataEditor.Control
@@ -20,6 +21,9 @@ namespace CKCharaDataEditor.Control
         private PetBattleType _battleType = PetBattleType.Undefined;
 
         private Pet _pet = Pet.Default;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Pet PetItem
         {
             get

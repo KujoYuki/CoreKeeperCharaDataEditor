@@ -1,4 +1,5 @@
 ﻿using CKCharaDataEditor.Model.Pet;
+using System.ComponentModel;
 
 namespace CKCharaDataEditor.Control
 {
@@ -13,6 +14,7 @@ namespace CKCharaDataEditor.Control
         }
 
         private int _slotNo;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SlotNo
         {
             get { return _slotNo; }
@@ -24,6 +26,7 @@ namespace CKCharaDataEditor.Control
         }
 
         private PetTalent _petTalent = PetTalent.Default;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public PetTalent Talent
         {
             get
@@ -39,6 +42,7 @@ namespace CKCharaDataEditor.Control
         }
 
         static PetBattleType _battleType = PetBattleType.Undefined;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public PetBattleType BattleType
         {
             get => _battleType;
@@ -57,7 +61,7 @@ namespace CKCharaDataEditor.Control
                 case PetBattleType.Melee or PetBattleType.Range:
                     validTalentIds.AddRange(
                         PetResource.TalentDescriptionDict
-                        .Select(set => 
+                        .Select(set =>
                         {
                             var list = new string[] { set.Id.ToString(), set.MeleeRangeDisplayName, set.MeleeRangeDescription };
                             return string.Join(_separator, list);

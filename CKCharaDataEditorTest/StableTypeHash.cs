@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CKCharaDataEditorTest
+﻿namespace CKCharaDataEditorTest
 {
     // FNV1A64 ハッシュを使用して、型の安定したハッシュ値を生成するゲーム内クラスです。
     public static class StableTypeHash

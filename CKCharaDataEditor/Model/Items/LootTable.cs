@@ -131,7 +131,7 @@ namespace CKCharaDataEditor.Model.Items
             // 四捨五入して整数に変換。負値は 0 にクランプする。
             int newMin = (int)Math.Round(range.Min * multiplier);
             int newMax = (int)Math.Round(range.Max * multiplier);
-            return new DropRange { Min = Math.Min(newMin,36), Max = Math.Min(newMax,36) };
+            return new DropRange { Min = Math.Min(newMin, 36), Max = Math.Min(newMax, 36) };
         }
     }
 

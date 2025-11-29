@@ -98,36 +98,37 @@ namespace CKCharaDataEditor
         {
             string additionalIngredientsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "AdditionalIngredients.csv")
                 ?? throw new FileNotFoundException($"AdditionalIngredients.csvが見つかりません。");
-            var ingredientCategories = File.ReadAllLines(additionalIngredientsFilePath)
+            var additionalIngredientCategories = File.ReadAllLines(additionalIngredientsFilePath)
                 .Select(line =>
                 {
                     string[] words = line.Split(',');
-                    return new Ingredient(int.Parse(words[0]), words[1], words[2], IngredientRoots.Cooked);
+                    // 調理後食材は存在しないのでスープで固定する
+                    return new Ingredient(int.Parse(words[0]), words[1], words[2], CookedFood.Soup, IngredientAttribute.Cooked);
                 })
                 .ToArray();
-            var allingredients = Recipe.AllIngredients.Concat(ingredientCategories)
+            var allingredients = RecipeHelper.AllIngredients.Concat(additionalIngredientCategories)
                 .OrderBy(c => c.objectID)
                 .ToList();
             // 開発者モードの場合は非推奨食材も表示する
             if (Program.IsDeveloper)
             {
-                allingredients.AddRange(Recipe.ObsoleteIngredients);
+                allingredients.AddRange(RecipeHelper.ObsoleteIngredients);
             }
             _ingredientCategories.AddRange(allingredients);
 
             var sortedIngredientNames = _ingredientCategories
                 .Select(c => c.DisplayName)
                 .ToArray();
-            ingredientComboBoxA.Items.AddRange(sortedIngredientNames);
-            ingredientComboBoxB.Items.AddRange(sortedIngredientNames);
+            primaryIngredientComboBox.Items.AddRange(sortedIngredientNames);
+            secondaryIngredientComboBox.Items.AddRange(sortedIngredientNames);
 
-            ingredientComboBoxA.SelectedIndex = 0;
-            ingredientComboBoxB.SelectedIndex = 0;
+            primaryIngredientComboBox.SelectedIndex = 0;
+            secondaryIngredientComboBox.SelectedIndex = 0;
         }
 
         private void InitCookedCategory()
         {
-            var cookedCategoryNames = Recipe.AllCookedBaseCategories
+            var cookedCategoryNames = RecipeHelper.AllCookedBaseCategories.Values
                 .Select(c => c.DefaultDisplayName)
                 .ToArray();
             cookedCategoryComboBox.Items.AddRange(cookedCategoryNames);
@@ -195,7 +196,7 @@ namespace CKCharaDataEditor
             _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
             // 開発者向けの最終接続ワールドIDチェック
-            if (Program.IsDeveloper)
+            if (Program.IsDeveloper && _saveDataManager.GetCharacterDataVersion() >= 12)
             {
                 lastConnectedWorldLabel.Text = _saveDataManager.GetLastConnnectedServerId().ToString();
             }
@@ -254,10 +255,10 @@ namespace CKCharaDataEditor
             if (Recipe.IsCookedItem(selectedItem.objectID))
             {
                 Recipe food = new(selectedItem);
-                ingredientComboBoxA.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.IngredientA)?.DisplayName;
-                ingredientComboBoxB.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.IngredientB)?.DisplayName;
+                primaryIngredientComboBox.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.PrimaryIngredient)?.DisplayName;
+                secondaryIngredientComboBox.SelectedItem = _ingredientCategories.SingleOrDefault(c => c.objectID == food.SecondaryIngredient)?.DisplayName;
                 cookedCategoryComboBox.SelectedIndex =
-                    Array.IndexOf(Recipe.AllCookedBaseCategories.Select(c => c.BaseRecipeID).ToArray(), food.BaseRecipeID);
+                    Array.IndexOf(RecipeHelper.AllCookedBaseCategories.Values.Select(c => c.BaseRecipeID).ToArray(), food.BaseRecipeID);
                 rarityComboBox.SelectedIndex = food.Rarity switch
                 {
                     CookRarity.Common => 0,
@@ -399,10 +400,9 @@ namespace CKCharaDataEditor
             switch (itemEditTabControl.SelectedTab?.Name)
             {
                 case "foodTab":
-                    // undone レア度と食材の組み合わせからObjectIdを先に決定する
-                    int recipeId = Recipe.AllCookedBaseCategories.ElementAt(cookedCategoryComboBox.SelectedIndex).objectID;
-                    int ingredientAId = _ingredientCategories[ingredientComboBoxA.SelectedIndex].objectID;
-                    int ingredientBId = _ingredientCategories[ingredientComboBoxB.SelectedIndex].objectID;
+                    int recipeId = RecipeHelper.AllCookedBaseCategories.Values.ElementAt(cookedCategoryComboBox.SelectedIndex).objectID;
+                    int PrimaryIngredientId = _ingredientCategories[primaryIngredientComboBox.SelectedIndex].objectID;
+                    int SecondaryIngredientId = _ingredientCategories[secondaryIngredientComboBox.SelectedIndex].objectID;
                     CookRarity rarity = rarityComboBox.SelectedIndex switch
                     {
                         0 => CookRarity.Common,
@@ -410,7 +410,7 @@ namespace CKCharaDataEditor
                         2 => CookRarity.Epic,
                         _ => throw new IndexOutOfRangeException()
                     };
-                    item = new Recipe(recipeId, ingredientAId, ingredientBId, rarity)
+                    item = new Recipe(recipeId, PrimaryIngredientId, SecondaryIngredientId, rarity)
                         .ToItem(amount: Convert.ToInt32(createdNumericNo.Value));
                     _saveDataManager.WriteItemData(index, item);
                     result = true;
@@ -557,9 +557,9 @@ namespace CKCharaDataEditor
             ComboBox combo = (ComboBox)sender;
             string itemText = (string)combo.Items[e.Index]!;
 
-            var displayNames = Recipe.AllIngredients.Select(c => c.DisplayName);
-            var goldernNames = Recipe.AllIngredients
-                .Where(i => i.CanMakeRare)
+            var displayNames = RecipeHelper.AllIngredients.Select(c => c.DisplayName);
+            var goldernNames = RecipeHelper.AllIngredients
+                .Where(i => RecipeHelper.IngredientShouldBePrimary(i.objectID))
                 .Select(i => i.DisplayName);
 
             // 背景色を設定する
@@ -678,6 +678,16 @@ namespace CKCharaDataEditor
             {
                 _saveDataManager.DeleteAllRecipes();
                 MessageBox.Show("全てのレシピの削除が完了しました。", "確認", MessageBoxButtons.OKCancel);
+            }
+        }
+
+        private void addAllRecipeButton_Click(object sender, EventArgs e)
+        {
+            var dialogResult = MessageBox.Show("全てのレシピを追加しますか？\n既に発見済みのレシピは上書きされます。", "確認", MessageBoxButtons.OKCancel);
+            if (dialogResult is DialogResult.OK)
+            {
+                _saveDataManager.AddAllRecipes();
+                MessageBox.Show("全てのレシピの追加が完了しました。", "確認", MessageBoxButtons.OKCancel);
             }
         }
 
@@ -872,6 +882,76 @@ namespace CKCharaDataEditor
             {
                 MessageBox.Show("設定からインストールパスを指定してください。\nドロップ率計算はゲーム内の定義データから行います。", "注意");
             }
+        }
+
+        private void ingredientComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 初期化中は無視
+            if (primaryIngredientComboBox.SelectedIndex < 0 ||
+                secondaryIngredientComboBox.SelectedIndex < 0 ||
+                cookedCategoryComboBox.SelectedIndex < 0)
+            {
+                return;
+            }
+            // 調理後の料理カテゴリを自動選択。 primaryに決定した食材の調理後料理で決定する
+            int primaryId = _ingredientCategories[primaryIngredientComboBox.SelectedIndex].objectID;
+            int secondaryId = _ingredientCategories[secondaryIngredientComboBox.SelectedIndex].objectID;
+            int primaryObjectID = RecipeHelper.GetPrimaryIngredient(primaryId, secondaryId);
+            CookedFood? cookedFood = RecipeHelper.AllIngredients
+                .Concat(RecipeHelper.ObsoleteIngredients)
+                .FirstOrDefault(c => c.objectID == primaryObjectID)?.CookedFood;
+            //AllCookedBaseCategories 該当する料理カテゴリを探す
+            if (cookedFood is not null)
+            {
+                var cookedFoodIndex = RecipeHelper.AllCookedBaseCategories.Keys.ToList().IndexOf((CookedFood)cookedFood);
+                cookedCategoryComboBox.SelectedIndex = cookedFoodIndex;
+            }
+            else
+            {
+                // 元から調理後料理が存在しない場合は何もしない。１つ前に決定された料理のまま。
+            }
+            // レア度のコンボボックスにも反映させる
+            int containsRarityIngredient = RecipeHelper.ContainsRareIngredient(primaryId, secondaryId);
+            rarityComboBox.SelectedIndex = containsRarityIngredient switch
+            {
+                1 or 2 => 1, // レア料理が1以上の場合はRare
+                _ => 0, // Common
+            };
+        }
+
+        private void rarityComboBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            string itemText = (string)rarityComboBox.Items[e.Index]!;
+            e.DrawBackground();
+
+            // 色変更
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                //選択中アイテムの背景色
+                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
+            }
+            else if (e.Index == 1)
+            {
+                // レア料理の背景色
+                e.Graphics.FillRectangle(Brushes.RoyalBlue, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+            else if (e.Index == 2)
+            {
+                // エピック料理の背景色
+                e.Graphics.FillRectangle(Brushes.Violet, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+            else
+            {
+                // コモン料理の背景色
+                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
+                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+            }
+            e.DrawFocusRectangle();
         }
     }
 }

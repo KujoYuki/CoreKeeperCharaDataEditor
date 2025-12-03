@@ -6,7 +6,8 @@ namespace CKCharaDataEditor
     partial class AboutBox : Form
     {
         public static string GameVersion = "1.1.2.9";
-        public AboutBox()
+        public static string ApplicationVersion = "1.5.6";
+		public AboutBox()
         {
             InitializeComponent();
             Text = String.Format("バージョン情報");
@@ -46,13 +47,28 @@ namespace CKCharaDataEditor
         {
             get
             {
-                //return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                // 実行ファイルのパスを取得
-                var exePath = Assembly.GetExecutingAssembly().Location;
-                // ファイルバージョン情報を取得
-                var fileVersion = FileVersionInfo.GetVersionInfo(exePath).FileVersion;
-                return fileVersion ?? "";
-            }
+				// 優先: EntryAssembly (実行ファイル)、次に ExecutingAssembly
+				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+
+				// まず実行ファイルパスから取得（単一ファイル公開などで空の場合がある）
+				var exePath = assembly.Location;
+				if (!string.IsNullOrEmpty(exePath))
+				{
+					try
+					{
+						var fileVersion = FileVersionInfo.GetVersionInfo(exePath).FileVersion;
+						if (!string.IsNullOrEmpty(fileVersion))
+						{
+							return fileVersion;
+						}
+					}
+					catch
+					{
+						// 取得失敗時は無視して次へ
+					}
+				}
+                return ApplicationVersion;
+			}
         }
 
         public static string AssemblyDescription

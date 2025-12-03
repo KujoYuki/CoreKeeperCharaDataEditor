@@ -11,7 +11,7 @@
             { CookedFood.Soup, new(9500, "CookedSoup", "スープ") },
             { CookedFood.Pudding, new(9501, "CookedPudding", "プリン") },
             { CookedFood.Salad, new(9502, "CookedSalad", "サラダ")  },
-            { CookedFood.Wrap, new(9503, "CookedWrap", "ピーマンラップ") },
+            { CookedFood.Wrap, new(9503, "CookedWrap", "ラップ") },
             { CookedFood.Steak, new(9504, "CookedSteak", "ステーキ") },
             { CookedFood.Cheese, new(9505, "CookedCheese", "チーズ") },
             { CookedFood.DipSnack, new(9506, "CookedDipSnack", "ディップスナック") },

@@ -249,7 +249,7 @@ namespace CKCharaDataEditor
             if (outputResult is DialogResult.Yes && exceptRecipes.Count() > 0)
             {
                 var foodBuilder = new StringBuilder();
-                foreach (var recipe in exceptRecipes)
+                foreach (Recipe recipe in exceptRecipes)
                 {
                     string primaryIngredientDisplayName = RecipeHelper.AllIngredientsWithObsolute.Single(i => i.objectID == recipe.PrimaryIngredient).DisplayName;
                     string secondaryIngredientDisplayName = RecipeHelper.AllIngredientsWithObsolute.Single(i => i.objectID == recipe.SecondaryIngredient).DisplayName;
@@ -289,7 +289,7 @@ namespace CKCharaDataEditor
         /// </summary>
         internal void AddAllRecipes()
         {
-            var allRecipe = RecipeHelper.AllRecipes
+            List<DiscoveredObjects> allRecipe = RecipeHelper.AllRecipes
                 .Select(r =>
                 {
                     // 高レアリティ版も追加する
@@ -318,7 +318,7 @@ namespace CKCharaDataEditor
 
         public List<Condition> GetConditions()
         {
-            var conditions = _saveData["conditionsList"]?.AsArray()
+            List<Condition> conditions = _saveData["conditionsList"]?.AsArray()
                 .Select(c => JsonSerializer.Deserialize<Condition>(c, StaticResource.SerializerOption)!)
                 .ToList()!;
             return conditions;
@@ -329,7 +329,7 @@ namespace CKCharaDataEditor
             conditions = conditions.OrderBy(c => c.Id);
             // 必要あらば例外処理
 
-            var conditionsNode = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
+            JsonNode? conditionsNode = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
             string changedJson = JsonSerializer.Serialize(conditionsNode, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(filePath, changedJson);
@@ -343,7 +343,7 @@ namespace CKCharaDataEditor
         public static List<Condition> LoadConditions(string filePath)
         {
             string jsonString = SanitizeJsonString(File.ReadAllText(filePath));
-            var conditions = JsonSerializer.Deserialize<List<Condition>>(jsonString, StaticResource.SerializerOption)?
+            List<Condition>? conditions = JsonSerializer.Deserialize<List<Condition>>(jsonString, StaticResource.SerializerOption)?
                 .OrderBy(c => c.Id)
                 .ToList();
             return conditions ??= [];
@@ -355,9 +355,10 @@ namespace CKCharaDataEditor
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
 #if DEBUG
+            // デバッグ時はdebug.jsonへ結果を保存する
             _saveDataPath = Path.Combine(Path.GetDirectoryName(SaveDataPath)!, "debug.json");
 #endif
-            File.WriteAllText(SaveDataPath, changedJson);
+			File.WriteAllText(SaveDataPath, changedJson);
         }
 
         public void TsetseWell()
@@ -526,7 +527,7 @@ namespace CKCharaDataEditor
             Item[] items = Items.Take(4).ToArray();
 
             // 通常のアイテム枠とポーチのアイテム枠
-            Queue<int> indexes = new(
+            Queue<int> itemSlot = new(
                 Enumerable.Range(0, 50)
                     .Concat(Enumerable.Range(87, 10))
                     .Concat(Enumerable.Range(98, 10))
@@ -541,7 +542,7 @@ namespace CKCharaDataEditor
                     {
                         variation = i
                     };
-                    WriteItemData(indexes.Dequeue(), newItem);
+                    WriteItemData(itemSlot.Dequeue(), newItem);
                 }
             }
         }

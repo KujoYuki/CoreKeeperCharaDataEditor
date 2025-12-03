@@ -155,6 +155,12 @@ namespace CKCharaDataEditor
                         e.Cancel = true;
                     }
                     break;
+                case "Description":
+                    // Descriptionカラムが変更された場合、対応するConditionIdを更新
+                    dataGridView.Rows[e.RowIndex].Cells["ConditionId"].Value =
+                        ConditionDescriptions.Single(d =>
+                        d.Description == dataGridView.Rows[e.RowIndex].Cells["Description"].EditedFormattedValue!.ToString()).ID;
+                    break;
                 default:
                     // 他のカラムに対する検証が必要な場合はここに追加
                     break;
@@ -175,7 +181,7 @@ namespace CKCharaDataEditor
 
         private void overrideConditionsButton_Click(object sender, EventArgs e)
         {
-            var newConditions = RetrieveConditionsFromGrid();
+            List<Condition> newConditions = RetrieveConditionsFromGrid();
             _saveDataManager.OverrideConditions(newConditions);
 
             updateConditionsLabel.Text = $"ConditionListを更新しました。\n" +
@@ -196,7 +202,6 @@ namespace CKCharaDataEditor
         {
             return dataGridView.Rows
                 .Cast<DataGridViewRow>()
-                .Take(dataGridView.Rows.Count)
                 .Select(r =>
                 {
                     try

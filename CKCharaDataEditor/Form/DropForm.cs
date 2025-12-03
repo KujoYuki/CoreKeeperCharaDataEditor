@@ -418,7 +418,7 @@ namespace CKCharaDataEditor
                 }
                 string normalRate = (item.RollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}");
                 string guaranteedRate = item.IsOneOfGuaranteedToDrop ? (item.GuaranteedRollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}") : "----";
-                sb.AppendLine($"|| {itemName} | {normalRate} | {guaranteedRate} |");
+                sb.AppendLine($"| &ref(画像保管場所/{itemName}.png,nolink,36x36); | {itemName} | {normalRate} | {guaranteedRate} |");
             }
             sb.AppendLine($"(ver {AboutBox.GameVersion})");
             Clipboard.SetText(sb.ToString());

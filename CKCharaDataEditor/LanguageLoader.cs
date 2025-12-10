@@ -35,7 +35,7 @@ namespace CKCharaDataEditor
 		{
 			string originObjectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");
 			string bundledObjectIdPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "ObjectID.json");
-			string originLocalizationPath = Path.Combine(installPath, @"localization\Localization.csv");
+			string originLocalizationPath = Path.Combine(installPath, @"localization\Localization Template.csv");
 			string bundledLocalizationPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "Localization Template.csv");
 			
 			string objectIdPath = File.Exists(originObjectIdPath) ? originObjectIdPath : bundledObjectIdPath;

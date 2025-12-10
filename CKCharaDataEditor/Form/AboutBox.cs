@@ -5,8 +5,8 @@ namespace CKCharaDataEditor
 {
     partial class AboutBox : Form
     {
-        public static string GameVersion = "1.1.2.9";
-        public static string ApplicationVersion = "1.5.6";
+        public static string GameVersion = "1.1.2.10";
+        public static string ApplicationVersion = "1.5.7";
 		public AboutBox()
         {
             InitializeComponent();

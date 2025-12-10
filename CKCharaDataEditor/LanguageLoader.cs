@@ -5,7 +5,8 @@ namespace CKCharaDataEditor
     public class LanguageLoader
     {
 		const string YukisInstallPath = @"G:\SteamLibrary\steamapps\common\Core Keeper";
-		const int resourceColumnsCount = 9; // リソースファイルのカラム数
+		static int ResourceColumnsCount = 0; // リソースファイルのカラム数
+		static int JapaneseColumnIndex = 0; // 日本語リソースのカラムインデックス
 
 		/// <summary>
 		/// 動作確認用に単体でリソースを合成し、tsvファイルにします。
@@ -35,7 +36,7 @@ namespace CKCharaDataEditor
 			string originObjectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");
 			string bundledObjectIdPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "ObjectID.json");
 			string originLocalizationPath = Path.Combine(installPath, @"localization\Localization.csv");
-			string bundledLocalizationPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "Localization.csv");
+			string bundledLocalizationPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "Localization Template.csv");
 			
 			string objectIdPath = File.Exists(originObjectIdPath) ? originObjectIdPath : bundledObjectIdPath;
 			string localizationPath = File.Exists(originLocalizationPath) ? originLocalizationPath : bundledLocalizationPath;
@@ -55,15 +56,19 @@ namespace CKCharaDataEditor
 				.ToDictionary(line => line[0], line => int.Parse(line[1]));
 
 			List<string[]> languageResourceOrigin = File.ReadAllLines(localizationPath)
-				.Skip(1)
 				.Select(line => line.Split('\t'))
 				.ToList(); // ヘッダーをスキップ
 
+			string[] header = languageResourceOrigin.First();
+			ResourceColumnsCount = header.Length;
+			JapaneseColumnIndex = Array.IndexOf(header, "Japanese");
+
 			var trancelation = FixLineFeed(languageResourceOrigin)
+				.Skip(1) // ヘッダーをスキップ
 				.Where(words =>
 				{
 					string key = words[0];
-					if (words.Length < resourceColumnsCount || !key.StartsWith("Items/") || key.EndsWith("Desc")) return false;
+					if (words.Length < ResourceColumnsCount || !key.StartsWith("Items/") || key.EndsWith("Desc")) return false;
 					return true;
 				})
 				.Distinct()
@@ -73,7 +78,7 @@ namespace CKCharaDataEditor
 					string objectId = objectIdDic.TryGetValue(key, out int id) ? id.ToString() : $"{key}"; // IDが見つからない場合はKeyを使用
 																										   // 本来はobjectIdとvariationのタプルでキーを参照しに良くのが正しいが、開発チームの消し忘れリソースも多いの。
 																										   // それにvariation違いでkeyが変わるアイテムが少数過ぎるし、コアキ側の実装がEAの頃から中途半端に変わってるのが悪い。
-					string displayString = words[5]; // 5 is Japanese translation column
+					string displayString = words[JapaneseColumnIndex];
 					return (objectId, (key, displayString));
 				})
 				.ToDictionary();
@@ -112,7 +117,7 @@ namespace CKCharaDataEditor
 				{
 					break; // 最後の行に到達したら終了
 				}
-				if (keyResource.Length < resourceColumnsCount)
+				if (keyResource.Length < ResourceColumnsCount)
 				{
 					if (keyResource.Length is 1 ||
 						(keyResource.Length >= 2 && keyResource[1] is not "Text"))
@@ -148,7 +153,7 @@ namespace CKCharaDataEditor
 				.ToList();
 
 			List<string> trancelation = FixLineFeed(languageResourceTwo)
-				.Select(words => string.Join("\t", words[0], words[5], words[3]))
+				.Select(words => string.Join("\t", words[0], words[JapaneseColumnIndex], words[3]))
 				.ToList();
 
 			string outputPath = Path.Combine(Environment.CurrentDirectory, "TwoLanguageResource.tsv");

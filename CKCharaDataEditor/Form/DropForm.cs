@@ -400,13 +400,14 @@ namespace CKCharaDataEditor
             sb.AppendLine($"抽選回数 {table.UniqueDrops}");
             string hasGuaranteed = table.Loots.Exists(item => item.IsOneOfGuaranteedToDrop) ? "あり" : "なし";
             sb.AppendLine($"保証抽選 {hasGuaranteed}");
-            sb.AppendLine("|>|アイテム|通常抽選確率[%]|保証抽選確率[%]|h");
+            sb.AppendLine("|>|~アイテム|~通常抽選確率[%]|~保証抽選確率[%]|h");
             foreach (var item in table.Loots)
             {
                 string itemName = item.ObjectID.ToString();
+                string itemNameWithoutCount = itemName;
                 if (_fileManager.LocalizationData.TryGetValue(item.ObjectID, out var translateResources))
                 {
-                    itemName = translateResources.DisplayName;
+                    itemName = itemNameWithoutCount = translateResources.DisplayName;
                 }
                 if (itemName == "0")
                 {
@@ -418,7 +419,8 @@ namespace CKCharaDataEditor
                 }
                 string normalRate = (item.RollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}");
                 string guaranteedRate = item.IsOneOfGuaranteedToDrop ? (item.GuaranteedRollPerDrop * 100f).ToString($"F{decimalPlacesNumericUpDown.Value.ToString()}") : "----";
-                sb.AppendLine($"| &ref(画像保管場所/{itemName}.png,nolink,36x36); | {itemName} | {normalRate} | {guaranteedRate} |");
+                string imagePath = itemName == "なし" ? string.Empty : $"&ref(画像保管場所/{itemNameWithoutCount}.png,nolink,36x36);";
+                sb.AppendLine($"| {imagePath} | {itemName} | {normalRate} | {guaranteedRate} |");
             }
             sb.AppendLine($"(ver {AboutBox.GameVersion})");
             Clipboard.SetText(sb.ToString());

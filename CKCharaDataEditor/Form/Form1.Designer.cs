@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             advancedTab = new TabPage();
@@ -75,7 +76,6 @@
             primaryIngredientComboBox = new ComboBox();
             label4 = new Label();
             petTab = new TabPage();
-            petEditControl = new CKCharaDataEditor.Control.PetEditControl();
             cattleTab = new TabPage();
             mealNumericUpDown = new NumericUpDown();
             label2 = new Label();
@@ -104,7 +104,6 @@
             slotReloadbutton = new Button();
             label13 = new Label();
             dataFormatLabel = new Label();
-            itemListBox = new ListBox();
             label14 = new Label();
             clearedFlagLabel = new Label();
             toolTipConstAmount = new ToolTip(components);
@@ -124,6 +123,10 @@
             worldEditButton = new Button();
             mapButton = new Button();
             dropButton = new Button();
+            itemList = new DataGridView();
+            index = new DataGridViewTextBoxColumn();
+            ItemName = new DataGridViewTextBoxColumn();
+            Amount = new DataGridViewTextBoxColumn();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)objectIdNumericUpDown).BeginInit();
@@ -135,12 +138,12 @@
             foodTab.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
-            petTab.SuspendLayout();
             cattleTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             otherTab.SuspendLayout();
             menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)itemList).BeginInit();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -630,7 +633,6 @@
             // 
             // petTab
             // 
-            petTab.Controls.Add(petEditControl);
             petTab.Location = new Point(4, 24);
             petTab.Name = "petTab";
             petTab.Padding = new Padding(3);
@@ -638,15 +640,6 @@
             petTab.TabIndex = 2;
             petTab.Text = "ペット";
             petTab.UseVisualStyleBackColor = true;
-            // 
-            // petEditControl
-            // 
-            petEditControl.Dock = DockStyle.Fill;
-            petEditControl.Location = new Point(3, 3);
-            petEditControl.Margin = new Padding(4, 5, 4, 5);
-            petEditControl.Name = "petEditControl";
-            petEditControl.Size = new Size(636, 270);
-            petEditControl.TabIndex = 0;
             // 
             // cattleTab
             // 
@@ -924,19 +917,6 @@
             dataFormatLabel.TabIndex = 21;
             dataFormatLabel.Text = "version";
             // 
-            // itemListBox
-            // 
-            itemListBox.DrawMode = DrawMode.OwnerDrawFixed;
-            itemListBox.FormattingEnabled = true;
-            itemListBox.ItemHeight = 15;
-            itemListBox.Location = new Point(12, 146);
-            itemListBox.Name = "itemListBox";
-            itemListBox.Size = new Size(286, 349);
-            itemListBox.TabIndex = 22;
-            itemListBox.DrawItem += itemListBox_DrawItem;
-            itemListBox.SelectedIndexChanged += itemListBox_TextChanged;
-            itemListBox.KeyDown += itemListBox_KeyDown;
-            // 
             // label14
             // 
             label14.AutoSize = true;
@@ -1064,17 +1044,69 @@
             dropButton.UseVisualStyleBackColor = true;
             dropButton.Click += dropButton_Click;
             // 
+            // itemList
+            // 
+            itemList.AllowUserToAddRows = false;
+            itemList.AllowUserToDeleteRows = false;
+            itemList.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            itemList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            itemList.Columns.AddRange(new DataGridViewColumn[] { index, ItemName, Amount });
+            itemList.Location = new Point(12, 146);
+            itemList.MultiSelect = false;
+            itemList.Name = "itemList";
+            itemList.ReadOnly = true;
+            itemList.RowHeadersVisible = false;
+            itemList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            itemList.Size = new Size(286, 348);
+            itemList.TabIndex = 30;
+            itemList.CellPainting += itemList_CellPainting;
+            itemList.SelectionChanged += itemList_SelectionChanged;
+            itemList.KeyDown += itemList_KeyDown;
+            // 
+            // index
+            // 
+            index.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            index.Frozen = true;
+            index.HeaderText = "";
+            index.MinimumWidth = 20;
+            index.Name = "index";
+            index.ReadOnly = true;
+            index.SortMode = DataGridViewColumnSortMode.NotSortable;
+            index.Width = 20;
+            // 
+            // ItemName
+            // 
+            ItemName.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            ItemName.Frozen = true;
+            ItemName.HeaderText = "Item";
+            ItemName.MinimumWidth = 36;
+            ItemName.Name = "ItemName";
+            ItemName.ReadOnly = true;
+            ItemName.SortMode = DataGridViewColumnSortMode.NotSortable;
+            ItemName.Width = 36;
+            // 
+            // Amount
+            // 
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Amount.DefaultCellStyle = dataGridViewCellStyle1;
+            Amount.Frozen = true;
+            Amount.HeaderText = "Amount";
+            Amount.MinimumWidth = 100;
+            Amount.Name = "Amount";
+            Amount.ReadOnly = true;
+            Amount.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(967, 508);
+            Controls.Add(itemList);
             Controls.Add(dropButton);
             Controls.Add(mapButton);
             Controls.Add(worldEditButton);
             Controls.Add(lastConnectedWorldLabel);
             Controls.Add(clearedFlagLabel);
             Controls.Add(label14);
-            Controls.Add(itemListBox);
             Controls.Add(dataFormatLabel);
             Controls.Add(label13);
             Controls.Add(slotReloadbutton);
@@ -1108,7 +1140,6 @@
             foodTab.PerformLayout();
             groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).EndInit();
-            petTab.ResumeLayout(false);
             cattleTab.ResumeLayout(false);
             cattleTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
@@ -1117,6 +1148,7 @@
             otherTab.PerformLayout();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)itemList).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1171,7 +1203,6 @@
         private Button slotReloadbutton;
         private Label label13;
         private Label dataFormatLabel;
-        private ListBox itemListBox;
         private TabPage cattleTab;
         private Label label14;
         private Label clearedFlagLabel;
@@ -1217,5 +1248,9 @@
         private GroupBox groupBox1;
         private NumericUpDown objectIdNumericUpDown;
         private Button exportTrancelateButton;
+        private DataGridView itemList;
+        private DataGridViewTextBoxColumn index;
+        private DataGridViewTextBoxColumn ItemName;
+        private DataGridViewTextBoxColumn Amount;
     }
 }

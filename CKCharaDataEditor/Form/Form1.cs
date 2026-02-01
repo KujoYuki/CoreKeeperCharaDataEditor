@@ -40,6 +40,7 @@ namespace CKCharaDataEditor
         public void Initialize()
         {
             _fileManager.InstallFolder = Settings.Default.InstallFolderPath;
+            petEditControl = new Control.PetEditControl();
             InitIngredientCategory();
             InitCookedCategory();
             rarityComboBox.SelectedIndex = 0;
@@ -187,7 +188,7 @@ namespace CKCharaDataEditor
             else
             {
                 DisabeleUI();
-                itemListBox.Items.Clear();
+                itemList.Columns.Clear();
                 return;
             }
         }
@@ -205,40 +206,43 @@ namespace CKCharaDataEditor
 
             // リロード時のindex保持
             int selectedInventoryIndex = 0;
-            int topIndex = itemListBox.TopIndex;
-            if (itemListBox.Items.Count > 0)
+            int topIndex = (itemList.FirstDisplayedScrollingRowIndex == -1) ? 0 : itemList.FirstDisplayedScrollingRowIndex;
+            if (itemList.Rows.Count > 0)
             {
-                selectedInventoryIndex = itemListBox.SelectedIndex;
+                selectedInventoryIndex = itemList.SelectedRows[0].Index;
             }
 
-            // 選択中のセーブデータのアイテム情報をitemListBoxに反映する
-            itemListBox.BeginUpdate();
-            itemListBox.Items.Clear();
+            // 選択中のセーブデータのアイテム情報をitemListに反映する
+            itemList.SuspendLayout();
+            itemList.Rows.Clear();
             for (int i = 0; i < _saveDataManager.Items.Count; i++)
             {
                 string indexText = StaticResource.ExtendSlotName.TryGetValue(i + 1, out var rim) ?
                     (i + 1) + "," + rim.Segment : (i + 1).ToString();
+                string amountText = _saveDataManager.Items[i].amount.ToString();
                 if (_saveDataManager.Items[i].objectID == 0)
                 {
-                    itemListBox.Items.Add($"{indexText} : ----");
+                    itemList.Rows.Add(indexText, "----", amountText);
                 }
                 else
                 {
                     Item item = _saveDataManager.Items[i];
                     string displayName = TranslateDisplayName(item);
-                    itemListBox.Items.Add($"{indexText} : {displayName}");
+                    itemList.Rows.Add(indexText, displayName, amountText);
                 }
             }
-            itemListBox.SelectedIndex = selectedInventoryIndex < itemListBox.Items.Count ? selectedInventoryIndex : itemListBox.Items.Count - 1;
-            itemListBox.TopIndex = topIndex < itemListBox.Items.Count ? topIndex : itemListBox.Items.Count - 1;
-            itemListBox.EndUpdate();
+            int selectedRowIndex = selectedInventoryIndex < itemList.Rows.Count ? selectedInventoryIndex : itemList.Rows.Count - 1;
+            itemList.CurrentCell = itemList.Rows[selectedRowIndex].Cells[1];
+            itemList.FirstDisplayedScrollingRowIndex = topIndex < itemList.Rows.Count ? topIndex : itemList.Rows.Count - 1;
+            itemList.ResumeLayout();
 
             LoadPanel();
         }
 
         private void LoadPanel()
         {
-            Item selectedItem = _saveDataManager.Items[itemListBox.SelectedIndex];
+            int selectedRowIndex = itemList.SelectedRows.Count == 0 ? 0 : itemList.SelectedRows[0].Index;
+            Item selectedItem = _saveDataManager.Items[selectedRowIndex];
             int variation = selectedItem.variation;
             int amount = selectedItem.amount;
 
@@ -336,7 +340,7 @@ namespace CKCharaDataEditor
             createdNumericNo.Value = -1;
         }
 
-        private void itemListBox_TextChanged(object sender, EventArgs e)
+        private void itemList_SelectionChanged(object sender, EventArgs e)
         {
             LoadPanel();
         }
@@ -402,7 +406,7 @@ namespace CKCharaDataEditor
             if (IsRunningGame()) return;
 
             bool result = false;
-            int index = itemListBox.SelectedIndex;
+            int index = itemList.SelectedRows[0].Index;
             Item item = _saveDataManager.Items[index];
 
             switch (itemEditTabControl.SelectedTab?.Name)
@@ -507,7 +511,7 @@ namespace CKCharaDataEditor
         private void EnabeleUI()
         {
             saveSlotNoComboBox.Enabled = true;
-            itemListBox.Enabled = true;
+            itemList.Enabled = true;
             createButton.Enabled = true;
             listUncreatedRecipesButton.Enabled = true;
             slotReloadbutton.Enabled = true;
@@ -517,7 +521,7 @@ namespace CKCharaDataEditor
         private void DisabeleUI()
         {
             saveSlotNoComboBox.Enabled = false;
-            itemListBox.Enabled = false;
+            itemList.Enabled = false;
             createButton.Enabled = false;
             listUncreatedRecipesButton.Enabled = false;
             slotReloadbutton.Enabled = false;
@@ -616,7 +620,7 @@ namespace CKCharaDataEditor
 
         private void CopyButton_Click(object sender, EventArgs e)
         {
-            int selectedItemIndex = itemListBox.SelectedIndex;
+            int selectedItemIndex = itemList.SelectedRows[0].Index;
             Item copiedItem = _saveDataManager.CopyItem(selectedItemIndex);
             string displayName = TranslateDisplayName(copiedItem);
             EnableResultMessage($"{displayName}をコピーしました。");
@@ -701,41 +705,42 @@ namespace CKCharaDataEditor
             LoadItems();
         }
 
-        private void itemListBox_DrawItem(object sender, DrawItemEventArgs e)
+        private void itemList_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (e.Index < 0) return;
+            if (e.RowIndex < 0 || e.ColumnIndex < 0 ||
+                !StaticResource.ExtendSlotName.Keys.Contains(e.RowIndex + 1)) return;
 
-            string itemText = (string)itemListBox.Items[e.Index]!;
-            e.DrawBackground();
-            var uniqueSlot = StaticResource.ExtendSlotName.Keys.ToArray();
+            Brush brush = StaticResource.ExtendSlotName[e.RowIndex + 1].Color;
 
-            // 色変更
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            // セルの背景色を変更
+            e.Graphics!.FillRectangle(brush, e.CellBounds);
+
+            // セルの文字列を描画
+            if (e.Value != null)
             {
-                //選択中のアイテムの背景色を変更
-                e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
-                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.HighlightText, e.Bounds);
-            }
-            else if (uniqueSlot.Contains(e.Index + 1))
-            {
-                // 装備など特定のインデックスのアイテムの背景色を変更
-                Brush color = StaticResource.ExtendSlotName[e.Index + 1].Color;
-                e.Graphics.FillRectangle(color, e.Bounds);
-                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
-            }
-            else
-            {
-                // 通常のアイテムの背景色を変更
-                e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
-                e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
+                // 選択状態に応じて文字色を変更   // hack 選択時の背景色と文字色は、基底の設定と同じにする
+                Brush textBrush = (e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected
+                    ? SystemBrushes.HighlightText
+                    : SystemBrushes.ControlText;
+
+                e.Graphics.DrawString(
+                    e.Value.ToString(),
+                    e.CellStyle!.Font!,
+                    textBrush,
+                    e.CellBounds.X + 2,
+                    e.CellBounds.Y + 2);
             }
 
-            e.DrawFocusRectangle();
+            // 枠線を描画
+            e.Paint(e.CellBounds, DataGridViewPaintParts.Border);
+
+            // デフォルトの描画を無効化
+            e.Handled = true;
         }
 
-        private void itemListBox_KeyDown(object sender, KeyEventArgs e)
+        private void itemList_KeyDown(object sender, KeyEventArgs e)
         {
-            if (itemListBox.SelectedIndex < 0) return;
+            if (itemList.SelectedRows[0].Index < 0) return;
 
             if (e.Control && e.KeyCode is Keys.C)
             {
@@ -747,7 +752,7 @@ namespace CKCharaDataEditor
                 if (!IsLegalSaveData()) return;
                 if (IsRunningGame()) return;
                 Item pasteItem = _saveDataManager.PasteItem();
-                _saveDataManager.WriteItemData(itemListBox.SelectedIndex, pasteItem);
+                _saveDataManager.WriteItemData(itemList.SelectedRows[0].Index, pasteItem);
                 string displayName = TranslateDisplayName(pasteItem);
                 EnableResultMessage($"{displayName}をペーストしました。");
                 LoadItems();
@@ -766,7 +771,7 @@ namespace CKCharaDataEditor
             if (e.KeyCode == Keys.Delete)
             {
                 // デフォルトアイテムで上書きして削除扱い
-                _saveDataManager.WriteItemData(itemListBox.SelectedIndex, Item.Default);
+                _saveDataManager.WriteItemData(itemList.SelectedRows[0].Index, Item.Default);
                 LoadItems();
                 EnableResultMessage("アイテムを削除しました。");
                 e.Handled = true;

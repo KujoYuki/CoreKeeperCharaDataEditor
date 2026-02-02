@@ -8,8 +8,19 @@ namespace CKCharaDataEditor
     {
         private static FileManager? _instance;
         public static FileManager Instance => _instance ??= new FileManager();
-        public IReadOnlyDictionary<int, (string Key, string DisplayName)> LocalizationData = new Dictionary<int, (string, string)>();
-        private FileManager()
+
+		/// <summary>
+		/// Idと表示名の辞書データ
+		/// </summary>
+		public IReadOnlyDictionary<int, (string Key, string DisplayName)> LocalizationData = new Dictionary<int, (string, string)>();
+
+		/// <summary>
+		/// Idとオブジェクトキーの辞書データ
+		/// </summary>
+		public IReadOnlyDictionary<int, string> ObjectIdWithKey = new Dictionary<int, string>();
+
+
+		private FileManager()
         {
             _saveFolder = Settings.Default.SaveFolderPath;
             if (_saveFolder == string.Empty || !Directory.Exists(_saveFolder))
@@ -55,7 +66,7 @@ namespace CKCharaDataEditor
                     _installFolder = value;
                     Settings.Default.InstallFolderPath = value;
                     // 言語リソースの初期化
-                    LocalizationData = LanguageLoader.CreateLanguageDictionary(value);
+                    LocalizationData = LanguageLoader.CreateLanguageDictionary(value, out ObjectIdWithKey);
                 }
             }
         }

@@ -27,11 +27,13 @@ namespace CKCharaDataEditor
             if (Program.IsDeveloper)
             {
                 variationUpdateCountNumericUpDown.ReadOnly = false;
+                keyNameTextBox.ReadOnly = false;
                 auxIndexNumericUpDown.ReadOnly = false;
                 auxDataTextBox.ReadOnly = false;
                 toMinusOneButton.Visible = true;
                 dupeEquipmentEachLv.Visible = true;
                 lastConnectedWorldLabel.Visible = true;
+                exportTrancelateButton.Visible = true;
             }
         }
 
@@ -84,9 +86,9 @@ namespace CKCharaDataEditor
         private void SetToolTips()
         {
             toolTipDataFormatVersion.SetToolTip(dataFormatLabel, "セーブデータのバージョンを表示します。\nバージョンが古い場合は、ゲーム中のキャラ読み込みにより自動的に更新されます。");
-            toolTipVariation.SetToolTip(variationNumericUpDown, "同一IDのオブジェクトに用意されたバリエーションを設定します。\n料理の場合は食材の組み合わせを表します。\nアップグレード済み装備ではアイテムLvを表します。\n色塗りできるアイテムでは色を表します。\n方向が設定できるアイテムでは方向を表します。");
+            toolTipVariation.SetToolTip(variationNumericUpDown, "同一IDのオブジェクトに用意されたバリエーションを設定します。\n料理の場合は食材の組み合わせを表します。\n装備ではアイテムLvを表します。\n色塗りできるアイテムでは色を表します。\n方向が設定できるアイテムでは方向を表します。");
             toolTipConstAmount.SetToolTip(amountConstCheckBox, "作成時に対象のアイテムのamountを設定した数で固定します。\n複数のスロットを同一個数で連続作成したい時に使います。");
-            toolTipObjectName.SetToolTip(objectNameTextBox, "アイテムの内部名称を表示します。\n空欄の場合はゲーム起動時にobjectIdから適切なものがセットされます。");
+            toolTipKeyName.SetToolTip(keyNameTextBox, "アイテムの内部キー名を表示します。\n空欄の場合は起動時にゲーム側から適切なKeyがセットされます。");
             toolTipAmount.SetToolTip(amountNumericUpDown, "スタック可能アイテムの場合は個数になります。\n武器/防具の場合は耐久値になります。\nペットでは経験値になります。\n家畜では満腹度になります。");
             toolTipAuxData.SetToolTip(auxDataTextBox, "アイテムの補助データです。\nペットや家畜の情報を設定する場合は、ペットタブや家畜タブを利用してください。");
             toolTipLockedObject.SetToolTip(objectLockedCheckBox, "ゲーム内でのアイテムのロック状態を設定します。");
@@ -143,8 +145,8 @@ namespace CKCharaDataEditor
             // 翻訳データがある場合に表示名を設定する
             for (int i = 0; i < cattleComboBox.Items.Count; i++)
             {
-                string objectName = cattleComboBox.Items[i]!.ToString()!;
-                int objectID = cattles[objectName];
+                string keyName = cattleComboBox.Items[i]!.ToString()!;
+                int objectID = cattles[keyName];
                 if (_fileManager.LocalizationData.TryGetValue(objectID, out var translateResources))
                 {
                     string displayName = translateResources.DisplayName;
@@ -223,7 +225,7 @@ namespace CKCharaDataEditor
                 else
                 {
                     Item item = _saveDataManager.Items[i];
-                    string displayName = TranslateObjectName(item);
+                    string displayName = TranslateDisplayName(item);
                     itemListBox.Items.Add($"{indexText} : {displayName}");
                 }
             }
@@ -240,12 +242,16 @@ namespace CKCharaDataEditor
             int variation = selectedItem.variation;
             int amount = selectedItem.amount;
 
-            objectIdTextBox.Text = selectedItem.objectID.ToString();
+            objectIdNumericUpDown.Value = Convert.ToDecimal(selectedItem.objectID);
+            if (string.IsNullOrEmpty(keyNameTextBox.Text))
+            {
+                // 辞書から取得出来なければセーブのkeyNameをセットする
+                keyNameTextBox.Text = selectedItem.keyName;
+            }
             amountNumericUpDown.Value = amount;
             objectLockedCheckBox.Checked = selectedItem.Locked;
             variationNumericUpDown.Value = variation;
             variationUpdateCountNumericUpDown.Value = selectedItem.variationUpdateCount;
-            objectNameTextBox.Text = selectedItem.objectName;
             auxIndexNumericUpDown.Value = selectedItem.Aux.index;
             auxDataTextBox.Text = selectedItem.Aux.data;
             DisplayNameTextBox.Text = selectedItem.DisplayName;
@@ -361,6 +367,7 @@ namespace CKCharaDataEditor
                     return false;
                 }
                 string characterName = _saveDataManager.GetCharacterName();
+#if !debug
                 foreach (var name in Forbidden.Users)
                 {
                     if (characterName.StartsWith(name))
@@ -370,6 +377,7 @@ namespace CKCharaDataEditor
                         return false;
                     }
                 }
+#endif
             }
             return true;
         }
@@ -434,7 +442,7 @@ namespace CKCharaDataEditor
                         objectID = objectID,
                         Color = Color,
                         Stomach = (int)stomachNumericUpDown.Value,
-                        objectName = ((CattleType)objectID).ToString(),
+                        keyName = ((CattleType)objectID).ToString(),
                         Name = cattleNameTextBox.Text,
                         Meal = (int)mealNumericUpDown.Value,
                         Breeding = breedingCheckBox.Checked,
@@ -453,7 +461,7 @@ namespace CKCharaDataEditor
 
             if (result)
             {
-                string itemName = TranslateObjectName(item);
+                string itemName = TranslateDisplayName(item);
                 EnableResultMessage($"{itemName}を作成しました。");
             }
             // 書き換え後の再読み込み
@@ -467,15 +475,12 @@ namespace CKCharaDataEditor
                 amountNumericUpDown.Value = amountConst.Value;
             }
             var aux = new ItemAuxData(Convert.ToInt32(auxIndexNumericUpDown.Value), auxDataTextBox.Text);
-            if (!int.TryParse(objectIdTextBox.Text, out int objectId))
-            {
-                return Item.Default;
-            }
+            int objectId = Convert.ToInt32(objectIdNumericUpDown.Value);
             return new(objectID: objectId,
                 amount: Convert.ToInt32(amountNumericUpDown.Value),
                 variation: Convert.ToInt32(variationNumericUpDown.Value),
                 variationUpdateCount: Convert.ToInt32(variationUpdateCountNumericUpDown.Value),
-                objectName: objectNameTextBox.Text,
+                keyName: keyNameTextBox.Text,
                 aux: aux,
                 locked: objectLockedCheckBox.Checked);
         }
@@ -490,9 +495,9 @@ namespace CKCharaDataEditor
 
         private void SetDefaultButton_Click(object sender, EventArgs e)
         {
-            objectIdTextBox.Text = ItemInfo.Default.objectID.ToString();
+            objectIdNumericUpDown.Value = Convert.ToDecimal(ItemInfo.Default.objectID);
             variationNumericUpDown.Value = ItemInfo.Default.variation;
-            objectNameTextBox.Text = string.Empty;
+            keyNameTextBox.Text = string.Empty;
             amountNumericUpDown.Value = ItemInfo.Default.amount;
             variationUpdateCountNumericUpDown.Value = ItemInfo.Default.variationUpdateCount;
             auxIndexNumericUpDown.Value = ItemAuxData.Default.index;
@@ -591,9 +596,9 @@ namespace CKCharaDataEditor
             e.DrawFocusRectangle();
         }
 
-        private string TranslateObjectName(Item item)
+        private string TranslateDisplayName(Item item)
         {
-            string displayName = item.objectName;
+            string displayName = item.keyName;
             if (_fileManager.LocalizationData.TryGetValue(item.objectID, out var displayResource))
             {
                 displayName = displayResource.DisplayName;
@@ -613,7 +618,7 @@ namespace CKCharaDataEditor
         {
             int selectedItemIndex = itemListBox.SelectedIndex;
             Item copiedItem = _saveDataManager.CopyItem(selectedItemIndex);
-            string displayName = TranslateObjectName(copiedItem);
+            string displayName = TranslateDisplayName(copiedItem);
             EnableResultMessage($"{displayName}をコピーしました。");
         }
 
@@ -622,15 +627,15 @@ namespace CKCharaDataEditor
             if (!IsLegalSaveData()) return;
             if (IsRunningGame()) return;
             Item pasteItem = _saveDataManager.PasteItem();
-            objectIdTextBox.Text = pasteItem.objectID.ToString();
+            objectIdNumericUpDown.Value = Convert.ToDecimal(pasteItem.objectID);
             amountNumericUpDown.Value = pasteItem.amount;
             variationNumericUpDown.Value = pasteItem.variation;
             variationUpdateCountNumericUpDown.Value = pasteItem.variationUpdateCount;
-            objectNameTextBox.Text = pasteItem.objectName;
+            keyNameTextBox.Text = pasteItem.keyName;
             auxIndexNumericUpDown.Value = pasteItem.Aux.index;
             auxDataTextBox.Text = pasteItem.Aux.data;
 
-            string displayName = TranslateObjectName(pasteItem);
+            string displayName = TranslateDisplayName(pasteItem);
             EnableResultMessage($"{displayName}の情報をペーストしました。");
         }
 
@@ -743,7 +748,7 @@ namespace CKCharaDataEditor
                 if (IsRunningGame()) return;
                 Item pasteItem = _saveDataManager.PasteItem();
                 _saveDataManager.WriteItemData(itemListBox.SelectedIndex, pasteItem);
-                string displayName = TranslateObjectName(pasteItem);
+                string displayName = TranslateDisplayName(pasteItem);
                 EnableResultMessage($"{displayName}をペーストしました。");
                 LoadItems();
                 e.Handled = true;
@@ -952,6 +957,25 @@ namespace CKCharaDataEditor
                 e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
             e.DrawFocusRectangle();
+        }
+
+        private void exportTrancelateButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("翻訳辞書を出力します。");
+            LanguageLoader.OutputVisibleDictionary();
+        }
+
+        private void objectIdNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            // undone objectIDに対応するKeyの自動取得
+            if (_fileManager.ObjectIdWithKey.TryGetValue((int)objectIdNumericUpDown.Value, out string? objectKey))
+            {
+                keyNameTextBox.Text = objectKey;
+            }
+            else
+            {
+                keyNameTextBox.Text = string.Empty;
+            }
         }
     }
 }

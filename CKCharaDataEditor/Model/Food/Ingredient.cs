@@ -5,7 +5,7 @@ namespace CKCharaDataEditor.Model.Food
 {
     public record Ingredient : DiscoveredObjects
     {
-        public string objectName { get; set; }
+        public string keyName { get; set; }
         public string DisplayName { get; set; }
         public IngredientAttribute Attribute { get; set; }
 
@@ -14,10 +14,10 @@ namespace CKCharaDataEditor.Model.Food
         /// </summary>
         public CookedFood CookedFood { get; set; }
 
-        public Ingredient(int objectID, string objectName, string displayName, CookedFood cookedFood, IngredientAttribute attribute)
+        public Ingredient(int objectID, string keyName, string displayName, CookedFood cookedFood, IngredientAttribute attribute)
             : base(objectID, 0)
         {
-            this.objectName = objectName;
+            this.keyName = keyName;
             DisplayName = displayName;
             CookedFood = cookedFood;
             Attribute = attribute;
@@ -25,7 +25,7 @@ namespace CKCharaDataEditor.Model.Food
 
         public Item ToItem(int amount = 1)
         {
-            return new Item(objectID, amount, 0, 0, objectName, ItemAuxData.Default);
+            return new Item(objectID, amount, 0, 0, keyName, ItemAuxData.Default);
         }
     }
 }

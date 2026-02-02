@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             advancedTab = new TabPage();
+            objectIdNumericUpDown = new NumericUpDown();
             dupeEquipmentEachLv = new Button();
             auxIndexNumericUpDown = new NumericUpDown();
             variationNumericUpDown = new NumericUpDown();
@@ -50,10 +51,9 @@
             amountConstCheckBox = new CheckBox();
             SetDefaultButton = new Button();
             label3 = new Label();
-            objectNameTextBox = new TextBox();
+            keyNameTextBox = new TextBox();
             objectIdsLinkLabel = new LinkLabel();
             label6 = new Label();
-            objectIdTextBox = new TextBox();
             labelAmount = new Label();
             label9 = new Label();
             labelVariation = new Label();
@@ -89,6 +89,7 @@
             label15 = new Label();
             label7 = new Label();
             otherTab = new TabPage();
+            exportTrancelateButton = new Button();
             ListupUnobtainedEquipButton = new Button();
             DisplayNameTextBox = new TextBox();
             label18 = new Label();
@@ -107,7 +108,7 @@
             label14 = new Label();
             clearedFlagLabel = new Label();
             toolTipConstAmount = new ToolTip(components);
-            toolTipObjectName = new ToolTip(components);
+            toolTipKeyName = new ToolTip(components);
             toolTipAmount = new ToolTip(components);
             toolTipAuxData = new ToolTip(components);
             toolTipVariation = new ToolTip(components);
@@ -125,6 +126,7 @@
             dropButton = new Button();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)objectIdNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)variationNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)variationUpdateCountNumericUpDown).BeginInit();
@@ -157,6 +159,7 @@
             // 
             // advancedTab
             // 
+            advancedTab.Controls.Add(objectIdNumericUpDown);
             advancedTab.Controls.Add(dupeEquipmentEachLv);
             advancedTab.Controls.Add(auxIndexNumericUpDown);
             advancedTab.Controls.Add(variationNumericUpDown);
@@ -175,10 +178,9 @@
             advancedTab.Controls.Add(amountConstCheckBox);
             advancedTab.Controls.Add(SetDefaultButton);
             advancedTab.Controls.Add(label3);
-            advancedTab.Controls.Add(objectNameTextBox);
+            advancedTab.Controls.Add(keyNameTextBox);
             advancedTab.Controls.Add(objectIdsLinkLabel);
             advancedTab.Controls.Add(label6);
-            advancedTab.Controls.Add(objectIdTextBox);
             advancedTab.Controls.Add(labelAmount);
             advancedTab.Controls.Add(label9);
             advancedTab.Controls.Add(labelVariation);
@@ -189,6 +191,15 @@
             advancedTab.TabIndex = 1;
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
+            // 
+            // objectIdNumericUpDown
+            // 
+            objectIdNumericUpDown.Location = new Point(9, 28);
+            objectIdNumericUpDown.Maximum = new decimal(new int[] { 65536, 0, 0, 0 });
+            objectIdNumericUpDown.Name = "objectIdNumericUpDown";
+            objectIdNumericUpDown.Size = new Size(99, 23);
+            objectIdNumericUpDown.TabIndex = 37;
+            objectIdNumericUpDown.ValueChanged += objectIdNumericUpDown_ValueChanged;
             // 
             // dupeEquipmentEachLv
             // 
@@ -361,16 +372,17 @@
             label3.AutoSize = true;
             label3.Location = new Point(273, 9);
             label3.Name = "label3";
-            label3.Size = new Size(71, 15);
+            label3.Size = new Size(60, 15);
             label3.TabIndex = 16;
-            label3.Text = "objectName";
+            label3.Text = "Key Name";
             // 
-            // objectNameTextBox
+            // keyNameTextBox
             // 
-            objectNameTextBox.Location = new Point(273, 27);
-            objectNameTextBox.Name = "objectNameTextBox";
-            objectNameTextBox.Size = new Size(191, 23);
-            objectNameTextBox.TabIndex = 17;
+            keyNameTextBox.Location = new Point(273, 27);
+            keyNameTextBox.Name = "keyNameTextBox";
+            keyNameTextBox.ReadOnly = true;
+            keyNameTextBox.Size = new Size(191, 23);
+            keyNameTextBox.TabIndex = 17;
             // 
             // objectIdsLinkLabel
             // 
@@ -391,13 +403,6 @@
             label6.Size = new Size(51, 15);
             label6.TabIndex = 8;
             label6.Text = "objectID";
-            // 
-            // objectIdTextBox
-            // 
-            objectIdTextBox.Location = new Point(9, 27);
-            objectIdTextBox.Name = "objectIdTextBox";
-            objectIdTextBox.Size = new Size(100, 23);
-            objectIdTextBox.TabIndex = 9;
             // 
             // labelAmount
             // 
@@ -766,6 +771,7 @@
             // 
             // otherTab
             // 
+            otherTab.Controls.Add(exportTrancelateButton);
             otherTab.Controls.Add(ListupUnobtainedEquipButton);
             otherTab.Controls.Add(DisplayNameTextBox);
             otherTab.Controls.Add(label18);
@@ -776,6 +782,17 @@
             otherTab.TabIndex = 4;
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
+            // 
+            // exportTrancelateButton
+            // 
+            exportTrancelateButton.Location = new Point(470, 38);
+            exportTrancelateButton.Name = "exportTrancelateButton";
+            exportTrancelateButton.Size = new Size(147, 23);
+            exportTrancelateButton.TabIndex = 3;
+            exportTrancelateButton.Text = "日本語リソース抽出";
+            exportTrancelateButton.UseVisualStyleBackColor = true;
+            exportTrancelateButton.Visible = false;
+            exportTrancelateButton.Click += exportTrancelateButton_Click;
             // 
             // ListupUnobtainedEquipButton
             // 
@@ -945,11 +962,11 @@
             toolTipConstAmount.InitialDelay = 100;
             toolTipConstAmount.ReshowDelay = 100;
             // 
-            // toolTipObjectName
+            // toolTipKeyName
             // 
-            toolTipObjectName.AutoPopDelay = 5000;
-            toolTipObjectName.InitialDelay = 100;
-            toolTipObjectName.ReshowDelay = 100;
+            toolTipKeyName.AutoPopDelay = 5000;
+            toolTipKeyName.InitialDelay = 100;
+            toolTipKeyName.ReshowDelay = 100;
             // 
             // toolTipAmount
             // 
@@ -1081,6 +1098,7 @@
             itemEditTabControl.ResumeLayout(false);
             advancedTab.ResumeLayout(false);
             advancedTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)objectIdNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)variationNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)variationUpdateCountNumericUpDown).EndInit();
@@ -1116,7 +1134,6 @@
         private Label label5;
         private ComboBox primaryIngredientComboBox;
         private Label label4;
-        private TextBox objectIdTextBox;
         private Label label6;
         private Label labelVariation;
         private Label labelAmount;
@@ -1132,7 +1149,7 @@
         private Label label12;
         private Label label11;
         private Label label3;
-        private TextBox objectNameTextBox;
+        private TextBox keyNameTextBox;
         private Button SetDefaultButton;
         private Label resultLabel;
         private NumericUpDown amountConst;
@@ -1160,7 +1177,7 @@
         private Label clearedFlagLabel;
         private CheckBox objectLockedCheckBox;
         private ToolTip toolTipConstAmount;
-        private ToolTip toolTipObjectName;
+        private ToolTip toolTipKeyName;
         private ToolTip toolTipAmount;
         private ToolTip toolTipAuxData;
         private ToolTip toolTipVariation;
@@ -1198,5 +1215,7 @@
         private Button dropButton;
         private Button addAllRecipeButton;
         private GroupBox groupBox1;
+        private NumericUpDown objectIdNumericUpDown;
+        private Button exportTrancelateButton;
     }
 }

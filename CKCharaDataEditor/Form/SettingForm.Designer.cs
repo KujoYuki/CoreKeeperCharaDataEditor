@@ -93,9 +93,9 @@
             label2.AutoSize = true;
             label2.Location = new Point(22, 92);
             label2.Name = "label2";
-            label2.Size = new Size(289, 15);
+            label2.Size = new Size(373, 15);
             label2.TabIndex = 8;
-            label2.Text = "インストールフォルダパス（翻訳リソースの取得に使用します）";
+            label2.Text = "インストールフォルダパス（正確な翻訳リソースとキー情報の取得に使用します）";
             // 
             // saveFolderBrowserDialog
             // 

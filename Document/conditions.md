@@ -46,3 +46,11 @@ ConditionId一覧はシステムから取得していますが、内容の大半
 良い翻訳案があればStaticResource/Description.csvを編集して作者に送ってください。  
 X(旧Twitter):@KujoYuki_vr  
 Discord:kujoyuki
+
+## ゲーム側が更新されて新しいConditionが出た場合
+
+作者の正式対応を待ってね。  
+更新されると起動時にお知らせされます。  
+それまで暫定で追加したい場合は、ResorceフォルダのConditionDescriptions.csvを編集してね。
+ゲーム側のConditionListはインストール先の以下のパスにあります。任意のエディタで開いて確認できます。    
+> steamapps\common\Core Keeper\CoreKeeper_Data\StreamingAssets\Conf\ID\ConditionID.json

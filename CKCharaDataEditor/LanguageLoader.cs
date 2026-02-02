@@ -12,11 +12,10 @@ namespace CKCharaDataEditor
 		/// 動作確認用に単体でリソースを合成し、tsvファイルにします。
 		/// </summary>
 		/// <param name="args"></param>
-		static void OutputVisibleDictionary(string[] args)
+		public static void OutputVisibleDictionary()
 		{
-			var dic = CreateLanguageDictionary(YukisInstallPath);
+			var dic = CreateLanguageDictionary(YukisInstallPath, out var _);
 			List<string> outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
-
 			// 新規TSVファイルに出力
 			string outputPath = Path.Combine(Environment.CurrentDirectory, "LanguageResource.tsv");
 
@@ -29,18 +28,21 @@ namespace CKCharaDataEditor
 		/// 日本語のリソースを取得します。
 		/// </summary>
 		/// <param name="installPath"></param>
-		/// <returns>KeyはobjectId, Valueは[0]でobjectName, [1]で日本語表示名</returns>
+		/// <returns>KeyはobjectId, Valueは[0]でkeyName, [1]で日本語表示名</returns>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static IReadOnlyDictionary<int, (string key, string displayString)> CreateLanguageDictionary(string installPath)
+		public static IReadOnlyDictionary<int, (string key, string displayString)> CreateLanguageDictionary(string installPath,
+			out IReadOnlyDictionary<int, string> objectIdWithKeyDic)
 		{
 			string originObjectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");
 			string bundledObjectIdPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "ObjectID.json");
-			string originLocalizationPath = Path.Combine(installPath, @"localization\Localization.csv");
+			string originLocalizationPath = Path.Combine(installPath, @"localization\Localization Template.csv");
 			string bundledLocalizationPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "Localization Template.csv");
 			
 			string objectIdPath = File.Exists(originObjectIdPath) ? originObjectIdPath : bundledObjectIdPath;
 			string localizationPath = File.Exists(originLocalizationPath) ? originLocalizationPath : bundledLocalizationPath;
-			
+
+			objectIdWithKeyDic = CreateIdWithKey(objectIdPath);
+
 			if (!File.Exists(localizationPath) || !File.Exists(objectIdPath))
 			{
 				// リソースファイルが見つからない場合は、空の辞書を返す
@@ -57,7 +59,7 @@ namespace CKCharaDataEditor
 
 			List<string[]> languageResourceOrigin = File.ReadAllLines(localizationPath)
 				.Select(line => line.Split('\t'))
-				.ToList(); // ヘッダーをスキップ
+				.ToList();
 
 			string[] header = languageResourceOrigin.First();
 			ResourceColumnsCount = header.Length;
@@ -102,12 +104,23 @@ namespace CKCharaDataEditor
 			return outputDic;
 		}
 
-		/// <summary>
-		/// リソースファイル中の無意味な改行コードの混入を修正します。
-		/// </summary>
-		/// <param name="languageResources"></param>
-		/// <returns></returns>
-		private static List<string[]> FixLineFeed(List<string[]> languageResources)
+        private static Dictionary<int, string> CreateIdWithKey(string filePath)
+        {
+			return File.ReadAllText(filePath).Trim()
+				.Replace("{", string.Empty).Replace("}", string.Empty).Replace(":", ",").Replace("\"", string.Empty).Replace("\t", string.Empty)
+				.Split("\n")
+				.Where(line => !string.IsNullOrEmpty(line))
+				.Select(line => line.Split(","))
+				.Skip(1) // Noneをスキップ
+				.ToDictionary(line => int.Parse(line[1]), line => line[0]);
+		}
+
+        /// <summary>
+        /// リソースファイル中の無意味な改行コードの混入を修正します。
+        /// </summary>
+        /// <param name="languageResources"></param>
+        /// <returns></returns>
+        private static List<string[]> FixLineFeed(List<string[]> languageResources)
 		{
 			string lastKey = @"youAreInGuestMode";
 			for (int i = 0; i < languageResources.Count; i++)

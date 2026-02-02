@@ -4,7 +4,7 @@ namespace CKCharaDataEditor.Model.Items
 {
     public record Item : ItemInfo
     {
-        public virtual string objectName { get; set; }
+        public virtual string keyName { get; set; }
         public ItemAuxData Aux { get; set; }
         public bool Locked { get; set; }
 
@@ -45,10 +45,10 @@ namespace CKCharaDataEditor.Model.Items
             }
         }
 
-        public Item(int objectID, int amount, int variation, int variationUpdateCount, string objectName, ItemAuxData aux, bool locked = false)
+        public Item(int objectID, int amount, int variation, int variationUpdateCount, string keyName, ItemAuxData aux, bool locked = false)
             : base(objectID, amount, variation, variationUpdateCount)
         {
-            this.objectName = objectName;
+            this.keyName = keyName;
             Aux = aux;
             Locked = locked;
         }

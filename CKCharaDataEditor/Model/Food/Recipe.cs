@@ -6,7 +6,7 @@ namespace CKCharaDataEditor.Model.Food
     public record Recipe : DiscoveredObjects
     {
         private int _baseRecipeObjectID = default;
-        private string _baseObjectName = string.Empty;
+        private string _baseKeyName = string.Empty;
 
         public override int objectID
         {
@@ -28,7 +28,7 @@ namespace CKCharaDataEditor.Model.Food
             }
         }
 
-        public string objectName
+        public string keyName
         {
             get
             {
@@ -39,7 +39,7 @@ namespace CKCharaDataEditor.Model.Food
                     _ => string.Empty
                 };
                 string baseRecipeName = RecipeHelper.AllCookedBaseCategories
-                    .SingleOrDefault(r => r.Value._baseRecipeObjectID == _baseRecipeObjectID)!.Value._baseObjectName;
+                    .SingleOrDefault(r => r.Value._baseRecipeObjectID == _baseRecipeObjectID)!.Value._baseKeyName;
                 return $"{prefix}{baseRecipeName}";
             }
         }
@@ -114,16 +114,16 @@ namespace CKCharaDataEditor.Model.Food
         public Recipe(Item original) : base(original)
         {
             objectID = original.objectID;
-            _baseObjectName = original.objectName;
+            _baseKeyName = original.keyName;
             DefaultDisplayName = CreateDisplayName(objectID, Rarity);
         }
 
-        public Recipe(int objectID, string objectName, string defaultDisplayName)
+        public Recipe(int objectID, string keyName, string defaultDisplayName)
             : base(Default with { objectID = objectID })
         {
             _baseRecipeObjectID = objectID;
             DefaultDisplayName = defaultDisplayName;
-            _baseObjectName = objectName;
+            _baseKeyName = keyName;
             Rarity = CookRarity.Common; // デフォルトはCommonとする
         }
 
@@ -136,20 +136,20 @@ namespace CKCharaDataEditor.Model.Food
             PrimaryIngredient = RecipeHelper.GetPrimaryIngredient(ingredientA, ingredientB);
             SecondaryIngredient = RecipeHelper.GetSecondaryIngredient(ingredientA, ingredientB);
             Rarity = rarity;
-            // objectNameはsetterで設定されるのでここでは設定しない
+            // keyNameはsetterで設定されるのでここでは設定しない
         }
 
         public Recipe(DiscoveredObjects discoveredObjects) : base(discoveredObjects)
         {
             objectID = discoveredObjects.objectID;  // setteを通して_baseRecipeObjectIDとRarityを設定する
-            _baseObjectName = string.Empty;
+            _baseKeyName = string.Empty;
             DefaultDisplayName = CreateDisplayName(objectID, Rarity);
         }
 
         public Item ToItem(int amount)
         {
             // RecipeはItemを継承しないので、Itemに変換する
-            return new Item(objectID, amount, variation, 0, objectName, ItemAuxData.Default);
+            return new Item(objectID, amount, variation, 0, keyName, ItemAuxData.Default);
         }
 
         public DiscoveredObjects ToDiscoveredObjects()
@@ -172,7 +172,7 @@ namespace CKCharaDataEditor.Model.Food
         {
             if (x is null || y is null) return false;
             return x.objectID == y.objectID
-                && x.objectName == y.objectName
+                && x.keyName == y.keyName
                 && x.variation == y.variation
                 && x.Rarity == y.Rarity;
         }
@@ -180,7 +180,7 @@ namespace CKCharaDataEditor.Model.Food
         {
             HashCode hash = new();
             hash.Add(obj.objectID);
-            hash.Add(obj.objectName);
+            hash.Add(obj.keyName);
             hash.Add(obj.variation);
             hash.Add(obj.Rarity);
 

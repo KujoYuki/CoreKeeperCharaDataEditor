@@ -9,13 +9,17 @@ namespace CKCharaDataEditor.Control
 {
     public partial class PetEditControl : UserControl
     {
-        private FileManager _fileManager = FileManager.Instance;
+        private FileManager _fileManager = null!;
         private const int TalentSlotCount = 9;
 
         public PetEditControl()
         {
             InitializeComponent();
-            LoadPetKind();
+            if (!DesignMode)
+            {
+                _fileManager = FileManager.Instance;
+                LoadPetKind();
+            }
         }
 
         private PetBattleType _battleType = PetBattleType.Undefined;
@@ -164,11 +168,11 @@ namespace CKCharaDataEditor.Control
             int auxIndex = _pet.Aux.index;
             int objectID = (int)allPetTypes[petKindComboBox.SelectedIndex];
             int petExp = (int)petExpNumeric.Value;
-            string objectName = Enum.GetNames<PetType>()[petKindComboBox.SelectedIndex];
+            string keyName = Enum.GetNames<PetType>()[petKindComboBox.SelectedIndex];
             var petTalents = GeneratePetTalentLists();
             ItemAuxData auxData = new(auxIndex, AuxPrefabManager.CreatePet(petNameTextBox.Text, petColorComboBox.SelectedIndex, petTalents));
 
-            return new(new Item(objectID, petExp, 0, 0, objectName, auxData));
+            return new(new Item(objectID, petExp, 0, 0, keyName, auxData));
         }
 
         private void petNameTextBox_TextChanged(object sender, EventArgs e)

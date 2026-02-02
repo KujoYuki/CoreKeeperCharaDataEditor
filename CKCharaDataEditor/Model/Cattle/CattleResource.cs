@@ -4,7 +4,7 @@ namespace CKCharaDataEditor.Model.Cattle
 {
     public class CattleResource
     {
-        public static readonly Dictionary<int, (CattleType CattleType, string ObjectName, bool IsAdult)> Define = new()
+        public static readonly Dictionary<int, (CattleType CattleType, string KeyName, bool IsAdult)> Define = new()
         {
             { (int)CattleType.Cow, (CattleType.Cow, CattleType.Cow.ToString(), true) },
             { (int)CattleType.CowBaby, (CattleType.CowBaby, CattleType.CowBaby.ToString(), false) },

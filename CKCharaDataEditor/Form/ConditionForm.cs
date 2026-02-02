@@ -8,7 +8,7 @@ namespace CKCharaDataEditor
     public partial class ConditionForm : Form
     {
         readonly SaveDataManager _saveDataManager = SaveDataManager.Instance;
-        static readonly List<(int ID, string Description)> ConditionDescriptions = LoadConditionDescriptions();
+        static List<(int ID, string Description)> ConditionDescriptions = LoadConditionDescriptions();
         private List<Condition> Conditions = [];
         public static List<int> IncreaseHealthMax = [16, 199, 200, 201, 212, 218, 242, 284, 300, 301];
 
@@ -25,8 +25,30 @@ namespace CKCharaDataEditor
                 size.Height = Settings.Default.ConditonFormSizeHeight;
                 this.Size = size;
             }
+            InitConditons();
+        }
+
+        private void InitConditons()
+        {
             Conditions = new(_saveDataManager.GetConditions().OrderBy(c => c.Id));
-            ((DataGridViewComboBoxColumn)dataGridView.Columns["Description"]!).Items
+            int maxConditionId = Conditions.Max(c => c.Id);
+            if (maxConditionId >= ConditionDescriptions.Last().ID)
+            {
+                MessageBox.Show($"v{AboutBox.GameVersion}に無いConditionIdを読み込んでいます\n" +
+                    "本ツールのバージョンが更新されたら再ダウンロードしてください",
+                    "ゲームが更新されています", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+				// todo CondtionDescription.csvに無いIDを追加する処理
+                string descriptionPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "ConditionDescription.csv")
+                    ?? throw new FileNotFoundException("ConditionDescription.csvが見つかりません。");
+                List<string> appendConditons = Enumerable.Range(ConditionDescriptions.Last().ID + 1, maxConditionId - ConditionDescriptions.Last().ID)
+                    .Select(id => $"{id},Unknown,new condition. Read GitHub.")
+                    .ToList();
+
+				File.AppendAllLines(descriptionPath,appendConditons);
+				ConditionDescriptions = LoadConditionDescriptions();
+			}
+			((DataGridViewComboBoxColumn)dataGridView.Columns["Description"]!).Items
                 .AddRange(ConditionDescriptions.Select(c => c.Description).ToArray());
             LoadConditionsToGrid();
         }
@@ -37,7 +59,8 @@ namespace CKCharaDataEditor
                 ?? throw new FileNotFoundException("ConditionDescription.csvが見つかりません。");
 
             var dic = File.ReadLines(conditionDescriptionFilePath)
-                .Select(line =>
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+				.Select(line =>
                 {
                     var sprit = line.Split(',');
                     return (int.Parse(sprit[0]), $"[{int.Parse(sprit[0])},{sprit[1]}] : {sprit[2]}");
@@ -49,7 +72,7 @@ namespace CKCharaDataEditor
         private void LoadConditionsToGrid()
         {
             dataGridView.Rows.Clear();
-            foreach (var condition in Conditions)
+			foreach (var condition in Conditions)
             {
                 bool infinityDuration = double.IsInfinity(condition.Duration);
                 dataGridView.Rows.Add(condition.Id,
@@ -57,7 +80,7 @@ namespace CKCharaDataEditor
                                       infinityDuration,
                                       infinityDuration ? "--" : condition.Duration,
                                       condition.Timer,
-                                      ConditionDescriptions.Single(d => d.ID == condition.Id).Description);
+                                      ConditionDescriptions.SingleOrDefault(d => d.ID == condition.Id).Description);
             }
         }
 

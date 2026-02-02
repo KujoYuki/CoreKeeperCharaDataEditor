@@ -102,16 +102,16 @@ namespace CKCharaDataEditor
                     var limitedItems = inventoryBase
                     .Zip(inventoryName, inventoryAuxData)
                     .Zip(inventoryLocked)
-                    .Select(x => (item: x.First.First!, objectName: x.First.Second!, auxData: x.First.Third!, locked: x.Second!));
+                    .Select(x => (item: x.First.First!, keyName: x.First.Second!, auxData: x.First.Third!, locked: x.Second!));
 
                     items = [];
-                    foreach (var (item, objectName, auxData, locked) in limitedItems)
+                    foreach (var (item, keyName, auxData, locked) in limitedItems)
                     {
                         int objectID = item["objectID"]!.GetValue<int>();
                         int amount = item["amount"]!.GetValue<int>();
                         int variation = item["variation"]!.GetValue<int>();
                         int variationUpdateCount = item["variationUpdateCount"]!.GetValue<int>();
-                        string objectInternalName = objectName!.GetValue<string>()!;
+                        string objectInternalName = keyName!.GetValue<string>()!;
                         var itemAux = new ItemAuxData(auxData["index"]!.GetValue<int>(), auxData["data"]!.GetValue<string>());
                         bool objectLocked = locked!.GetValue<bool>()!;
                         items.Add(new(objectID, amount, variation, variationUpdateCount, objectInternalName, itemAux, objectLocked));
@@ -143,7 +143,7 @@ namespace CKCharaDataEditor
             try
             {
                 _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
-                _saveData["inventoryObjectNames"]![insertIndex] = item.objectName;
+                _saveData["inventoryObjectNames"]![insertIndex] = item.keyName;
                 _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(item.Aux, StaticResource.SerializerOption));
                 if (CharaDataFormatVersion >= 11)
                 {
@@ -168,7 +168,7 @@ namespace CKCharaDataEditor
         public void RewriteAllItemData()
         {
             _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i), StaticResource.SerializerOption));
-            _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.objectName), StaticResource.SerializerOption));
+            _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.keyName), StaticResource.SerializerOption));
             _saveData["inventoryAuxData"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Aux), StaticResource.SerializerOption));
             BreakLastConnectedServerId();
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);

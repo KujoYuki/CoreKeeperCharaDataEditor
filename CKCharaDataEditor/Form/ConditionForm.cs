@@ -10,7 +10,7 @@ namespace CKCharaDataEditor
         readonly SaveDataManager _saveDataManager = SaveDataManager.Instance;
         static List<(int ID, string Description)> ConditionDescriptions = LoadConditionDescriptions();
         private List<Condition> Conditions = [];
-        public static List<int> IncreaseHealthMax = [16, 199, 200, 201, 212, 218, 242, 284, 300, 301];
+        public static List<int> IncreaseHealthMax = [16, 199, 200, 201, 212, 218, 242, 284, 300, 301,356];
 
         public ConditionForm()
         {
@@ -32,7 +32,7 @@ namespace CKCharaDataEditor
         {
             Conditions = new(_saveDataManager.GetConditions().OrderBy(c => c.Id));
             int maxConditionId = Conditions.Max(c => c.Id);
-            if (maxConditionId >= ConditionDescriptions.Last().ID)
+            if (maxConditionId > ConditionDescriptions.Last().ID)
             {
                 MessageBox.Show($"v{AboutBox.GameVersion}に無いConditionIdを読み込んでいます\n" +
                     "本ツールのバージョンが更新されたら再ダウンロードしてください",

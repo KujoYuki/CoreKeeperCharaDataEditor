@@ -961,7 +961,7 @@ namespace CKCharaDataEditor
 
         private void exportTrancelateButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("翻訳辞書を出力します。");
+            MessageBox.Show("アイテム名の対応ファイルと翻訳差分を出力します。");
             LanguageLoader.OutputVisibleDictionary();
         }
 

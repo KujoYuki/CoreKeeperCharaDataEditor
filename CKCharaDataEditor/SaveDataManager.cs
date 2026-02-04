@@ -364,9 +364,9 @@ namespace CKCharaDataEditor
         public void TsetseWell()
         {
             var conditions = GetConditions();
-            if (!conditions.Any(c => c.Id == 210))
+            if (conditions.Any(c => c.Id == 16))
             {
-                conditions.Add(new(210, 2, double.PositiveInfinity, -1));
+                conditions.RemoveAt(conditions.FindIndex(c => c.Id == 16));
             }
             _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
             _saveData["characterType"] = 1;
@@ -427,6 +427,12 @@ namespace CKCharaDataEditor
             var byteNameList = new List<byte>();
             var byteName = _saveData["characterCustomization"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
             var additionalName = _saveData["characterCustomization"]!["name"]!["bytes"]!.AsObject();
+            int version = GetCharacterDataVersion();
+            if (version >= 14)
+            {
+                byteName = _saveData["characterCustomizationNew"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
+                additionalName = _saveData["characterCustomizationNew"]!["name"]!["bytes"]!.AsObject();
+            }
 
             foreach (var byteEntry in byteName.Concat(additionalName))
             {
@@ -536,7 +542,7 @@ namespace CKCharaDataEditor
                     );
             foreach (var item in items)
             {
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 21; i++)
                 {
                     Item newItem = item with
                     {

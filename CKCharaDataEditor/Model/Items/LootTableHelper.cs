@@ -60,6 +60,8 @@ namespace CKCharaDataEditor.Model.Items
             { Biome.Lava, ConvertColor("554e6a") },
             { Biome.Crystal, ConvertColor("3988db") },
             { Biome.Passage, ConvertColor("c0bacf") },
+            { Biome.BreakersReach, ConvertColor("2C4F3B") },
+            { Biome.Void, ConvertColor("6B4866") },
         });
 
         public static Brush ConvertColor(string colorCode)
@@ -97,12 +99,13 @@ namespace CKCharaDataEditor.Model.Items
             { "LargeAncientDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "WoodenDestructible" ,(Biome.Dirt, TableAction.Destructible) },
             { "LargeWoodenDestructible" ,(Biome.Dirt, TableAction.Destructible) },
-            { "ClayPot" ,(Biome.Clay, TableAction.Enemy) },
-            { "DiggingSpot" ,(Biome.Dirt, TableAction.Enemy) },
-            { "DiggingSpotNature" ,(Biome.Nature, TableAction.Enemy) },
-            { "DiggingSpotSea" ,(Biome.Sea, TableAction.Enemy) },
-            { "DiggingSpotDesert" ,(Biome.Desert, TableAction.Enemy) },
-            { "DiggingSpotLava" ,(Biome.Lava, TableAction.Enemy) },
+            { "ClayPot" ,(Biome.Clay, TableAction.Destructible) },
+            { "DiggingSpot" ,(Biome.Dirt, TableAction.None) },
+            { "DiggingSpotNature" ,(Biome.Nature, TableAction.None) },
+            { "DiggingSpotSea" ,(Biome.Sea, TableAction.None) },
+            { "DiggingSpotDesert" ,(Biome.Desert, TableAction.None) },
+            { "DiggingSpotLava" ,(Biome.Lava, TableAction.None) },
+            { "DiggingSpotExcavation", (Biome.BreakersReach, TableAction.None) },
             { "Caveling" ,(Biome.Stone, TableAction.Enemy) },
             { "CavelingBrute" ,(Biome.Stone, TableAction.Enemy) },
             { "CavelingGardener" ,(Biome.Nature, TableAction.Enemy) },
@@ -236,6 +239,24 @@ namespace CKCharaDataEditor.Model.Items
             { "AbioticFactorDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "AbioticFactorLargeDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "AbioticFactorElectroPest" ,(Biome.Stone, TableAction.Enemy) },
+            { "ExcavationDestructible", (Biome.BreakersReach, TableAction.Destructible) },
+            { "LargeExcavationDestructible", (Biome.BreakersReach, TableAction.Destructible) },
+            { "ReluciteChest", (Biome.BreakersReach, TableAction.Chest) },
+            { "RobotMiner", (Biome.BreakersReach, TableAction.Enemy) },
+            { "RobotPatroller", (Biome.BreakersReach, TableAction.Enemy) },
+            { "RobotSwarmer", (Biome.BreakersReach, TableAction.Enemy) },
+            { "VoidCavelingMiner", (Biome.Void, TableAction.Enemy) },
+            { "RobotBoss", (Biome.BreakersReach, TableAction.Boss)},
+            { "HydraBossVoid", (Biome.Void, TableAction.Boss)},
+            { "VoidLarva", (Biome.Void, TableAction.Enemy)},
+            { "VoidLarvaCocoon", (Biome.Void, TableAction.Enemy)},
+            { "VoidCavelingShaman", (Biome.Void, TableAction.Enemy)},
+            { "VoidCavelingBrute", (Biome.Void, TableAction.Enemy)},
+            { "FallExcavationRockDestructible", (Biome.BreakersReach, TableAction.Destructible) },
+            { "BrokenRobotDestructibleSmall", (Biome.BreakersReach, TableAction.Destructible) },
+            { "BrokenRobotDestructibleBig", (Biome.BreakersReach, TableAction.Destructible) },
+
+
         };
 
         /// <summary>
@@ -254,13 +275,14 @@ namespace CKCharaDataEditor.Model.Items
             {"LarvaHiveDestructible", "巣のできもの" },
             {"HiveBoss", "ハイブマザー" },
             {"LargeSlimeDestructible", "大きなスライムの器" },
-            {"FallRockDestructible", "落石" },
+            {"FallRockDestructible", "落石(忘却の遺跡)" },
             {"LargeWoodenDestructible", "大きな木の箱" }, // 正式には「木の箱」
             {"DiggingSpot", "発掘ポイント(土、粘土)" },
             {"DiggingSpotNature", "発掘ポイント(森)" },
             {"DiggingSpotSea", "発掘ポイント(海)" },
             {"DiggingSpotDesert", "発掘ポイント(砂漠)" },
             {"DiggingSpotLava", "発掘ポイント(溶岩)" },
+            {"DiggingSpotExcavation", "発掘ポイント(突破者の到達点)" },
             {"ShamanBoss", "頽廃のマルガズ" },
             {"BirdBoss", "天空の巨鳥アゼオス" },
             {"DirtWall", "土の壁" },
@@ -340,6 +362,14 @@ namespace CKCharaDataEditor.Model.Items
             {"AbioticFactorDestructible", "オフィスの箱" },
             {"AbioticFactorLargeDestructible", "大きなオフィスの箱" },
             {"AbioticFactorElectroPest", "電子ペスト" },
+            {"ExcavationDestructible", "金属の工業箱" },
+            {"LargeExcavationDestructible", "補強された工業箱" },
+            {"VoidCavelingMiner", "空虚のケイヴリング" },
+            {"RobotBoss", "S.A.H.A.B.A.R." },
+            {"HydraBossVoid", "空虚の支配者オブリドラ" },
+            {"FallExcavationRockDestructible", "落石(突破者の到達点)" },
+            {"BrokenRobotDestructibleSmall", "壊れたジオボット・小" },
+            {"BrokenRobotDestructibleBig", "壊れたジオボット・大" },
         });
     }
 
@@ -360,6 +390,8 @@ namespace CKCharaDataEditor.Model.Items
         Lava,
         Crystal,
         Passage,
+        BreakersReach,
+        Void,
     }
     public enum TableAction
     {

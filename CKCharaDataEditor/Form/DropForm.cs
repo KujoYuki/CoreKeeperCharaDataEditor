@@ -122,7 +122,7 @@ namespace CKCharaDataEditor
                     }
                     break;
                 case { Name: "Weight" }:
-                    e.Value = ((double)e.Value!).ToString("F3");
+                    e.Value = ((double)e.Value!).ToString("F4");
                     break;
                 case { Name: "RollPerDop" }:
                 case { Name: "GuaranteedRoll" }:
@@ -324,57 +324,9 @@ namespace CKCharaDataEditor
             }
             else
             {
-                switch (otherLootInfo.Biome)
-                {
-                    case Biome.Dirt:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Dirt], e.Bounds);
-                        break;
-                    case Biome.Clay:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Clay], e.Bounds);
-                        break;
-                    case Biome.Larva:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Larva], e.Bounds);
-                        break;
-                    case Biome.Stone:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Stone], e.Bounds);
-                        break;
-                    case Biome.Nature:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Nature], e.Bounds);
-                        break;
-                    case Biome.Mold:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Mold], e.Bounds);
-                        break;
-                    case Biome.Sea:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Sea], e.Bounds);
-                        break;
-                    case Biome.City:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.City], e.Bounds);
-                        break;
-                    case Biome.Desert:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Desert], e.Bounds);
-                        break;
-                    case Biome.Temple:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Temple], e.Bounds);
-                        break;
-                    case Biome.Oasis:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Oasis], e.Bounds);
-                        break;
-                    case Biome.Lava:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Lava], e.Bounds);
-                        break;
-                    case Biome.Crystal:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Crystal], e.Bounds);
-                        break;
-                    case Biome.Passage:
-                        e.Graphics.FillRectangle(LootTableHelper.BiomeColor[Biome.Passage], e.Bounds);
-                        break;
-                    // 通常のアイテムの背景色を変更
-                    case Biome.None:
-                    default:
-                        e.Graphics.FillRectangle(SystemBrushes.Window, e.Bounds);
-                        e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
-                        break;
-                }
+                Biome biome = otherLootInfo.Biome;
+                Brush brush = LootTableHelper.BiomeColor.TryGetValue(biome, out var biomeColor) ? biomeColor : SystemBrushes.Window;
+                e.Graphics.FillRectangle(brush, e.Bounds);
                 e.Graphics.DrawString(itemText, e.Font!, SystemBrushes.ControlText, e.Bounds);
             }
             e.DrawFocusRectangle();

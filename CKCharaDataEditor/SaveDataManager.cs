@@ -364,9 +364,9 @@ namespace CKCharaDataEditor
         public void TsetseWell()
         {
             var conditions = GetConditions();
-            if (!conditions.Any(c => c.Id == 210))
+            if (conditions.Any(c => c.Id == 16))
             {
-                conditions.Add(new(210, 2, double.PositiveInfinity, -1));
+                conditions.RemoveAt(conditions.FindIndex(c => c.Id == 16));
             }
             _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
             _saveData["characterType"] = 1;

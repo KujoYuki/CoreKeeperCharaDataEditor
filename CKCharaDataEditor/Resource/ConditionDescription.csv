@@ -262,9 +262,9 @@
 261,IncreasedMagicDamagePercentage,魔法ダメージ x%
 262,ManaBarrier,x%の被ダメージをマナプールで吸収
 263,MagicBarrier,被ダメージの最大xを吸収する。魔法バリアはしばらくダメージを受けなければ再生する。
-264,GainManaPercentageOnCrit,クリティカルヒットで回復するマナ x%
+264,GainManaOnCrit,クリティカルヒットで回復するマナ x
 265,GainManaOnHeal,N/A
-266,WellFedManaRegenerationPercentage,満腹時のマナ回復量 x%
+266,WellFedManaRegeneration,満腹時のマナ回復量 x
 267,GainManaPercentageOnDamageTaken,被ダメージ時に回復するマナ x%
 268,GainMagicDamagePercentageBoostAfterCrit,クリティカルヒットで魔法ダメージが短時間 x%
 269,ReducedManaRegenDelayPercentage,マナ回復速度の減少 x%
@@ -311,7 +311,7 @@
 310,GainManaFromExplosion,爆発物が起爆した時xマナを獲得する
 311,ChanceToSpawnMinionOnExplosion,N/A
 312,ExplosionIncreaseMeleeDamage,爆発物の起爆後に短時間近接ダメージ増加 x%
-313,ChanceToSpawnNapalmOnExplosion,爆発物からナパームが生成される確率 x%
+313,ChanceToSpawnNapalmFromExplosives,爆発物からナパームが生成される確率 x%
 314,IncreasedBurningDamagePercentage,燃焼ダメージ x%
 315,IncreasedMagicDamagePercentageWhileAdjacentToWater,水に隣接中、魔法ダメージ x%
 316,IncreasedMagicDamagePercentageFromAdjacentWater,水と隣接することによる魔法ダメージ x%
@@ -320,9 +320,38 @@
 319,Superman,N/A
 320,BiliBiliDodgeChance,x% dodge chance
 321,GreenGlow,緑色の光度 x
-322,Unused1(ApplyIncreasedDamageFromMinions),N/A
-323,Unused2(TakeIncreasedDamageFromMinions),N/A
+322,SleepingFromStandingStill,N/A
+323,BuffsFromQualitySleep,2秒間の睡眠後、体力回復とマナ回復の効果がx増加する
 324,LifeOnMinionHit,ミニオンのヒットでライフ x
 325,LifeOnPetHit,ペットのヒットでライフ x
 326,IncreasedMinionCritDamagePercentage,ミニオンのクリティカルヒットダメージ x%
 327,IncreasedMinionBossDamagePercentage,ボスへのミニオンの与ダメージ x%
+328,ChannelVoidBreach,空虚の突破口を生み出す
+329,AffixElectricOrb,N/A
+330,AffixArcaneBeam,N/A
+331,AffixFireBomb,N/A
+332,AffixUnused3,N/A
+333,AffixUnused4,N/A
+334,AffixUnused5,N/A
+335,ExtraHealFromSleepPercentage,You heal from sleep x% faster.
+336,DrenchedInOil,燃焼が炎の爆破を引き起こす
+337,ImmuneToOil,石油に耐性
+338,ApplyDrenchedInOil,ヒット時に石油を付与して、ターゲットが受ける燃焼ダメージ増加 x%
+339,AmassThenReciprocateDamage,被ダメージの300%をxまで蓄積し、2秒後に爆発して、周囲の敵全員に蓄積されたダメージを与える
+340,IncreaseSequenceExplosionTotalMaxExplosionsOnHit,1ヒットごとに二次機能に追加の爆破を付与
+341,SequenceExplosionTotalMaxExplosions,N/A
+342,ReadyToAmassThenReciprocateDamage,被ダメージの300%をxまで蓄積し、2秒後に爆発して、周囲の敵全員に蓄積されたダメージを与える
+343,ClosedEyes,あなたの瞳は閉じたままになる
+344,ApplyBurningIfBurning,自分が燃焼中、ヒット時に燃焼ダメージ x
+345,DamageIncreaseIfBurning,自分が燃焼中、ダメージ増加 x%
+346,ExplosivesApplyOilOnGround,爆破が地面に石油を付与する
+347,GainSleepFromStandingStill,3秒間の直立不動時でキャンセル可能な睡眠に突入
+348,ManaOnHit,近接ヒットでマナ x
+349,ManaAdditionPercentage,マナ x%
+350,IncreaseManaCostAndMagicDamagePercentagePerSecond,ビーム攻撃1回につき、マナ使用量と魔法ダメージ増加 x%。最大400%まで
+351,IncreaseManaCostAndMagicDamagePercentage,「巨獣の息吹」攻撃1回につき、マナ使用量と魔法ダメージ増加 x%
+352,ChanceToSpawnFireOnAttack,攻撃から地面に炎を生成される確率 x%
+353,ApplyBurningFromBurning,N/A
+354,DamageIncreaseFromBurning,N/A
+355,VoidGlow,紫色の光度 {0}
+356,VoidHydraHeartBuff,x max health

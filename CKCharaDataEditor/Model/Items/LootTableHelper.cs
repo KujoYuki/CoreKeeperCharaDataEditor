@@ -60,6 +60,8 @@ namespace CKCharaDataEditor.Model.Items
             { Biome.Lava, ConvertColor("554e6a") },
             { Biome.Crystal, ConvertColor("3988db") },
             { Biome.Passage, ConvertColor("c0bacf") },
+            { Biome.BreakersReach, ConvertColor("7B68EE") },    //hack 色は仮
+            { Biome.Void, ConvertColor("C71585") },
         });
 
         public static Brush ConvertColor(string colorCode)
@@ -236,6 +238,10 @@ namespace CKCharaDataEditor.Model.Items
             { "AbioticFactorDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "AbioticFactorLargeDestructible" ,(Biome.Stone, TableAction.Destructible) },
             { "AbioticFactorElectroPest" ,(Biome.Stone, TableAction.Enemy) },
+
+            //wip 追加途中
+            { "RobotBoss", (Biome.BreakersReach, TableAction.Boss)},
+            { "HydraBossVoid", (Biome.Void, TableAction.Boss)},
         };
 
         /// <summary>
@@ -340,6 +346,10 @@ namespace CKCharaDataEditor.Model.Items
             {"AbioticFactorDestructible", "オフィスの箱" },
             {"AbioticFactorLargeDestructible", "大きなオフィスの箱" },
             {"AbioticFactorElectroPest", "電子ペスト" },
+
+            // wip 追加途中
+            {"RobotBoss", "S.A.H.A.B.A.R." },
+            {"HydraBossVoid", "空虚の支配者オブリドラ" },
         });
     }
 
@@ -360,6 +370,8 @@ namespace CKCharaDataEditor.Model.Items
         Lava,
         Crystal,
         Passage,
+        BreakersReach,
+        Void,
     }
     public enum TableAction
     {

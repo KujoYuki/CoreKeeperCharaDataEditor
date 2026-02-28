@@ -32,7 +32,7 @@ namespace CKCharaDataEditor
         {
             Conditions = new(_saveDataManager.GetConditions().OrderBy(c => c.Id));
             int maxConditionId = Conditions.Max(c => c.Id);
-            if (maxConditionId >= ConditionDescriptions.Last().ID)
+            if (maxConditionId > ConditionDescriptions.Last().ID)
             {
                 MessageBox.Show($"v{AboutBox.GameVersion}に無いConditionIdを読み込んでいます\n" +
                     "本ツールのバージョンが更新されたら再ダウンロードしてください",

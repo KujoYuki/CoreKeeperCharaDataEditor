@@ -1,3 +1,4 @@
+using CKCharaDataEditor.Control;
 using CKCharaDataEditor.Model;
 using CKCharaDataEditor.Model.Cattle;
 using CKCharaDataEditor.Model.Food;
@@ -7,17 +8,20 @@ using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Properties;
 using CKCharaDataEditor.Resource;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 
 // todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
 // todo ペット、家畜の色コントロールを当該の色にする
 
 namespace CKCharaDataEditor
 {
+    [SupportedOSPlatform("windows")]
     public partial class Form1 : Form
     {
         private FileManager _fileManager = FileManager.Instance;
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
         private List<Ingredient> _ingredientCategories = [];
+        private DropForm? _dropForm = null;
         public Form1()
         {
             InitializeComponent();
@@ -32,8 +36,8 @@ namespace CKCharaDataEditor
                 auxDataTextBox.ReadOnly = false;
                 toMinusOneButton.Visible = true;
                 dupeEquipmentEachLv.Visible = true;
-                lastConnectedWorldLabel.Visible = true;
-                exportTrancelateButton.Visible = true;
+                lastActivatedSessionWorld.Visible = true;
+                inventoryDupeButton.Visible = true;
             }
         }
 
@@ -44,12 +48,29 @@ namespace CKCharaDataEditor
             InitCookedCategory();
             rarityComboBox.SelectedIndex = 0;
             InitCattleCategory();
-
+            InitPetEditControl();
             if (_fileManager.CharacterFilePaths.Count > 0)
             {
                 string firstSaveDataPath = _fileManager.CharacterFilePaths.First().FullName;
                 LoadSlots(firstSaveDataPath);
             }
+        }
+
+        /// <summary>
+        /// VS2026以降でデザイナーから弾かれたPetEditControlをコード上で初期化して配置する。
+        /// </summary>
+        private void InitPetEditControl()
+        {
+            petEditControl = new PetEditControl();
+            petTab.SuspendLayout();
+            petTab.Controls.Add(petEditControl);
+            petEditControl.Dock = DockStyle.Fill;
+            petEditControl.Location = new Point(3, 3);
+            petEditControl.Margin = new Padding(4, 5, 4, 5);
+            petEditControl.Name = "petEditControl";
+            petEditControl.Size = new Size(636, 270);
+            petEditControl.TabIndex = 0;
+            petTab.ResumeLayout(false);
         }
 
         private void CheckUpdate()
@@ -197,10 +218,11 @@ namespace CKCharaDataEditor
             if (_fileManager.CharacterFilePaths.Count is 0) return;
             _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
-            // 開発者向けの最終接続ワールドIDチェック
-            if (Program.IsDeveloper && _saveDataManager.GetCharacterDataVersion() >= 12)
+            // 最終接続ワールドがセッション中断の場合のIDチェック
+            // v1.2.0.7以降、中断時のみGUID保存、正常終了の場合は0になるように変更されたため、コメントアウトで様子見。
+            if (Program.IsDeveloper)
             {
-                lastConnectedWorldLabel.Text = _saveDataManager.GetLastConnnectedServerId().ToString();
+                lastActivatedSessionWorld.Text = _saveDataManager.GetLastActiveSessionId().ToString();
             }
 
             // リロード時のindex保持
@@ -343,7 +365,7 @@ namespace CKCharaDataEditor
 
         private void objectIdsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://core-keeper.fandom.com/wiki/Object_IDs") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(@"https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/Document/アイテムID一覧表.tsv") { UseShellExecute = true });
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -431,6 +453,7 @@ namespace CKCharaDataEditor
 
                 case "advancedTab":
                     item = GenerateAdvancedItem();
+                    item.DisplayName = DisplayNameTextBox.Text;
                     result = _saveDataManager.WriteItemData(index, item);
                     break;
 
@@ -451,10 +474,7 @@ namespace CKCharaDataEditor
                     break;
 
                 case "otherTab":
-                    string overrideName = DisplayNameTextBox.Text;
-                    item.DisplayName = overrideName;
-                    result = _saveDataManager.WriteItemData(index, item);
-                    break;
+                    return; // その他タブは選択中のアイテムに関する処理をしないため、ここでは何もしない。
                 default:
                     throw new InvalidOperationException();
             }
@@ -841,11 +861,11 @@ namespace CKCharaDataEditor
             }
         }
 
-        private void lastConnectedWorldLabel_Click(object sender, EventArgs e)
+        private void lastActivatedSessionWorldLabel_Click(object sender, EventArgs e)
         {
             // 最終接続ワールドIDをコピー
-            Clipboard.SetText(lastConnectedWorldLabel.Text);
-            EnableResultMessage("最終接続ワールドIDをコピーしました。");
+            Clipboard.SetText(lastActivatedSessionWorld.Text);
+            EnableResultMessage("最終接続かつセッション中断された場合のIDをコピーしました。");
         }
 
         private void worldEditButton_Click(object sender, EventArgs e)
@@ -880,8 +900,16 @@ namespace CKCharaDataEditor
             // パス設定が間違えてる場合は警告を出す
             if (_fileManager.CanOpenLootFiles())
             {
-                using var dropForm = new DropForm();
-                _ = dropForm.ShowDialog();
+                // 既に表示中の場合はアクティブにする
+                if (_dropForm != null && !_dropForm.IsDisposed)
+                {
+                    _dropForm.Activate();
+                    return;
+                }
+
+                _dropForm = new DropForm();
+                _dropForm.FormClosed += (s, args) => _dropForm = null;
+                _dropForm.Show();
             }
             else
             {
@@ -961,13 +989,26 @@ namespace CKCharaDataEditor
 
         private void exportTrancelateButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("アイテム名の対応ファイルと翻訳差分を出力します。");
-            LanguageLoader.OutputVisibleDictionary();
+            var dialogResult = MessageBox.Show("アイテム名の対応ファイルと翻訳差分を出力します。", "翻訳リソース抽出", MessageBoxButtons.OKCancel);
+            if (dialogResult != DialogResult.OK) return;
+
+            string installPath = _fileManager.InstallFolder;
+            if (!Directory.Exists(installPath))
+            {
+                MessageBox.Show("インストールパスが存在しません。設定から正しいパスを指定してください。", "エラー");
+                return;
+            }
+            dialogResult = folderBrowserDialog.ShowDialog();
+            if (dialogResult is not DialogResult.OK) return;
+
+            string outputFolderPath = folderBrowserDialog.SelectedPath;
+            LanguageLoader.OutputVisibleDictionary(_fileManager.InstallFolder, outputFolderPath);
+            MessageBox.Show("翻訳リソースの出力が完了しました。", "完了");
         }
 
         private void objectIdNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            // undone objectIDに対応するKeyの自動取得
+            // objectIDに対応するKeyの自動取得
             if (_fileManager.ObjectIdWithKey.TryGetValue((int)objectIdNumericUpDown.Value, out string? objectKey))
             {
                 keyNameTextBox.Text = objectKey;
@@ -976,6 +1017,63 @@ namespace CKCharaDataEditor
             {
                 keyNameTextBox.Text = string.Empty;
             }
+        }
+
+        private void IdOrKeyTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // objectIDとkeyNameの双方向自動変換
+            int objectId;
+            string key;
+
+            if (int.TryParse(IdOrKeyTextBox.Text, out objectId))
+            {
+                key = _fileManager.ObjectIdWithKey.TryGetValue(objectId, out string? objectKey) ? objectKey : string.Empty;
+            }
+            else
+            {
+                key = IdOrKeyTextBox.Text;
+                bool isExist = _fileManager.ObjectIdWithKeyReverse.TryGetValue(key, out objectId);
+
+                // 存在しないkeyが入力された場合はobjectIDを空にする
+                if (!isExist)
+                {
+                    itemNameJpTextBox.Text = string.Empty;
+                    itemNameEnTextBox.Text = string.Empty;
+                    itemDescJpTextBox.Text = string.Empty;
+                    itemDescEnTextBox.Text = string.Empty;
+                    return;
+                }
+
+            }
+
+            //_fileManager.LocalizationData
+
+            //hack 翻訳リソースから取得するにはLanguageLoaderの処理の一部をFileManagerに移す必要があるため、現状はObjectID.jsonからkeyとIDの対応を取得している。
+            //翻訳リソースから取得できるようになったらそちらに切り替える。
+        }
+
+        /// <summary>
+        /// 複数ワールドに倉庫を移転するため作業補助。私用。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InventoryDupeButton_Click(object sender, EventArgs e)
+        {
+            var dialogResult = MessageBox.Show("インベントリのアイテムを複製して全てのスロットに8000個ずつ配置します。\n続行しますか？\n\n" +
+                "※既に存在するアイテムは上書きされます。", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (dialogResult is not DialogResult.OK) return;
+
+            // 0のセーブデータの有効なアイテムをを全て8000個にする
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[0].FullName;
+            _saveDataManager.DupeInventory();
+
+            // 0のセーブデータのインベントリを全て1,2にコピーしてアイテム個数を8000個にする
+            _saveDataManager.CopyInventory();
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[1].FullName;
+            _saveDataManager.PasteInventory();
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[2].FullName;
+            _saveDataManager.PasteInventory();
+            LoadPanel();
         }
     }
 }

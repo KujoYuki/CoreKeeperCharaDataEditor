@@ -78,8 +78,7 @@ namespace CKCharaDataEditor.Model.ItemAux
                 .Any();
             if (exist == false)
             {
-                throw new KeyNotFoundException($"対象のハッシュが存在しません。\n" +
-                    $"prefabHash:{prefabHash}\nstableTypeHash:{stableTypeHash}");
+                return;
             }
 
             // stableTypeHashに対応するデータを削除

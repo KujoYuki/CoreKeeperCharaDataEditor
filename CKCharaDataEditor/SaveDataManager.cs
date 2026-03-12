@@ -3,6 +3,7 @@ using CKCharaDataEditor.Model.Food;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Resource;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -12,6 +13,7 @@ namespace CKCharaDataEditor
     /// <summary>
     /// 単一のセーブデータに対する読み書きモジュール
     /// </summary>
+    [SupportedOSPlatform("windows")]
     public sealed class SaveDataManager
     {
         private static SaveDataManager? _instance;
@@ -145,12 +147,18 @@ namespace CKCharaDataEditor
                 _saveData["inventory"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(itemBase, StaticResource.SerializerOption));
                 _saveData["inventoryObjectNames"]![insertIndex] = item.keyName;
                 _saveData["inventoryAuxData"]![insertIndex] = JsonNode.Parse(JsonSerializer.Serialize(item.Aux, StaticResource.SerializerOption));
-                if (CharaDataFormatVersion >= 11)
+                
+                if (!_saveData.TryGetPropertyValue("lockedObjects", out JsonNode? lockedObjectsNode) || lockedObjectsNode is null)
                 {
-                    _saveData["lockedObjects"]![insertIndex] = item.Locked;
+                    lockedObjectsNode![insertIndex] = item.Locked;
+                    _saveData["lockedObjects"] = lockedObjectsNode;
                 }
 
-                BreakLastConnectedServerId();
+                if (GetLastActiveSessionId() != Guid.Empty)
+                {
+                    ResetLastActiveSession();
+                }
+
                 string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
 
                 // 書き込む前に元jsonの構文に戻す
@@ -165,12 +173,32 @@ namespace CKCharaDataEditor
             }
         }
 
+        /// <summary>
+        /// 最終接続セッションIDをGuid.Emptyにリセットします。
+        /// ログイン時のゲーム側処理によってインベントリのロールバックが発生しないようにします。
+        /// </summary>
+        private void ResetLastActiveSession()
+        {
+            if (!_saveData.TryGetPropertyValue("lastActiveSession", out var lastActiveSessionNode) || lastActiveSessionNode is null)
+            {
+                // バージョンが古いキャラデータはキー自体が存在しないため、何もしない
+                return;
+            }
+
+            JsonObject valueObj = lastActiveSessionNode["Value"]!.AsObject();
+            valueObj["x"] = 0;
+            valueObj["y"] = 0;
+            valueObj["z"] = 0;
+            valueObj["w"] = 0;
+            _saveData["lastActiveSession"]!["Value"] = valueObj;
+        }
+
         public void RewriteAllItemData()
         {
             _saveData["inventory"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i), StaticResource.SerializerOption));
             _saveData["inventoryObjectNames"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.keyName), StaticResource.SerializerOption));
             _saveData["inventoryAuxData"] = JsonNode.Parse(JsonSerializer.Serialize(Items.Select(i => i.Aux), StaticResource.SerializerOption));
-            BreakLastConnectedServerId();
+            //IncrementLastActiveSessionWorldId();    // 1.2.0.7より最終接続サーバーIDの更新は切断のチェックと切り離されたため、ここでは呼び出さない
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
@@ -425,15 +453,10 @@ namespace CKCharaDataEditor
         internal string GetCharacterName()
         {
             var byteNameList = new List<byte>();
-            var byteName = _saveData["characterCustomization"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
-            var additionalName = _saveData["characterCustomization"]!["name"]!["bytes"]!.AsObject();
-            int version = GetCharacterDataVersion();
-            if (version >= 14)
-            {
-                byteName = _saveData["characterCustomizationNew"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
-                additionalName = _saveData["characterCustomizationNew"]!["name"]!["bytes"]!.AsObject();
-            }
-
+            string nameKey = (CharaDataFormatVersion >= 14)? "characterCustomizationNew" : "characterCustomization";
+            JsonObject byteName = _saveData[nameKey]!["name"]!["bytes"]!["offset0000"]!.AsObject();
+            JsonObject additionalName = _saveData[nameKey]!["name"]!["bytes"]!.AsObject();
+            
             foreach (var byteEntry in byteName.Concat(additionalName))
             {
                 // 値を取得し、バイトデータに変換
@@ -472,9 +495,15 @@ namespace CKCharaDataEditor
             File.WriteAllText(SaveDataPath, changedJson);
         }
 
-        internal Guid GetLastConnnectedServerId()
+        internal Guid GetLastActiveSessionId()
         {
-            var changedOrderWorldId = _saveData["lastConnectedServerGuid"]!["Value"]!.AsObject()
+            if (!_saveData.TryGetPropertyValue("lastActiveSession", out var lastActiveSessionNode) || lastActiveSessionNode is null)
+            {
+                // バージョンが12以前の古いキャラデータはキー自体が存在しないため、Guid.Emptyを返す
+                return Guid.Empty;
+            }
+
+            var changedOrderWorldId = lastActiveSessionNode["Value"]!.AsObject()
                 .Select(fourbyte =>
                 {
                     byte[] bytes = new byte[4];
@@ -511,17 +540,16 @@ namespace CKCharaDataEditor
             return originalId;
         }
 
-        private void BreakLastConnectedServerId()
+        private void IncrementLastActiveSessionWorldId()
         {
-            if (CharaDataFormatVersion < 12)
+            if (!_saveData.TryGetPropertyValue("lastActiveSession", out var lastActiveSessionNode) || lastActiveSessionNode is null)
             {
-                // 12未満のバージョンではlastConnectedServerGuidが存在しないため、何もしない
                 return;
             }
-            JsonObject valueObj = _saveData["lastConnectedServerGuid"]!["Value"]!.AsObject();
+            JsonObject valueObj = lastActiveSessionNode["Value"]!.AsObject();
             uint x = valueObj["x"]!.GetValue<uint>();
             valueObj["x"] = x + 1;
-            _saveData["lastConnectedServerGuid"]!["Value"] = valueObj;
+            _saveData["lastActiveSession"]!["Value"] = valueObj;
 
         }
 
@@ -594,6 +622,25 @@ namespace CKCharaDataEditor
                 string path = saveFileDialog.FileName;
                 File.WriteAllText(path, outputText.ToString());
                 MessageBox.Show($"{unobtainedEquipIds.Count} の未発見アイテムを出力しました。");
+            }
+        }
+
+        /// <summary>
+        /// インベントリ内の有効なアイテムのamaountを全て8000個に変更します。
+        /// </summary>
+        public void DupeInventory()
+        {
+            List<int> itemSlotNo = new(
+                Enumerable.Range(0, 50)
+                    .Concat(Enumerable.Range(87, 10))
+                    .Concat(Enumerable.Range(98, 10))
+                    .Concat(Enumerable.Range(109, 10))
+                    .Concat(Enumerable.Range(120, 10)));
+            foreach (int slotNo in itemSlotNo)
+            {
+                if (Items[slotNo].amount == 0)  continue;
+                Item yachi8000 = Items[slotNo] with {amount = 8000};
+                WriteItemData(slotNo, yachi8000);
             }
         }
     }

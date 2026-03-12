@@ -4,7 +4,6 @@ namespace CKCharaDataEditor
 {
     public class LanguageLoader
     {
-		const string YukisInstallPath = @"G:\SteamLibrary\steamapps\common\Core Keeper";
 		static int ResourceColumnsCount = 0; // リソースファイルのカラム数
 		static int JapaneseColumnIndex = 0; // 日本語リソースのカラムインデックス
 
@@ -12,16 +11,16 @@ namespace CKCharaDataEditor
 		/// 動作確認用に単体でリソースを合成し、tsvファイルにします。
 		/// </summary>
 		/// <param name="args"></param>
-		public static void OutputVisibleDictionary()
+		public static void OutputVisibleDictionary(string installPath, string outputFolderPath)
 		{
-			var dic = CreateLanguageDictionary(YukisInstallPath, out var _);
+			var dic = CreateLanguageDictionary(outputFolderPath, out var _);
 			List<string> outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
 			// 新規TSVファイルに出力
-			string outputPath = Path.Combine(Environment.CurrentDirectory, "LanguageResource.tsv");
+			string langResourceFilePath = Path.Combine(outputFolderPath, "LanguageResource.tsv");
 
-			File.WriteAllLines(outputPath, outputNumericLines, Encoding.UTF8);
-			OutPutJapaneseResource();                                           // 全ての言語リソースの日英を抽出。
-			Console.WriteLine($"TSVファイルが出力されました: {outputPath}");
+			File.WriteAllLines(langResourceFilePath, outputNumericLines, Encoding.UTF8);
+			OutPutJapaneseResource(installPath, outputFolderPath);                                           // 全ての言語リソースの日英を抽出。
+			Console.WriteLine($"TSVファイルが出力されました: {outputFolderPath}");
 		}
 
 		/// <summary>
@@ -158,9 +157,11 @@ namespace CKCharaDataEditor
 		/// <summary>
 		/// 翻訳用リソースのみを抽出、ただしアイテムに限らず全てのリソースを対象とする。
 		/// </summary>
-		private static void OutPutJapaneseResource()
+		private static void OutPutJapaneseResource(string installPath, string outputPath)
 		{
-			string localizationPath = Path.Combine(YukisInstallPath, @"localization\Localization.csv");
+			string localizationPath = Path.Combine(installPath, @"localization\Localization.csv");
+			if (!File.Exists(localizationPath)) return;
+
 			List<string[]> languageResourceTwo = File.ReadAllLines(localizationPath)
 				.Select(line => line.Split('\t'))
 				.ToList();
@@ -169,7 +170,7 @@ namespace CKCharaDataEditor
 				.Select(words => string.Join("\t", words[0], words[JapaneseColumnIndex], words[3]))
 				.ToList();
 
-			string outputPath = Path.Combine(Environment.CurrentDirectory, "TwoLanguageResource.tsv");
+			outputPath = Path.Combine(outputPath, "TwoLanguageResource.tsv");
 			File.WriteAllLines(outputPath, trancelation, Encoding.UTF8);
 			Console.WriteLine($"TSVファイルが出力されました: {outputPath}");
 		}

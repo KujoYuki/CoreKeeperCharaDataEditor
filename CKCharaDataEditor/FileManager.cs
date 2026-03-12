@@ -19,8 +19,10 @@ namespace CKCharaDataEditor
 		/// </summary>
 		public IReadOnlyDictionary<int, string> ObjectIdWithKey = new Dictionary<int, string>();
 
+		public IReadOnlyDictionary<string, int> ObjectIdWithKeyReverse = new Dictionary<string, int>();
 
-		private FileManager()
+
+        private FileManager()
         {
             _saveFolder = Settings.Default.SaveFolderPath;
             if (_saveFolder == string.Empty || !Directory.Exists(_saveFolder))
@@ -67,6 +69,7 @@ namespace CKCharaDataEditor
                     Settings.Default.InstallFolderPath = value;
                     // 言語リソースの初期化
                     LocalizationData = LanguageLoader.CreateLanguageDictionary(value, out ObjectIdWithKey);
+                    ObjectIdWithKeyReverse = ObjectIdWithKey.ToDictionary(kv => kv.Value, kv => kv.Key);
                 }
             }
         }

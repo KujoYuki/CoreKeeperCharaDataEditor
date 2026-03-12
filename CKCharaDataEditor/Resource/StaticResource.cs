@@ -10,7 +10,8 @@ namespace CKCharaDataEditor.Resource
         public static readonly JsonSerializerOptions SerializerOption = new()
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals | JsonNumberHandling.AllowReadingFromString,
+            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals |
+            JsonNumberHandling.AllowReadingFromString,
         };
 
         /// <summary>

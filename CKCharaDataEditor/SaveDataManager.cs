@@ -425,15 +425,10 @@ namespace CKCharaDataEditor
         internal string GetCharacterName()
         {
             var byteNameList = new List<byte>();
-            var byteName = _saveData["characterCustomization"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
-            var additionalName = _saveData["characterCustomization"]!["name"]!["bytes"]!.AsObject();
-            int version = GetCharacterDataVersion();
-            if (version >= 14)
-            {
-                byteName = _saveData["characterCustomizationNew"]!["name"]!["bytes"]!["offset0000"]!.AsObject();
-                additionalName = _saveData["characterCustomizationNew"]!["name"]!["bytes"]!.AsObject();
-            }
-
+            string nameKey = (CharaDataFormatVersion >= 14)? "characterCustomizationNew" : "characterCustomization";
+            JsonObject byteName = _saveData[nameKey]!["name"]!["bytes"]!["offset0000"]!.AsObject();
+            JsonObject additionalName = _saveData[nameKey]!["name"]!["bytes"]!.AsObject();
+            
             foreach (var byteEntry in byteName.Concat(additionalName))
             {
                 // 値を取得し、バイトデータに変換

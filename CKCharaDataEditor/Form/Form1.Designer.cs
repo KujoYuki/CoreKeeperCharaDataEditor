@@ -32,31 +32,34 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             advancedTab = new TabPage();
+            itemDataGroupBox = new GroupBox();
             objectIdNumericUpDown = new NumericUpDown();
-            dupeEquipmentEachLv = new Button();
-            auxIndexNumericUpDown = new NumericUpDown();
             variationNumericUpDown = new NumericUpDown();
+            labelVariation = new Label();
+            label9 = new Label();
+            labelAmount = new Label();
+            auxIndexNumericUpDown = new NumericUpDown();
+            label6 = new Label();
+            keyNameTextBox = new TextBox();
             variationUpdateCountNumericUpDown = new NumericUpDown();
+            label3 = new Label();
             amountNumericUpDown = new NumericUpDown();
+            amountConstCheckBox = new CheckBox();
             objectLockedCheckBox = new CheckBox();
+            amountConst = new NumericUpDown();
+            label17 = new Label();
+            labelAuxData = new Label();
+            auxDataTextBox = new TextBox();
+            dupeEquipmentEachLv = new Button();
+            DisplayNameTextBox = new TextBox();
+            label18 = new Label();
             inventryPasteButton = new Button();
             inventryCopyButton = new Button();
             parameterlinkLabel = new LinkLabel();
             itemPasteButton = new Button();
             itemCopyButton = new Button();
-            auxDataTextBox = new TextBox();
-            labelAuxData = new Label();
-            label17 = new Label();
-            amountConst = new NumericUpDown();
-            amountConstCheckBox = new CheckBox();
             SetDefaultButton = new Button();
-            label3 = new Label();
-            keyNameTextBox = new TextBox();
             objectIdsLinkLabel = new LinkLabel();
-            label6 = new Label();
-            labelAmount = new Label();
-            label9 = new Label();
-            labelVariation = new Label();
             foodTab = new TabPage();
             groupBox1 = new GroupBox();
             addAllRecipeButton = new Button();
@@ -90,11 +93,8 @@
             otherTab = new TabPage();
             exportTrancelateButton = new Button();
             ListupUnobtainedEquipButton = new Button();
-            DisplayNameTextBox = new TextBox();
-            label18 = new Label();
             label1 = new Label();
             saveSlotNoComboBox = new ComboBox();
-            saveFolderBrowserDialog = new FolderBrowserDialog();
             itemSlotLabel = new Label();
             createButton = new Button();
             resultLabel = new Label();
@@ -123,11 +123,17 @@
             worldEditButton = new Button();
             mapButton = new Button();
             dropButton = new Button();
+            folderBrowserDialog = new FolderBrowserDialog();
+            label19 = new Label();
+            textBox1 = new TextBox();
+            label20 = new Label();
+            changeAddResourceButton = new Button();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
+            itemDataGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)objectIdNumericUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)variationNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)variationUpdateCountNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)amountNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)amountConst).BeginInit();
@@ -143,6 +149,7 @@
             // 
             // itemEditTabControl
             // 
+            itemEditTabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             itemEditTabControl.Controls.Add(advancedTab);
             itemEditTabControl.Controls.Add(foodTab);
             itemEditTabControl.Controls.Add(petTab);
@@ -152,56 +159,214 @@
             itemEditTabControl.MinimumSize = new Size(650, 300);
             itemEditTabControl.Name = "itemEditTabControl";
             itemEditTabControl.SelectedIndex = 0;
-            itemEditTabControl.Size = new Size(650, 304);
+            itemEditTabControl.Size = new Size(658, 357);
             itemEditTabControl.TabIndex = 0;
             // 
             // advancedTab
             // 
-            advancedTab.Controls.Add(objectIdNumericUpDown);
+            advancedTab.Controls.Add(itemDataGroupBox);
             advancedTab.Controls.Add(dupeEquipmentEachLv);
-            advancedTab.Controls.Add(auxIndexNumericUpDown);
-            advancedTab.Controls.Add(variationNumericUpDown);
-            advancedTab.Controls.Add(variationUpdateCountNumericUpDown);
-            advancedTab.Controls.Add(amountNumericUpDown);
-            advancedTab.Controls.Add(objectLockedCheckBox);
+            advancedTab.Controls.Add(DisplayNameTextBox);
+            advancedTab.Controls.Add(label18);
             advancedTab.Controls.Add(inventryPasteButton);
             advancedTab.Controls.Add(inventryCopyButton);
             advancedTab.Controls.Add(parameterlinkLabel);
             advancedTab.Controls.Add(itemPasteButton);
             advancedTab.Controls.Add(itemCopyButton);
-            advancedTab.Controls.Add(auxDataTextBox);
-            advancedTab.Controls.Add(labelAuxData);
-            advancedTab.Controls.Add(label17);
-            advancedTab.Controls.Add(amountConst);
-            advancedTab.Controls.Add(amountConstCheckBox);
             advancedTab.Controls.Add(SetDefaultButton);
-            advancedTab.Controls.Add(label3);
-            advancedTab.Controls.Add(keyNameTextBox);
             advancedTab.Controls.Add(objectIdsLinkLabel);
-            advancedTab.Controls.Add(label6);
-            advancedTab.Controls.Add(labelAmount);
-            advancedTab.Controls.Add(label9);
-            advancedTab.Controls.Add(labelVariation);
             advancedTab.Location = new Point(4, 24);
             advancedTab.Name = "advancedTab";
             advancedTab.Padding = new Padding(3);
-            advancedTab.Size = new Size(642, 276);
+            advancedTab.Size = new Size(650, 329);
             advancedTab.TabIndex = 1;
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
             // 
+            // itemDataGroupBox
+            // 
+            itemDataGroupBox.Controls.Add(objectIdNumericUpDown);
+            itemDataGroupBox.Controls.Add(variationNumericUpDown);
+            itemDataGroupBox.Controls.Add(labelVariation);
+            itemDataGroupBox.Controls.Add(label9);
+            itemDataGroupBox.Controls.Add(labelAmount);
+            itemDataGroupBox.Controls.Add(auxIndexNumericUpDown);
+            itemDataGroupBox.Controls.Add(label6);
+            itemDataGroupBox.Controls.Add(keyNameTextBox);
+            itemDataGroupBox.Controls.Add(variationUpdateCountNumericUpDown);
+            itemDataGroupBox.Controls.Add(label3);
+            itemDataGroupBox.Controls.Add(amountNumericUpDown);
+            itemDataGroupBox.Controls.Add(amountConstCheckBox);
+            itemDataGroupBox.Controls.Add(objectLockedCheckBox);
+            itemDataGroupBox.Controls.Add(amountConst);
+            itemDataGroupBox.Controls.Add(label17);
+            itemDataGroupBox.Controls.Add(labelAuxData);
+            itemDataGroupBox.Controls.Add(auxDataTextBox);
+            itemDataGroupBox.Location = new Point(8, 3);
+            itemDataGroupBox.Name = "itemDataGroupBox";
+            itemDataGroupBox.Size = new Size(632, 198);
+            itemDataGroupBox.TabIndex = 38;
+            itemDataGroupBox.TabStop = false;
+            itemDataGroupBox.Text = "データ部";
+            // 
             // objectIdNumericUpDown
             // 
-            objectIdNumericUpDown.Location = new Point(9, 28);
+            objectIdNumericUpDown.Location = new Point(14, 44);
             objectIdNumericUpDown.Maximum = new decimal(new int[] { 65536, 0, 0, 0 });
             objectIdNumericUpDown.Name = "objectIdNumericUpDown";
             objectIdNumericUpDown.Size = new Size(99, 23);
             objectIdNumericUpDown.TabIndex = 37;
             objectIdNumericUpDown.ValueChanged += objectIdNumericUpDown_ValueChanged;
             // 
+            // variationNumericUpDown
+            // 
+            variationNumericUpDown.Location = new Point(127, 44);
+            variationNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            variationNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
+            variationNumericUpDown.Name = "variationNumericUpDown";
+            variationNumericUpDown.Size = new Size(136, 23);
+            variationNumericUpDown.TabIndex = 34;
+            // 
+            // labelVariation
+            // 
+            labelVariation.AutoSize = true;
+            labelVariation.Location = new Point(125, 25);
+            labelVariation.Name = "labelVariation";
+            labelVariation.Size = new Size(53, 15);
+            labelVariation.TabIndex = 12;
+            labelVariation.Text = "variation";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(493, 25);
+            label9.Name = "label9";
+            label9.Size = new Size(123, 15);
+            label9.TabIndex = 14;
+            label9.Text = "variationUpdateCount";
+            // 
+            // labelAmount
+            // 
+            labelAmount.AutoSize = true;
+            labelAmount.Location = new Point(15, 85);
+            labelAmount.Name = "labelAmount";
+            labelAmount.Size = new Size(48, 15);
+            labelAmount.TabIndex = 10;
+            labelAmount.Text = "amount";
+            // 
+            // auxIndexNumericUpDown
+            // 
+            auxIndexNumericUpDown.Location = new Point(493, 105);
+            auxIndexNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            auxIndexNumericUpDown.Name = "auxIndexNumericUpDown";
+            auxIndexNumericUpDown.ReadOnly = true;
+            auxIndexNumericUpDown.Size = new Size(123, 23);
+            auxIndexNumericUpDown.TabIndex = 35;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(14, 25);
+            label6.Name = "label6";
+            label6.Size = new Size(51, 15);
+            label6.TabIndex = 8;
+            label6.Text = "objectID";
+            // 
+            // keyNameTextBox
+            // 
+            keyNameTextBox.Location = new Point(278, 43);
+            keyNameTextBox.Name = "keyNameTextBox";
+            keyNameTextBox.ReadOnly = true;
+            keyNameTextBox.Size = new Size(191, 23);
+            keyNameTextBox.TabIndex = 17;
+            // 
+            // variationUpdateCountNumericUpDown
+            // 
+            variationUpdateCountNumericUpDown.Location = new Point(493, 44);
+            variationUpdateCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            variationUpdateCountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
+            variationUpdateCountNumericUpDown.Name = "variationUpdateCountNumericUpDown";
+            variationUpdateCountNumericUpDown.ReadOnly = true;
+            variationUpdateCountNumericUpDown.Size = new Size(123, 23);
+            variationUpdateCountNumericUpDown.TabIndex = 33;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(278, 25);
+            label3.Name = "label3";
+            label3.Size = new Size(60, 15);
+            label3.TabIndex = 16;
+            label3.Text = "Key Name";
+            // 
+            // amountNumericUpDown
+            // 
+            amountNumericUpDown.Location = new Point(14, 104);
+            amountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            amountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
+            amountNumericUpDown.Name = "amountNumericUpDown";
+            amountNumericUpDown.Size = new Size(100, 23);
+            amountNumericUpDown.TabIndex = 32;
+            // 
+            // amountConstCheckBox
+            // 
+            amountConstCheckBox.AutoSize = true;
+            amountConstCheckBox.Location = new Point(126, 85);
+            amountConstCheckBox.Name = "amountConstCheckBox";
+            amountConstCheckBox.Size = new Size(99, 19);
+            amountConstCheckBox.TabIndex = 20;
+            amountConstCheckBox.Text = "const amount";
+            amountConstCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // objectLockedCheckBox
+            // 
+            objectLockedCheckBox.AutoSize = true;
+            objectLockedCheckBox.Location = new Point(278, 106);
+            objectLockedCheckBox.Name = "objectLockedCheckBox";
+            objectLockedCheckBox.Size = new Size(83, 19);
+            objectLockedCheckBox.TabIndex = 31;
+            objectLockedCheckBox.Text = "locked flag";
+            objectLockedCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // amountConst
+            // 
+            amountConst.Location = new Point(125, 105);
+            amountConst.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            amountConst.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
+            amountConst.Name = "amountConst";
+            amountConst.Size = new Size(136, 23);
+            amountConst.TabIndex = 21;
+            amountConst.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new Point(493, 85);
+            label17.Name = "label17";
+            label17.Size = new Size(55, 15);
+            label17.TabIndex = 22;
+            label17.Text = "auxIndex";
+            // 
+            // labelAuxData
+            // 
+            labelAuxData.AutoSize = true;
+            labelAuxData.Location = new Point(14, 143);
+            labelAuxData.Name = "labelAuxData";
+            labelAuxData.Size = new Size(50, 15);
+            labelAuxData.TabIndex = 24;
+            labelAuxData.Text = "auxData";
+            // 
+            // auxDataTextBox
+            // 
+            auxDataTextBox.Location = new Point(15, 161);
+            auxDataTextBox.Name = "auxDataTextBox";
+            auxDataTextBox.ReadOnly = true;
+            auxDataTextBox.Size = new Size(601, 23);
+            auxDataTextBox.TabIndex = 25;
+            // 
             // dupeEquipmentEachLv
             // 
-            dupeEquipmentEachLv.Location = new Point(121, 216);
+            dupeEquipmentEachLv.Location = new Point(121, 293);
             dupeEquipmentEachLv.Name = "dupeEquipmentEachLv";
             dupeEquipmentEachLv.Size = new Size(152, 23);
             dupeEquipmentEachLv.TabIndex = 36;
@@ -210,56 +375,26 @@
             dupeEquipmentEachLv.Visible = false;
             dupeEquipmentEachLv.Click += dupeEquipmentEachLv_Click;
             // 
-            // auxIndexNumericUpDown
+            // DisplayNameTextBox
             // 
-            auxIndexNumericUpDown.Location = new Point(488, 89);
-            auxIndexNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            auxIndexNumericUpDown.Name = "auxIndexNumericUpDown";
-            auxIndexNumericUpDown.ReadOnly = true;
-            auxIndexNumericUpDown.Size = new Size(123, 23);
-            auxIndexNumericUpDown.TabIndex = 35;
+            DisplayNameTextBox.Location = new Point(10, 228);
+            DisplayNameTextBox.Name = "DisplayNameTextBox";
+            DisplayNameTextBox.Size = new Size(333, 23);
+            DisplayNameTextBox.TabIndex = 1;
+            DisplayNameTextBox.TextChanged += DisplayNameTextBox_TextChanged;
             // 
-            // variationNumericUpDown
+            // label18
             // 
-            variationNumericUpDown.Location = new Point(122, 28);
-            variationNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            variationNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
-            variationNumericUpDown.Name = "variationNumericUpDown";
-            variationNumericUpDown.Size = new Size(136, 23);
-            variationNumericUpDown.TabIndex = 34;
-            // 
-            // variationUpdateCountNumericUpDown
-            // 
-            variationUpdateCountNumericUpDown.Location = new Point(488, 28);
-            variationUpdateCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            variationUpdateCountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
-            variationUpdateCountNumericUpDown.Name = "variationUpdateCountNumericUpDown";
-            variationUpdateCountNumericUpDown.ReadOnly = true;
-            variationUpdateCountNumericUpDown.Size = new Size(123, 23);
-            variationUpdateCountNumericUpDown.TabIndex = 33;
-            // 
-            // amountNumericUpDown
-            // 
-            amountNumericUpDown.Location = new Point(9, 88);
-            amountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            amountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
-            amountNumericUpDown.Name = "amountNumericUpDown";
-            amountNumericUpDown.Size = new Size(100, 23);
-            amountNumericUpDown.TabIndex = 32;
-            // 
-            // objectLockedCheckBox
-            // 
-            objectLockedCheckBox.AutoSize = true;
-            objectLockedCheckBox.Location = new Point(273, 90);
-            objectLockedCheckBox.Name = "objectLockedCheckBox";
-            objectLockedCheckBox.Size = new Size(83, 19);
-            objectLockedCheckBox.TabIndex = 31;
-            objectLockedCheckBox.Text = "locked flag";
-            objectLockedCheckBox.UseVisualStyleBackColor = true;
+            label18.AutoSize = true;
+            label18.Location = new Point(10, 210);
+            label18.Name = "label18";
+            label18.Size = new Size(149, 15);
+            label18.TabIndex = 0;
+            label18.Text = "ユーザー定義のアイテム表示名";
             // 
             // inventryPasteButton
             // 
-            inventryPasteButton.Location = new Point(463, 216);
+            inventryPasteButton.Location = new Point(463, 293);
             inventryPasteButton.Name = "inventryPasteButton";
             inventryPasteButton.Size = new Size(148, 23);
             inventryPasteButton.TabIndex = 30;
@@ -269,7 +404,7 @@
             // 
             // inventryCopyButton
             // 
-            inventryCopyButton.Location = new Point(463, 180);
+            inventryCopyButton.Location = new Point(463, 257);
             inventryCopyButton.Name = "inventryCopyButton";
             inventryCopyButton.Size = new Size(148, 23);
             inventryCopyButton.TabIndex = 29;
@@ -280,7 +415,7 @@
             // parameterlinkLabel
             // 
             parameterlinkLabel.AutoSize = true;
-            parameterlinkLabel.Location = new Point(9, 188);
+            parameterlinkLabel.Location = new Point(9, 265);
             parameterlinkLabel.Name = "parameterlinkLabel";
             parameterlinkLabel.Size = new Size(87, 15);
             parameterlinkLabel.TabIndex = 28;
@@ -290,7 +425,7 @@
             // 
             // itemPasteButton
             // 
-            itemPasteButton.Location = new Point(305, 216);
+            itemPasteButton.Location = new Point(305, 293);
             itemPasteButton.Name = "itemPasteButton";
             itemPasteButton.Size = new Size(130, 23);
             itemPasteButton.TabIndex = 27;
@@ -300,7 +435,7 @@
             // 
             // itemCopyButton
             // 
-            itemCopyButton.Location = new Point(305, 180);
+            itemCopyButton.Location = new Point(305, 257);
             itemCopyButton.Name = "itemCopyButton";
             itemCopyButton.Size = new Size(130, 23);
             itemCopyButton.TabIndex = 26;
@@ -308,56 +443,9 @@
             itemCopyButton.UseVisualStyleBackColor = true;
             itemCopyButton.Click += CopyButton_Click;
             // 
-            // auxDataTextBox
-            // 
-            auxDataTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            auxDataTextBox.Location = new Point(10, 145);
-            auxDataTextBox.Name = "auxDataTextBox";
-            auxDataTextBox.ReadOnly = true;
-            auxDataTextBox.Size = new Size(601, 23);
-            auxDataTextBox.TabIndex = 25;
-            // 
-            // labelAuxData
-            // 
-            labelAuxData.AutoSize = true;
-            labelAuxData.Location = new Point(9, 127);
-            labelAuxData.Name = "labelAuxData";
-            labelAuxData.Size = new Size(50, 15);
-            labelAuxData.TabIndex = 24;
-            labelAuxData.Text = "auxData";
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Location = new Point(488, 69);
-            label17.Name = "label17";
-            label17.Size = new Size(55, 15);
-            label17.TabIndex = 22;
-            label17.Text = "auxIndex";
-            // 
-            // amountConst
-            // 
-            amountConst.Location = new Point(120, 89);
-            amountConst.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            amountConst.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
-            amountConst.Name = "amountConst";
-            amountConst.Size = new Size(136, 23);
-            amountConst.TabIndex = 21;
-            amountConst.Value = new decimal(new int[] { 100, 0, 0, 0 });
-            // 
-            // amountConstCheckBox
-            // 
-            amountConstCheckBox.AutoSize = true;
-            amountConstCheckBox.Location = new Point(121, 69);
-            amountConstCheckBox.Name = "amountConstCheckBox";
-            amountConstCheckBox.Size = new Size(99, 19);
-            amountConstCheckBox.TabIndex = 20;
-            amountConstCheckBox.Text = "const amount";
-            amountConstCheckBox.UseVisualStyleBackColor = true;
-            // 
             // SetDefaultButton
             // 
-            SetDefaultButton.Location = new Point(122, 180);
+            SetDefaultButton.Location = new Point(122, 257);
             SetDefaultButton.Name = "SetDefaultButton";
             SetDefaultButton.Size = new Size(152, 23);
             SetDefaultButton.TabIndex = 18;
@@ -365,69 +453,16 @@
             SetDefaultButton.UseVisualStyleBackColor = true;
             SetDefaultButton.Click += SetDefaultButton_Click;
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(273, 9);
-            label3.Name = "label3";
-            label3.Size = new Size(60, 15);
-            label3.TabIndex = 16;
-            label3.Text = "Key Name";
-            // 
-            // keyNameTextBox
-            // 
-            keyNameTextBox.Location = new Point(273, 27);
-            keyNameTextBox.Name = "keyNameTextBox";
-            keyNameTextBox.ReadOnly = true;
-            keyNameTextBox.Size = new Size(191, 23);
-            keyNameTextBox.TabIndex = 17;
-            // 
             // objectIdsLinkLabel
             // 
             objectIdsLinkLabel.AutoSize = true;
-            objectIdsLinkLabel.Location = new Point(9, 220);
+            objectIdsLinkLabel.Location = new Point(9, 297);
             objectIdsLinkLabel.Name = "objectIdsLinkLabel";
-            objectIdsLinkLabel.Size = new Size(87, 15);
+            objectIdsLinkLabel.Size = new Size(58, 15);
             objectIdsLinkLabel.TabIndex = 14;
             objectIdsLinkLabel.TabStop = true;
-            objectIdsLinkLabel.Text = "ObjectIDs(wiki)";
+            objectIdsLinkLabel.Text = "ObjectIDs";
             objectIdsLinkLabel.LinkClicked += objectIdsLinkLabel_LinkClicked;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(9, 9);
-            label6.Name = "label6";
-            label6.Size = new Size(51, 15);
-            label6.TabIndex = 8;
-            label6.Text = "objectID";
-            // 
-            // labelAmount
-            // 
-            labelAmount.AutoSize = true;
-            labelAmount.Location = new Point(10, 69);
-            labelAmount.Name = "labelAmount";
-            labelAmount.Size = new Size(48, 15);
-            labelAmount.TabIndex = 10;
-            labelAmount.Text = "amount";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(488, 9);
-            label9.Name = "label9";
-            label9.Size = new Size(123, 15);
-            label9.TabIndex = 14;
-            label9.Text = "variationUpdateCount";
-            // 
-            // labelVariation
-            // 
-            labelVariation.AutoSize = true;
-            labelVariation.Location = new Point(120, 9);
-            labelVariation.Name = "labelVariation";
-            labelVariation.Size = new Size(53, 15);
-            labelVariation.TabIndex = 12;
-            labelVariation.Text = "variation";
             // 
             // foodTab
             // 
@@ -447,7 +482,7 @@
             foodTab.Location = new Point(4, 24);
             foodTab.Name = "foodTab";
             foodTab.Padding = new Padding(3);
-            foodTab.Size = new Size(642, 276);
+            foodTab.Size = new Size(650, 329);
             foodTab.TabIndex = 0;
             foodTab.Text = "料理作成";
             foodTab.UseVisualStyleBackColor = true;
@@ -504,7 +539,7 @@
             rarityComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             rarityComboBox.FormattingEnabled = true;
             rarityComboBox.Items.AddRange(new object[] { "コモン", "レア", "エピック" });
-            rarityComboBox.Location = new Point(289, 81);
+            rarityComboBox.Location = new Point(297, 81);
             rarityComboBox.Name = "rarityComboBox";
             rarityComboBox.Size = new Size(241, 24);
             rarityComboBox.TabIndex = 17;
@@ -515,7 +550,7 @@
             cookedCategoryComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             cookedCategoryComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             cookedCategoryComboBox.FormattingEnabled = true;
-            cookedCategoryComboBox.Location = new Point(289, 30);
+            cookedCategoryComboBox.Location = new Point(297, 30);
             cookedCategoryComboBox.Name = "cookedCategoryComboBox";
             cookedCategoryComboBox.Size = new Size(241, 23);
             cookedCategoryComboBox.TabIndex = 16;
@@ -524,7 +559,7 @@
             // 
             label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label12.AutoSize = true;
-            label12.Location = new Point(289, 63);
+            label12.Location = new Point(297, 63);
             label12.Name = "label12";
             label12.Size = new Size(37, 15);
             label12.TabIndex = 15;
@@ -534,7 +569,7 @@
             // 
             label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label11.AutoSize = true;
-            label11.Location = new Point(289, 12);
+            label11.Location = new Point(297, 12);
             label11.Name = "label11";
             label11.Size = new Size(78, 15);
             label11.TabIndex = 14;
@@ -543,7 +578,7 @@
             // toMinusOneButton
             // 
             toMinusOneButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            toMinusOneButton.Location = new Point(7, 207);
+            toMinusOneButton.Location = new Point(7, 260);
             toMinusOneButton.Name = "toMinusOneButton";
             toMinusOneButton.Size = new Size(86, 23);
             toMinusOneButton.TabIndex = 13;
@@ -555,7 +590,7 @@
             // toMaxButton
             // 
             toMaxButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            toMaxButton.Location = new Point(7, 178);
+            toMaxButton.Location = new Point(7, 231);
             toMaxButton.Name = "toMaxButton";
             toMaxButton.Size = new Size(86, 23);
             toMaxButton.TabIndex = 12;
@@ -567,7 +602,7 @@
             // 
             label10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label10.AutoSize = true;
-            label10.Location = new Point(7, 121);
+            label10.Location = new Point(7, 174);
             label10.Name = "label10";
             label10.Size = new Size(55, 15);
             label10.TabIndex = 9;
@@ -576,7 +611,7 @@
             // createdNumericNo
             // 
             createdNumericNo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            createdNumericNo.Location = new Point(7, 139);
+            createdNumericNo.Location = new Point(7, 192);
             createdNumericNo.Maximum = new decimal(new int[] { 869778, 0, 0, 0 });
             createdNumericNo.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             createdNumericNo.Name = "createdNumericNo";
@@ -631,7 +666,7 @@
             petTab.Location = new Point(4, 24);
             petTab.Name = "petTab";
             petTab.Padding = new Padding(3);
-            petTab.Size = new Size(642, 276);
+            petTab.Size = new Size(650, 329);
             petTab.TabIndex = 2;
             petTab.Text = "ペット";
             petTab.UseVisualStyleBackColor = true;
@@ -651,7 +686,7 @@
             cattleTab.Controls.Add(label7);
             cattleTab.Location = new Point(4, 24);
             cattleTab.Name = "cattleTab";
-            cattleTab.Size = new Size(642, 276);
+            cattleTab.Size = new Size(650, 329);
             cattleTab.TabIndex = 3;
             cattleTab.Text = "家畜";
             cattleTab.UseVisualStyleBackColor = true;
@@ -759,55 +794,39 @@
             // 
             // otherTab
             // 
+            otherTab.Controls.Add(changeAddResourceButton);
+            otherTab.Controls.Add(label20);
+            otherTab.Controls.Add(textBox1);
+            otherTab.Controls.Add(label19);
             otherTab.Controls.Add(exportTrancelateButton);
             otherTab.Controls.Add(ListupUnobtainedEquipButton);
-            otherTab.Controls.Add(DisplayNameTextBox);
-            otherTab.Controls.Add(label18);
             otherTab.Location = new Point(4, 24);
             otherTab.Name = "otherTab";
             otherTab.Padding = new Padding(3);
-            otherTab.Size = new Size(642, 276);
+            otherTab.Size = new Size(650, 329);
             otherTab.TabIndex = 4;
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
             // 
             // exportTrancelateButton
             // 
-            exportTrancelateButton.Location = new Point(470, 38);
+            exportTrancelateButton.Location = new Point(10, 280);
             exportTrancelateButton.Name = "exportTrancelateButton";
             exportTrancelateButton.Size = new Size(147, 23);
             exportTrancelateButton.TabIndex = 3;
             exportTrancelateButton.Text = "日本語リソース抽出";
             exportTrancelateButton.UseVisualStyleBackColor = true;
-            exportTrancelateButton.Visible = false;
             exportTrancelateButton.Click += exportTrancelateButton_Click;
             // 
             // ListupUnobtainedEquipButton
             // 
-            ListupUnobtainedEquipButton.Location = new Point(17, 105);
+            ListupUnobtainedEquipButton.Location = new Point(10, 251);
             ListupUnobtainedEquipButton.Name = "ListupUnobtainedEquipButton";
-            ListupUnobtainedEquipButton.Size = new Size(149, 23);
+            ListupUnobtainedEquipButton.Size = new Size(147, 23);
             ListupUnobtainedEquipButton.TabIndex = 2;
             ListupUnobtainedEquipButton.Text = "未発見アイテム一覧を出力";
             ListupUnobtainedEquipButton.UseVisualStyleBackColor = true;
             ListupUnobtainedEquipButton.Click += ListupUnobtainedEquipButton_Click;
-            // 
-            // DisplayNameTextBox
-            // 
-            DisplayNameTextBox.Location = new Point(17, 38);
-            DisplayNameTextBox.Name = "DisplayNameTextBox";
-            DisplayNameTextBox.Size = new Size(333, 23);
-            DisplayNameTextBox.TabIndex = 1;
-            DisplayNameTextBox.TextChanged += DisplayNameTextBox_TextChanged;
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(17, 20);
-            label18.Name = "label18";
-            label18.Size = new Size(113, 15);
-            label18.TabIndex = 0;
-            label18.Text = "ユーザー定義の表示名";
             // 
             // label1
             // 
@@ -828,10 +847,6 @@
             saveSlotNoComboBox.TabIndex = 2;
             saveSlotNoComboBox.SelectedIndexChanged += saveSlotNoComboBox_SelectedIndexChanged;
             // 
-            // saveFolderBrowserDialog
-            // 
-            saveFolderBrowserDialog.RootFolder = Environment.SpecialFolder.LocalApplicationData;
-            // 
             // itemSlotLabel
             // 
             itemSlotLabel.AutoSize = true;
@@ -843,7 +858,8 @@
             // 
             // createButton
             // 
-            createButton.Location = new Point(306, 449);
+            createButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            createButton.Location = new Point(306, 502);
             createButton.Name = "createButton";
             createButton.Size = new Size(147, 45);
             createButton.TabIndex = 13;
@@ -853,8 +869,9 @@
             // 
             // resultLabel
             // 
+            resultLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             resultLabel.AutoSize = true;
-            resultLabel.Location = new Point(465, 464);
+            resultLabel.Location = new Point(465, 517);
             resultLabel.Name = "resultLabel";
             resultLabel.Size = new Size(64, 15);
             resultLabel.TabIndex = 14;
@@ -914,12 +931,13 @@
             // 
             // itemListBox
             // 
+            itemListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             itemListBox.DrawMode = DrawMode.OwnerDrawFixed;
             itemListBox.FormattingEnabled = true;
             itemListBox.ItemHeight = 15;
             itemListBox.Location = new Point(12, 146);
             itemListBox.Name = "itemListBox";
-            itemListBox.Size = new Size(286, 349);
+            itemListBox.Size = new Size(286, 394);
             itemListBox.TabIndex = 22;
             itemListBox.DrawItem += itemListBox_DrawItem;
             itemListBox.SelectedIndexChanged += itemListBox_TextChanged;
@@ -985,7 +1003,7 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { SettingToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new Size(967, 24);
+            menuStrip.Size = new Size(972, 24);
             menuStrip.TabIndex = 25;
             menuStrip.Text = "menuStrip1";
             // 
@@ -1052,10 +1070,44 @@
             dropButton.UseVisualStyleBackColor = true;
             dropButton.Click += dropButton_Click;
             // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new Point(10, 14);
+            label19.Name = "label19";
+            label19.Size = new Size(74, 15);
+            label19.TabIndex = 4;
+            label19.Text = "objectId/Key";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(10, 32);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(100, 23);
+            textBox1.TabIndex = 5;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Location = new Point(10, 71);
+            label20.Name = "label20";
+            label20.Size = new Size(372, 15);
+            label20.TabIndex = 6;
+            label20.Text = "追加したいのは日英リソース、及びそれがアイテムならDescがついた日英リソース";
+            // 
+            // changeAddResourceButton
+            // 
+            changeAddResourceButton.Location = new Point(10, 173);
+            changeAddResourceButton.Name = "changeAddResourceButton";
+            changeAddResourceButton.Size = new Size(75, 23);
+            changeAddResourceButton.TabIndex = 7;
+            changeAddResourceButton.Text = "変更/追加";
+            changeAddResourceButton.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
-            ClientSize = new Size(967, 508);
+            ClientSize = new Size(972, 561);
             Controls.Add(dropButton);
             Controls.Add(mapButton);
             Controls.Add(worldEditButton);
@@ -1086,9 +1138,11 @@
             itemEditTabControl.ResumeLayout(false);
             advancedTab.ResumeLayout(false);
             advancedTab.PerformLayout();
+            itemDataGroupBox.ResumeLayout(false);
+            itemDataGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)objectIdNumericUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)variationNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)auxIndexNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)variationUpdateCountNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)amountNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)amountConst).EndInit();
@@ -1115,7 +1169,6 @@
         private TabPage advancedTab;
         private Label label1;
         private ComboBox saveSlotNoComboBox;
-        private FolderBrowserDialog saveFolderBrowserDialog;
         private Label itemSlotLabel;
         private ComboBox secondaryIngredientComboBox;
         private Label label5;
@@ -1204,5 +1257,11 @@
         private GroupBox groupBox1;
         private NumericUpDown objectIdNumericUpDown;
         private Button exportTrancelateButton;
+        private GroupBox itemDataGroupBox;
+        private FolderBrowserDialog folderBrowserDialog;
+        private Label label20;
+        private TextBox textBox1;
+        private Label label19;
+        private Button changeAddResourceButton;
     }
 }

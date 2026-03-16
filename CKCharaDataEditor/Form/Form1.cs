@@ -36,7 +36,6 @@ namespace CKCharaDataEditor
                 toMinusOneButton.Visible = true;
                 dupeEquipmentEachLv.Visible = true;
                 lastConnectedWorldLabel.Visible = true;
-                exportTrancelateButton.Visible = true;
             }
         }
 
@@ -363,7 +362,7 @@ namespace CKCharaDataEditor
 
         private void objectIdsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://core-keeper.fandom.com/wiki/Object_IDs") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/CKCharaDataEditor/Resource/ObjectID.json") { UseShellExecute = true });
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -451,6 +450,10 @@ namespace CKCharaDataEditor
 
                 case "advancedTab":
                     item = GenerateAdvancedItem();
+                    if (DisplayNameTextBox.Text != string.Empty)
+                    {
+                        item.DisplayName = DisplayNameTextBox.Text;
+                    }
                     result = _saveDataManager.WriteItemData(index, item);
                     break;
 
@@ -471,10 +474,7 @@ namespace CKCharaDataEditor
                     break;
 
                 case "otherTab":
-                    string overrideName = DisplayNameTextBox.Text;
-                    item.DisplayName = overrideName;
-                    result = _saveDataManager.WriteItemData(index, item);
-                    break;
+                    return; // その他タブは選択中のアイテムに関する処理をしないため、ここでは何もしない。
                 default:
                     throw new InvalidOperationException();
             }
@@ -981,8 +981,21 @@ namespace CKCharaDataEditor
 
         private void exportTrancelateButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("アイテム名の対応ファイルと翻訳差分を出力します。");
-            LanguageLoader.OutputVisibleDictionary();
+            var dialogResult = MessageBox.Show("アイテム名の対応ファイルと翻訳差分を出力します。", "翻訳リソース抽出", MessageBoxButtons.OKCancel);
+            if (dialogResult != DialogResult.OK) return;
+
+            string installPath = _fileManager.InstallFolder;
+            if (!Directory.Exists(installPath))
+            {
+                MessageBox.Show("インストールパスが存在しません。設定から正しいパスを指定してください。", "エラー");
+                return;
+            }
+            dialogResult = folderBrowserDialog.ShowDialog();
+            if (dialogResult is not DialogResult.OK) return;
+
+            string outputFolderPath = folderBrowserDialog.SelectedPath;
+            LanguageLoader.OutputVisibleDictionary(_fileManager.InstallFolder, outputFolderPath);
+            MessageBox.Show("翻訳リソースの出力が完了しました。", "完了");
         }
 
         private void objectIdNumericUpDown_ValueChanged(object sender, EventArgs e)

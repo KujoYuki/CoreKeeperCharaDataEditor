@@ -1,3 +1,4 @@
+using CKCharaDataEditor.Control;
 using CKCharaDataEditor.Model;
 using CKCharaDataEditor.Model.Cattle;
 using CKCharaDataEditor.Model.Food;
@@ -7,12 +8,14 @@ using CKCharaDataEditor.Model.Pet;
 using CKCharaDataEditor.Properties;
 using CKCharaDataEditor.Resource;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 
 // todo 経験値テーブル（プレイヤー、ペット）の解析とLv表示をLabelで追加
 // todo ペット、家畜の色コントロールを当該の色にする
 
 namespace CKCharaDataEditor
 {
+    [SupportedOSPlatform("windows")]
     public partial class Form1 : Form
     {
         private FileManager _fileManager = FileManager.Instance;
@@ -44,12 +47,29 @@ namespace CKCharaDataEditor
             InitCookedCategory();
             rarityComboBox.SelectedIndex = 0;
             InitCattleCategory();
-
+            InitPetEditControl();
             if (_fileManager.CharacterFilePaths.Count > 0)
             {
                 string firstSaveDataPath = _fileManager.CharacterFilePaths.First().FullName;
                 LoadSlots(firstSaveDataPath);
             }
+        }
+
+        /// <summary>
+        /// VS2026以降でデザイナーから弾かれたPetEditControlをコード上で初期化して配置する。
+        /// </summary>
+        private void InitPetEditControl()
+        {
+            petEditControl = new PetEditControl();
+            petTab.SuspendLayout();
+            petTab.Controls.Add(petEditControl);
+            petEditControl.Dock = DockStyle.Fill;
+            petEditControl.Location = new Point(3, 3);
+            petEditControl.Margin = new Padding(4, 5, 4, 5);
+            petEditControl.Name = "petEditControl";
+            petEditControl.Size = new Size(636, 270);
+            petEditControl.TabIndex = 0;
+            petTab.ResumeLayout(false);
         }
 
         private void CheckUpdate()

@@ -75,7 +75,6 @@
             primaryIngredientComboBox = new ComboBox();
             label4 = new Label();
             petTab = new TabPage();
-            petEditControl = new CKCharaDataEditor.Control.PetEditControl();
             cattleTab = new TabPage();
             mealNumericUpDown = new NumericUpDown();
             label2 = new Label();
@@ -135,7 +134,6 @@
             foodTab.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).BeginInit();
-            petTab.SuspendLayout();
             cattleTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
@@ -630,7 +628,6 @@
             // 
             // petTab
             // 
-            petTab.Controls.Add(petEditControl);
             petTab.Location = new Point(4, 24);
             petTab.Name = "petTab";
             petTab.Padding = new Padding(3);
@@ -638,15 +635,6 @@
             petTab.TabIndex = 2;
             petTab.Text = "ペット";
             petTab.UseVisualStyleBackColor = true;
-            // 
-            // petEditControl
-            // 
-            petEditControl.Dock = DockStyle.Fill;
-            petEditControl.Location = new Point(3, 3);
-            petEditControl.Margin = new Padding(4, 5, 4, 5);
-            petEditControl.Name = "petEditControl";
-            petEditControl.Size = new Size(636, 270);
-            petEditControl.TabIndex = 0;
             // 
             // cattleTab
             // 
@@ -1108,7 +1096,6 @@
             foodTab.PerformLayout();
             groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)createdNumericNo).EndInit();
-            petTab.ResumeLayout(false);
             cattleTab.ResumeLayout(false);
             cattleTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();

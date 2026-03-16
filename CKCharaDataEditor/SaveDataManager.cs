@@ -3,6 +3,7 @@ using CKCharaDataEditor.Model.Food;
 using CKCharaDataEditor.Model.ItemAux;
 using CKCharaDataEditor.Model.Items;
 using CKCharaDataEditor.Resource;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -12,6 +13,7 @@ namespace CKCharaDataEditor
     /// <summary>
     /// 単一のセーブデータに対する読み書きモジュール
     /// </summary>
+    [SupportedOSPlatform("windows")]
     public sealed class SaveDataManager
     {
         private static SaveDataManager? _instance;

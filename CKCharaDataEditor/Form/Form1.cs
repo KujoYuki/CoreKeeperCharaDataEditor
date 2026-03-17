@@ -1000,7 +1000,7 @@ namespace CKCharaDataEditor
 
         private void objectIdNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            // undone objectIDに対応するKeyの自動取得
+            // objectIDに対応するKeyの自動取得
             if (_fileManager.ObjectIdWithKey.TryGetValue((int)objectIdNumericUpDown.Value, out string? objectKey))
             {
                 keyNameTextBox.Text = objectKey;
@@ -1009,6 +1009,39 @@ namespace CKCharaDataEditor
             {
                 keyNameTextBox.Text = string.Empty;
             }
+        }
+
+        private void IdOrKeyTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // objectIDとkeyNameの双方向自動変換
+            int objectId;
+            string key;
+
+            if (int.TryParse(IdOrKeyTextBox.Text, out objectId))
+            {
+                key = _fileManager.ObjectIdWithKey.TryGetValue(objectId, out string? objectKey) ? objectKey : string.Empty;
+            }
+            else
+            {
+                key = IdOrKeyTextBox.Text;
+                bool isExist = _fileManager.ObjectIdWithKeyReverse.TryGetValue(key, out objectId);
+
+                // 存在しないkeyが入力された場合はobjectIDを空にする
+                if (!isExist)
+                {
+                    itemNameJpTextBox.Text = string.Empty;
+                    itemNameEnTextBox.Text = string.Empty;
+                    itemDescJpTextBox.Text = string.Empty;
+                    itemDescEnTextBox.Text = string.Empty;
+                    return;
+                }
+                
+            }
+
+            //_fileManager.LocalizationData
+
+            //hack 翻訳リソースから取得するにはLanguageLoaderの処理の一部をFileManagerに移す必要があるため、現状はObjectID.jsonからkeyとIDの対応を取得している。
+            //翻訳リソースから取得できるようになったらそちらに切り替える。
         }
     }
 }

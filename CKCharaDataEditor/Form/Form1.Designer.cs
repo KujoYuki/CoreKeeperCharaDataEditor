@@ -91,6 +91,10 @@
             label15 = new Label();
             label7 = new Label();
             otherTab = new TabPage();
+            changeAddResourceButton = new Button();
+            label20 = new Label();
+            IdOrKeyTextBox = new TextBox();
+            label19 = new Label();
             exportTrancelateButton = new Button();
             ListupUnobtainedEquipButton = new Button();
             label1 = new Label();
@@ -124,10 +128,12 @@
             mapButton = new Button();
             dropButton = new Button();
             folderBrowserDialog = new FolderBrowserDialog();
-            label19 = new Label();
-            textBox1 = new TextBox();
-            label20 = new Label();
-            changeAddResourceButton = new Button();
+            itemNameJpTextBox = new TextBox();
+            itemNameEnTextBox = new TextBox();
+            label21 = new Label();
+            itemDescJpTextBox = new TextBox();
+            groupBox2 = new GroupBox();
+            itemDescEnTextBox = new TextBox();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             itemDataGroupBox.SuspendLayout();
@@ -145,6 +151,7 @@
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             otherTab.SuspendLayout();
             menuStrip.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -794,12 +801,16 @@
             // 
             // otherTab
             // 
+            otherTab.Controls.Add(itemDescEnTextBox);
+            otherTab.Controls.Add(groupBox2);
+            otherTab.Controls.Add(itemDescJpTextBox);
+            otherTab.Controls.Add(label21);
+            otherTab.Controls.Add(itemNameEnTextBox);
+            otherTab.Controls.Add(itemNameJpTextBox);
             otherTab.Controls.Add(changeAddResourceButton);
             otherTab.Controls.Add(label20);
-            otherTab.Controls.Add(textBox1);
+            otherTab.Controls.Add(IdOrKeyTextBox);
             otherTab.Controls.Add(label19);
-            otherTab.Controls.Add(exportTrancelateButton);
-            otherTab.Controls.Add(ListupUnobtainedEquipButton);
             otherTab.Location = new Point(4, 24);
             otherTab.Name = "otherTab";
             otherTab.Padding = new Padding(3);
@@ -808,9 +819,44 @@
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
             // 
+            // changeAddResourceButton
+            // 
+            changeAddResourceButton.Location = new Point(10, 288);
+            changeAddResourceButton.Name = "changeAddResourceButton";
+            changeAddResourceButton.Size = new Size(75, 23);
+            changeAddResourceButton.TabIndex = 7;
+            changeAddResourceButton.Text = "変更/追加";
+            changeAddResourceButton.UseVisualStyleBackColor = true;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Location = new Point(10, 71);
+            label20.Name = "label20";
+            label20.Size = new Size(55, 15);
+            label20.TabIndex = 6;
+            label20.Text = "アイテム名";
+            // 
+            // IdOrKeyTextBox
+            // 
+            IdOrKeyTextBox.Location = new Point(10, 32);
+            IdOrKeyTextBox.Name = "IdOrKeyTextBox";
+            IdOrKeyTextBox.Size = new Size(100, 23);
+            IdOrKeyTextBox.TabIndex = 5;
+            IdOrKeyTextBox.TextChanged += IdOrKeyTextBox_TextChanged;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new Point(10, 14);
+            label19.Name = "label19";
+            label19.Size = new Size(74, 15);
+            label19.TabIndex = 4;
+            label19.Text = "objectId/Key";
+            // 
             // exportTrancelateButton
             // 
-            exportTrancelateButton.Location = new Point(10, 280);
+            exportTrancelateButton.Location = new Point(6, 51);
             exportTrancelateButton.Name = "exportTrancelateButton";
             exportTrancelateButton.Size = new Size(147, 23);
             exportTrancelateButton.TabIndex = 3;
@@ -820,7 +866,7 @@
             // 
             // ListupUnobtainedEquipButton
             // 
-            ListupUnobtainedEquipButton.Location = new Point(10, 251);
+            ListupUnobtainedEquipButton.Location = new Point(6, 22);
             ListupUnobtainedEquipButton.Name = "ListupUnobtainedEquipButton";
             ListupUnobtainedEquipButton.Size = new Size(147, 23);
             ListupUnobtainedEquipButton.TabIndex = 2;
@@ -1070,39 +1116,55 @@
             dropButton.UseVisualStyleBackColor = true;
             dropButton.Click += dropButton_Click;
             // 
-            // label19
+            // itemNameJpTextBox
             // 
-            label19.AutoSize = true;
-            label19.Location = new Point(10, 14);
-            label19.Name = "label19";
-            label19.Size = new Size(74, 15);
-            label19.TabIndex = 4;
-            label19.Text = "objectId/Key";
+            itemNameJpTextBox.Location = new Point(10, 89);
+            itemNameJpTextBox.Name = "itemNameJpTextBox";
+            itemNameJpTextBox.Size = new Size(194, 23);
+            itemNameJpTextBox.TabIndex = 8;
             // 
-            // textBox1
+            // itemNameEnTextBox
             // 
-            textBox1.Location = new Point(10, 32);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(100, 23);
-            textBox1.TabIndex = 5;
+            itemNameEnTextBox.Location = new Point(10, 118);
+            itemNameEnTextBox.Name = "itemNameEnTextBox";
+            itemNameEnTextBox.Size = new Size(194, 23);
+            itemNameEnTextBox.TabIndex = 9;
             // 
-            // label20
+            // label21
             // 
-            label20.AutoSize = true;
-            label20.Location = new Point(10, 71);
-            label20.Name = "label20";
-            label20.Size = new Size(372, 15);
-            label20.TabIndex = 6;
-            label20.Text = "追加したいのは日英リソース、及びそれがアイテムならDescがついた日英リソース";
+            label21.AutoSize = true;
+            label21.Location = new Point(10, 171);
+            label21.Name = "label21";
+            label21.Size = new Size(67, 15);
+            label21.TabIndex = 10;
+            label21.Text = "アイテム説明";
             // 
-            // changeAddResourceButton
+            // itemDescJpTextBox
             // 
-            changeAddResourceButton.Location = new Point(10, 173);
-            changeAddResourceButton.Name = "changeAddResourceButton";
-            changeAddResourceButton.Size = new Size(75, 23);
-            changeAddResourceButton.TabIndex = 7;
-            changeAddResourceButton.Text = "変更/追加";
-            changeAddResourceButton.UseVisualStyleBackColor = true;
+            itemDescJpTextBox.Location = new Point(10, 189);
+            itemDescJpTextBox.Multiline = true;
+            itemDescJpTextBox.Name = "itemDescJpTextBox";
+            itemDescJpTextBox.Size = new Size(416, 32);
+            itemDescJpTextBox.TabIndex = 11;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(ListupUnobtainedEquipButton);
+            groupBox2.Controls.Add(exportTrancelateButton);
+            groupBox2.Location = new Point(473, 222);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(161, 89);
+            groupBox2.TabIndex = 12;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "出力";
+            // 
+            // itemDescEnTextBox
+            // 
+            itemDescEnTextBox.Location = new Point(10, 227);
+            itemDescEnTextBox.Multiline = true;
+            itemDescEnTextBox.Name = "itemDescEnTextBox";
+            itemDescEnTextBox.Size = new Size(416, 32);
+            itemDescEnTextBox.TabIndex = 13;
             // 
             // Form1
             // 
@@ -1158,6 +1220,7 @@
             otherTab.PerformLayout();
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1260,8 +1323,14 @@
         private GroupBox itemDataGroupBox;
         private FolderBrowserDialog folderBrowserDialog;
         private Label label20;
-        private TextBox textBox1;
+        private TextBox IdOrKeyTextBox;
         private Label label19;
         private Button changeAddResourceButton;
+        private TextBox itemNameJpTextBox;
+        private Label label21;
+        private TextBox itemNameEnTextBox;
+        private GroupBox groupBox2;
+        private TextBox itemDescJpTextBox;
+        private TextBox itemDescEnTextBox;
     }
 }

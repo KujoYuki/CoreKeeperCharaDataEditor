@@ -91,12 +91,20 @@
             label15 = new Label();
             label7 = new Label();
             otherTab = new TabPage();
-            changeAddResourceButton = new Button();
-            label20 = new Label();
-            IdOrKeyTextBox = new TextBox();
+            inventoryDupeButton = new Button();
+            groupBox3 = new GroupBox();
             label19 = new Label();
-            exportTrancelateButton = new Button();
+            itemDescEnTextBox = new TextBox();
+            IdOrKeyTextBox = new TextBox();
+            label20 = new Label();
+            itemDescJpTextBox = new TextBox();
+            itemNameJpTextBox = new TextBox();
+            label21 = new Label();
+            itemNameEnTextBox = new TextBox();
+            groupBox2 = new GroupBox();
             ListupUnobtainedEquipButton = new Button();
+            exportTrancelateButton = new Button();
+            changeAddResourceButton = new Button();
             label1 = new Label();
             saveSlotNoComboBox = new ComboBox();
             itemSlotLabel = new Label();
@@ -128,12 +136,6 @@
             mapButton = new Button();
             dropButton = new Button();
             folderBrowserDialog = new FolderBrowserDialog();
-            itemNameJpTextBox = new TextBox();
-            itemNameEnTextBox = new TextBox();
-            label21 = new Label();
-            itemDescJpTextBox = new TextBox();
-            groupBox2 = new GroupBox();
-            itemDescEnTextBox = new TextBox();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             itemDataGroupBox.SuspendLayout();
@@ -150,8 +152,9 @@
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             otherTab.SuspendLayout();
-            menuStrip.SuspendLayout();
+            groupBox3.SuspendLayout();
             groupBox2.SuspendLayout();
+            menuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // itemEditTabControl
@@ -801,16 +804,10 @@
             // 
             // otherTab
             // 
-            otherTab.Controls.Add(itemDescEnTextBox);
+            otherTab.Controls.Add(inventoryDupeButton);
+            otherTab.Controls.Add(groupBox3);
             otherTab.Controls.Add(groupBox2);
-            otherTab.Controls.Add(itemDescJpTextBox);
-            otherTab.Controls.Add(label21);
-            otherTab.Controls.Add(itemNameEnTextBox);
-            otherTab.Controls.Add(itemNameJpTextBox);
             otherTab.Controls.Add(changeAddResourceButton);
-            otherTab.Controls.Add(label20);
-            otherTab.Controls.Add(IdOrKeyTextBox);
-            otherTab.Controls.Add(label19);
             otherTab.Location = new Point(4, 24);
             otherTab.Name = "otherTab";
             otherTab.Padding = new Padding(3);
@@ -819,40 +816,120 @@
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
             // 
-            // changeAddResourceButton
+            // inventoryDupeButton
             // 
-            changeAddResourceButton.Location = new Point(10, 288);
-            changeAddResourceButton.Name = "changeAddResourceButton";
-            changeAddResourceButton.Size = new Size(75, 23);
-            changeAddResourceButton.TabIndex = 7;
-            changeAddResourceButton.Text = "変更/追加";
-            changeAddResourceButton.UseVisualStyleBackColor = true;
+            inventoryDupeButton.Location = new Point(16, 100);
+            inventoryDupeButton.Name = "inventoryDupeButton";
+            inventoryDupeButton.Size = new Size(147, 23);
+            inventoryDupeButton.TabIndex = 4;
+            inventoryDupeButton.Text = "倉庫用アイテム複製";
+            inventoryDupeButton.UseVisualStyleBackColor = true;
+            inventoryDupeButton.Visible = false;
+            inventoryDupeButton.Click += InventoryDupeButton_Click;
             // 
-            // label20
+            // groupBox3
             // 
-            label20.AutoSize = true;
-            label20.Location = new Point(10, 71);
-            label20.Name = "label20";
-            label20.Size = new Size(55, 15);
-            label20.TabIndex = 6;
-            label20.Text = "アイテム名";
+            groupBox3.Controls.Add(label19);
+            groupBox3.Controls.Add(itemDescEnTextBox);
+            groupBox3.Controls.Add(IdOrKeyTextBox);
+            groupBox3.Controls.Add(label20);
+            groupBox3.Controls.Add(itemDescJpTextBox);
+            groupBox3.Controls.Add(itemNameJpTextBox);
+            groupBox3.Controls.Add(label21);
+            groupBox3.Controls.Add(itemNameEnTextBox);
+            groupBox3.Location = new Point(229, 34);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(447, 268);
+            groupBox3.TabIndex = 14;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "2.0で実装する";
+            groupBox3.Visible = false;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new Point(10, 19);
+            label19.Name = "label19";
+            label19.Size = new Size(74, 15);
+            label19.TabIndex = 4;
+            label19.Text = "objectId/Key";
+            // 
+            // itemDescEnTextBox
+            // 
+            itemDescEnTextBox.Location = new Point(10, 232);
+            itemDescEnTextBox.Multiline = true;
+            itemDescEnTextBox.Name = "itemDescEnTextBox";
+            itemDescEnTextBox.Size = new Size(416, 32);
+            itemDescEnTextBox.TabIndex = 13;
             // 
             // IdOrKeyTextBox
             // 
-            IdOrKeyTextBox.Location = new Point(10, 32);
+            IdOrKeyTextBox.Location = new Point(10, 37);
             IdOrKeyTextBox.Name = "IdOrKeyTextBox";
             IdOrKeyTextBox.Size = new Size(100, 23);
             IdOrKeyTextBox.TabIndex = 5;
             IdOrKeyTextBox.TextChanged += IdOrKeyTextBox_TextChanged;
             // 
-            // label19
+            // label20
             // 
-            label19.AutoSize = true;
-            label19.Location = new Point(10, 14);
-            label19.Name = "label19";
-            label19.Size = new Size(74, 15);
-            label19.TabIndex = 4;
-            label19.Text = "objectId/Key";
+            label20.AutoSize = true;
+            label20.Location = new Point(10, 76);
+            label20.Name = "label20";
+            label20.Size = new Size(55, 15);
+            label20.TabIndex = 6;
+            label20.Text = "アイテム名";
+            // 
+            // itemDescJpTextBox
+            // 
+            itemDescJpTextBox.Location = new Point(10, 194);
+            itemDescJpTextBox.Multiline = true;
+            itemDescJpTextBox.Name = "itemDescJpTextBox";
+            itemDescJpTextBox.Size = new Size(416, 32);
+            itemDescJpTextBox.TabIndex = 11;
+            // 
+            // itemNameJpTextBox
+            // 
+            itemNameJpTextBox.Location = new Point(10, 94);
+            itemNameJpTextBox.Name = "itemNameJpTextBox";
+            itemNameJpTextBox.Size = new Size(194, 23);
+            itemNameJpTextBox.TabIndex = 8;
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Location = new Point(10, 176);
+            label21.Name = "label21";
+            label21.Size = new Size(67, 15);
+            label21.TabIndex = 10;
+            label21.Text = "アイテム説明";
+            // 
+            // itemNameEnTextBox
+            // 
+            itemNameEnTextBox.Location = new Point(10, 123);
+            itemNameEnTextBox.Name = "itemNameEnTextBox";
+            itemNameEnTextBox.Size = new Size(194, 23);
+            itemNameEnTextBox.TabIndex = 9;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(ListupUnobtainedEquipButton);
+            groupBox2.Controls.Add(exportTrancelateButton);
+            groupBox2.Location = new Point(10, 12);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(161, 82);
+            groupBox2.TabIndex = 12;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "出力";
+            // 
+            // ListupUnobtainedEquipButton
+            // 
+            ListupUnobtainedEquipButton.Location = new Point(6, 22);
+            ListupUnobtainedEquipButton.Name = "ListupUnobtainedEquipButton";
+            ListupUnobtainedEquipButton.Size = new Size(147, 23);
+            ListupUnobtainedEquipButton.TabIndex = 2;
+            ListupUnobtainedEquipButton.Text = "未発見アイテム一覧を出力";
+            ListupUnobtainedEquipButton.UseVisualStyleBackColor = true;
+            ListupUnobtainedEquipButton.Click += ListupUnobtainedEquipButton_Click;
             // 
             // exportTrancelateButton
             // 
@@ -864,15 +941,14 @@
             exportTrancelateButton.UseVisualStyleBackColor = true;
             exportTrancelateButton.Click += exportTrancelateButton_Click;
             // 
-            // ListupUnobtainedEquipButton
+            // changeAddResourceButton
             // 
-            ListupUnobtainedEquipButton.Location = new Point(6, 22);
-            ListupUnobtainedEquipButton.Name = "ListupUnobtainedEquipButton";
-            ListupUnobtainedEquipButton.Size = new Size(147, 23);
-            ListupUnobtainedEquipButton.TabIndex = 2;
-            ListupUnobtainedEquipButton.Text = "未発見アイテム一覧を出力";
-            ListupUnobtainedEquipButton.UseVisualStyleBackColor = true;
-            ListupUnobtainedEquipButton.Click += ListupUnobtainedEquipButton_Click;
+            changeAddResourceButton.Location = new Point(10, 288);
+            changeAddResourceButton.Name = "changeAddResourceButton";
+            changeAddResourceButton.Size = new Size(75, 23);
+            changeAddResourceButton.TabIndex = 7;
+            changeAddResourceButton.Text = "変更/追加";
+            changeAddResourceButton.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -1116,56 +1192,6 @@
             dropButton.UseVisualStyleBackColor = true;
             dropButton.Click += dropButton_Click;
             // 
-            // itemNameJpTextBox
-            // 
-            itemNameJpTextBox.Location = new Point(10, 89);
-            itemNameJpTextBox.Name = "itemNameJpTextBox";
-            itemNameJpTextBox.Size = new Size(194, 23);
-            itemNameJpTextBox.TabIndex = 8;
-            // 
-            // itemNameEnTextBox
-            // 
-            itemNameEnTextBox.Location = new Point(10, 118);
-            itemNameEnTextBox.Name = "itemNameEnTextBox";
-            itemNameEnTextBox.Size = new Size(194, 23);
-            itemNameEnTextBox.TabIndex = 9;
-            // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.Location = new Point(10, 171);
-            label21.Name = "label21";
-            label21.Size = new Size(67, 15);
-            label21.TabIndex = 10;
-            label21.Text = "アイテム説明";
-            // 
-            // itemDescJpTextBox
-            // 
-            itemDescJpTextBox.Location = new Point(10, 189);
-            itemDescJpTextBox.Multiline = true;
-            itemDescJpTextBox.Name = "itemDescJpTextBox";
-            itemDescJpTextBox.Size = new Size(416, 32);
-            itemDescJpTextBox.TabIndex = 11;
-            // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(ListupUnobtainedEquipButton);
-            groupBox2.Controls.Add(exportTrancelateButton);
-            groupBox2.Location = new Point(473, 222);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(161, 89);
-            groupBox2.TabIndex = 12;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "出力";
-            // 
-            // itemDescEnTextBox
-            // 
-            itemDescEnTextBox.Location = new Point(10, 227);
-            itemDescEnTextBox.Multiline = true;
-            itemDescEnTextBox.Name = "itemDescEnTextBox";
-            itemDescEnTextBox.Size = new Size(416, 32);
-            itemDescEnTextBox.TabIndex = 13;
-            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
@@ -1217,10 +1243,11 @@
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).EndInit();
             otherTab.ResumeLayout(false);
-            otherTab.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            groupBox2.ResumeLayout(false);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
-            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1332,5 +1359,7 @@
         private GroupBox groupBox2;
         private TextBox itemDescJpTextBox;
         private TextBox itemDescEnTextBox;
+        private Button inventoryDupeButton;
+        private GroupBox groupBox3;
     }
 }

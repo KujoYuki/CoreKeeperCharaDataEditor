@@ -593,5 +593,24 @@ namespace CKCharaDataEditor
                 MessageBox.Show($"{unobtainedEquipIds.Count} の未発見アイテムを出力しました。");
             }
         }
+
+        /// <summary>
+        /// インベントリ内の有効なアイテムのamaountを全て8000個に変更します。
+        /// </summary>
+        public void DupeInventory()
+        {
+            List<int> itemSlotNo = new(
+                Enumerable.Range(0, 50)
+                    .Concat(Enumerable.Range(87, 10))
+                    .Concat(Enumerable.Range(98, 10))
+                    .Concat(Enumerable.Range(109, 10))
+                    .Concat(Enumerable.Range(120, 10)));
+            foreach (int slotNo in itemSlotNo)
+            {
+                if (Items[slotNo].amount == 0)  continue;
+                Item yachi8000 = Items[slotNo] with {amount = 8000};
+                WriteItemData(slotNo, yachi8000);
+            }
+        }
     }
 }

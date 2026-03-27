@@ -368,8 +368,8 @@ namespace CKCharaDataEditor.Model.Items
             {"RobotBoss", "S.A.H.A.B.A.R." },
             {"HydraBossVoid", "空虚の支配者オブリドラ" },
             {"FallExcavationRockDestructible", "落石(突破者の到達点)" },
-            {"BrokenRobotDestructibleSmall", "壊れたジオボット・小" },
-            {"BrokenRobotDestructibleBig", "壊れたジオボット・大" },
+            {"BrokenRobotDestructibleSmall", "壊れたジオボット" },
+            {"BrokenRobotDestructibleBig", "老朽化したジオボット" },
         });
     }
 

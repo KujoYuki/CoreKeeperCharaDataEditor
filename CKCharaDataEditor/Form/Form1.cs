@@ -36,6 +36,7 @@ namespace CKCharaDataEditor
                 toMinusOneButton.Visible = true;
                 dupeEquipmentEachLv.Visible = true;
                 lastConnectedWorldLabel.Visible = true;
+                inventoryDupeButton.Visible = true;
             }
         }
 
@@ -450,10 +451,7 @@ namespace CKCharaDataEditor
 
                 case "advancedTab":
                     item = GenerateAdvancedItem();
-                    if (DisplayNameTextBox.Text != string.Empty)
-                    {
-                        item.DisplayName = DisplayNameTextBox.Text;
-                    }
+                    item.DisplayName = DisplayNameTextBox.Text;
                     result = _saveDataManager.WriteItemData(index, item);
                     break;
 
@@ -1035,13 +1033,37 @@ namespace CKCharaDataEditor
                     itemDescEnTextBox.Text = string.Empty;
                     return;
                 }
-                
+
             }
 
             //_fileManager.LocalizationData
 
             //hack 翻訳リソースから取得するにはLanguageLoaderの処理の一部をFileManagerに移す必要があるため、現状はObjectID.jsonからkeyとIDの対応を取得している。
             //翻訳リソースから取得できるようになったらそちらに切り替える。
+        }
+
+        /// <summary>
+        /// 複数ワールドに倉庫を移転するため作業補助。私用。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InventoryDupeButton_Click(object sender, EventArgs e)
+        {
+            var dialogResult = MessageBox.Show("インベントリのアイテムを複製して全てのスロットに8000個ずつ配置します。\n続行しますか？\n\n" +
+                "※既に存在するアイテムは上書きされます。", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (dialogResult is not DialogResult.OK) return;
+
+            // 0のセーブデータの有効なアイテムをを全て8000個にする
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[0].FullName;
+            _saveDataManager.DupeInventory();
+
+            // 0のセーブデータのインベントリを全て1,2にコピーしてアイテム個数を8000個にする
+            _saveDataManager.CopyInventory();
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[1].FullName;
+            _saveDataManager.PasteInventory();
+            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[2].FullName;
+            _saveDataManager.PasteInventory();
+            LoadPanel();
         }
     }
 }

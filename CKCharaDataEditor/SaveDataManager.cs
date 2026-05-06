@@ -397,7 +397,6 @@ namespace CKCharaDataEditor
                 conditions.RemoveAt(conditions.FindIndex(c => c.Id == 16));
             }
             _saveData["conditionsList"] = JsonNode.Parse(JsonSerializer.Serialize(conditions, StaticResource.SerializerOption));
-            _saveData["characterType"] = 1;
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
@@ -642,6 +641,29 @@ namespace CKCharaDataEditor
                 Item yachi8000 = Items[slotNo] with {amount = 8000};
                 WriteItemData(slotNo, yachi8000);
             }
+        }
+
+        internal string ReadCharaType()
+        {
+            if (_saveData.TryGetPropertyValue("characterType", out var type))
+            {
+                return type!.GetValue<int>().ToString();
+            }
+            else
+            {
+                return "1"; // デフォルト難易度は1（ノーマル）
+            }
+        }
+
+        internal void WriteCharaType(int charcterType)
+        {
+            _saveData["characterType"] = charcterType;
+
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            // 書き込む前に元jsonの構文に戻す
+            changedJson = RestoreJsonString(changedJson);
+
+            File.WriteAllText(SaveDataPath, changedJson);
         }
     }
 }

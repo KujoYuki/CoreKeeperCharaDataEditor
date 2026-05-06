@@ -219,7 +219,6 @@ namespace CKCharaDataEditor
             _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[saveSlotNoComboBox.SelectedIndex].FullName;
 
             // 最終接続ワールドがセッション中断の場合のIDチェック
-            // v1.2.0.7以降、中断時のみGUID保存、正常終了の場合は0になるように変更されたため、コメントアウトで様子見。
             if (Program.IsDeveloper)
             {
                 lastActivatedSessionWorld.Text = _saveDataManager.GetLastActiveSessionId().ToString();
@@ -256,6 +255,7 @@ namespace CKCharaDataEditor
             itemListBox.EndUpdate();
 
             LoadPanel();
+            LoadCharaType();
         }
 
         private void LoadPanel()
@@ -341,6 +341,19 @@ namespace CKCharaDataEditor
             }
         }
 
+        private void LoadCharaType()
+        {
+            string charaType = _saveDataManager.ReadCharaType();
+            foreach (var rb in charaTypeGroupBox.Controls.OfType<RadioButton>())
+            {
+                if (rb.Tag is string tag && tag == charaType)
+                {
+                    rb.Checked = true;
+                    break;
+                }
+            }
+        }
+
         private void saveSlotNoComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadItems();
@@ -365,7 +378,7 @@ namespace CKCharaDataEditor
 
         private void objectIdsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(@"https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/Document/アイテムID一覧表.tsv") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(@"https://raw.githubusercontent.com/KujoYuki/CoreKeeperCharaDataEditor/refs/heads/main/Document/allItemList.tsv") { UseShellExecute = true });
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -474,7 +487,11 @@ namespace CKCharaDataEditor
                     break;
 
                 case "otherTab":
-                    return; // その他タブは選択中のアイテムに関する処理をしないため、ここでは何もしない。
+                    object charcterTypeObj = charaTypeGroupBox.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked)?.Tag!;
+                    int charcterType = int.Parse((string)charcterTypeObj);
+                    _saveDataManager.WriteCharaType(charcterType);
+                    EnableResultMessage("キャラクター難易度を変更しました。");
+                    return;
                 default:
                     throw new InvalidOperationException();
             }

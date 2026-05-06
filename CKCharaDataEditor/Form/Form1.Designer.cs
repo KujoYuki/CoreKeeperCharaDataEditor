@@ -91,11 +91,16 @@
             label15 = new Label();
             label7 = new Label();
             otherTab = new TabPage();
+            charaTypeGroupBox = new GroupBox();
+            charaTypeCasualButton = new RadioButton();
+            charaTypeHardCoreButton = new RadioButton();
+            charaTypeNormalButton = new RadioButton();
             inventoryDupeButton = new Button();
             groupBox3 = new GroupBox();
             label19 = new Label();
             itemDescEnTextBox = new TextBox();
             IdOrKeyTextBox = new TextBox();
+            changeAddResourceButton = new Button();
             label20 = new Label();
             itemDescJpTextBox = new TextBox();
             itemNameJpTextBox = new TextBox();
@@ -104,7 +109,6 @@
             groupBox2 = new GroupBox();
             ListupUnobtainedEquipButton = new Button();
             exportTrancelateButton = new Button();
-            changeAddResourceButton = new Button();
             label1 = new Label();
             saveSlotNoComboBox = new ComboBox();
             itemSlotLabel = new Label();
@@ -152,6 +156,7 @@
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).BeginInit();
             otherTab.SuspendLayout();
+            charaTypeGroupBox.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox2.SuspendLayout();
             menuStrip.SuspendLayout();
@@ -804,6 +809,7 @@
             // 
             // otherTab
             // 
+            otherTab.Controls.Add(charaTypeGroupBox);
             otherTab.Controls.Add(inventoryDupeButton);
             otherTab.Controls.Add(groupBox3);
             otherTab.Controls.Add(groupBox2);
@@ -815,9 +821,57 @@
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
             // 
+            // charaTypeGroupBox
+            // 
+            charaTypeGroupBox.Controls.Add(charaTypeCasualButton);
+            charaTypeGroupBox.Controls.Add(charaTypeHardCoreButton);
+            charaTypeGroupBox.Controls.Add(charaTypeNormalButton);
+            charaTypeGroupBox.Location = new Point(6, 6);
+            charaTypeGroupBox.Name = "charaTypeGroupBox";
+            charaTypeGroupBox.Size = new Size(161, 99);
+            charaTypeGroupBox.TabIndex = 15;
+            charaTypeGroupBox.TabStop = false;
+            charaTypeGroupBox.Text = "キャラクター難易度";
+            // 
+            // charaTypeCasualButton
+            // 
+            charaTypeCasualButton.AutoSize = true;
+            charaTypeCasualButton.Location = new Point(3, 70);
+            charaTypeCasualButton.Name = "charaTypeCasualButton";
+            charaTypeCasualButton.Size = new Size(59, 19);
+            charaTypeCasualButton.TabIndex = 2;
+            charaTypeCasualButton.TabStop = true;
+            charaTypeCasualButton.Tag = "2";
+            charaTypeCasualButton.Text = "Casual";
+            charaTypeCasualButton.UseVisualStyleBackColor = true;
+            // 
+            // charaTypeHardCoreButton
+            // 
+            charaTypeHardCoreButton.AutoSize = true;
+            charaTypeHardCoreButton.Location = new Point(3, 45);
+            charaTypeHardCoreButton.Name = "charaTypeHardCoreButton";
+            charaTypeHardCoreButton.Size = new Size(75, 19);
+            charaTypeHardCoreButton.TabIndex = 1;
+            charaTypeHardCoreButton.TabStop = true;
+            charaTypeHardCoreButton.Tag = "1";
+            charaTypeHardCoreButton.Text = "HardCore";
+            charaTypeHardCoreButton.UseVisualStyleBackColor = true;
+            // 
+            // charaTypeNormalButton
+            // 
+            charaTypeNormalButton.AutoSize = true;
+            charaTypeNormalButton.Location = new Point(3, 19);
+            charaTypeNormalButton.Name = "charaTypeNormalButton";
+            charaTypeNormalButton.Size = new Size(72, 19);
+            charaTypeNormalButton.TabIndex = 0;
+            charaTypeNormalButton.TabStop = true;
+            charaTypeNormalButton.Tag = "0";
+            charaTypeNormalButton.Text = "Standard";
+            charaTypeNormalButton.UseVisualStyleBackColor = true;
+            // 
             // inventoryDupeButton
             // 
-            inventoryDupeButton.Location = new Point(16, 100);
+            inventoryDupeButton.Location = new Point(12, 208);
             inventoryDupeButton.Name = "inventoryDupeButton";
             inventoryDupeButton.Size = new Size(147, 23);
             inventoryDupeButton.TabIndex = 4;
@@ -837,7 +891,7 @@
             groupBox3.Controls.Add(itemNameJpTextBox);
             groupBox3.Controls.Add(label21);
             groupBox3.Controls.Add(itemNameEnTextBox);
-            groupBox3.Location = new Point(229, 34);
+            groupBox3.Location = new Point(180, 36);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(447, 268);
             groupBox3.TabIndex = 14;
@@ -869,6 +923,15 @@
             IdOrKeyTextBox.Size = new Size(100, 23);
             IdOrKeyTextBox.TabIndex = 5;
             IdOrKeyTextBox.TextChanged += IdOrKeyTextBox_TextChanged;
+            // 
+            // changeAddResourceButton
+            // 
+            changeAddResourceButton.Location = new Point(317, 37);
+            changeAddResourceButton.Name = "changeAddResourceButton";
+            changeAddResourceButton.Size = new Size(75, 23);
+            changeAddResourceButton.TabIndex = 7;
+            changeAddResourceButton.Text = "変更/追加";
+            changeAddResourceButton.UseVisualStyleBackColor = true;
             // 
             // label20
             // 
@@ -914,7 +977,7 @@
             // 
             groupBox2.Controls.Add(ListupUnobtainedEquipButton);
             groupBox2.Controls.Add(exportTrancelateButton);
-            groupBox2.Location = new Point(10, 12);
+            groupBox2.Location = new Point(6, 120);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(161, 82);
             groupBox2.TabIndex = 12;
@@ -940,15 +1003,6 @@
             exportTrancelateButton.Text = "日本語リソース抽出";
             exportTrancelateButton.UseVisualStyleBackColor = true;
             exportTrancelateButton.Click += exportTrancelateButton_Click;
-            // 
-            // changeAddResourceButton
-            // 
-            changeAddResourceButton.Location = new Point(317, 37);
-            changeAddResourceButton.Name = "changeAddResourceButton";
-            changeAddResourceButton.Size = new Size(75, 23);
-            changeAddResourceButton.TabIndex = 7;
-            changeAddResourceButton.Text = "変更/追加";
-            changeAddResourceButton.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -1243,6 +1297,8 @@
             ((System.ComponentModel.ISupportInitialize)mealNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)stomachNumericUpDown).EndInit();
             otherTab.ResumeLayout(false);
+            charaTypeGroupBox.ResumeLayout(false);
+            charaTypeGroupBox.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -1361,5 +1417,9 @@
         private TextBox itemDescEnTextBox;
         private Button inventoryDupeButton;
         private GroupBox groupBox3;
+        private GroupBox charaTypeGroupBox;
+        private RadioButton charaTypeCasualButton;
+        private RadioButton charaTypeHardCoreButton;
+        private RadioButton charaTypeNormalButton;
     }
 }

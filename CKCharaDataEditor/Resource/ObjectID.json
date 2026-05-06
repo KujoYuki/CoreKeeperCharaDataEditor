@@ -1316,7 +1316,6 @@
 	"WallThermostat": 6852
 	"WallGauge": 6853
 	"WallMetalSheet": 6854
-	"BustedRobotArm": 6855
 	"ExcavationSign": 6858
 	"MetalBarrel": 6859
 	"ExcavationDestructibleReinforcedBox": 6860
@@ -1511,6 +1510,12 @@
 	"LargeSeedAndCropsPouch": 8459
 	"LargeValuablePouch": 8460
 	"LargeFishPouch": 8461
+	"PotionPouch": 8462
+	"MediumPotionPouch": 8463
+	"LargePotionPouch": 8464
+	"CritterPouch": 8465
+	"MediumCritterPouch": 8466
+	"LargeCritterPouch": 8467
 	"CopperHelm": 8500
 	"WoodHelm": 8501
 	"PeasantHelm": 8502

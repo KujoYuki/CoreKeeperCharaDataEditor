@@ -36,7 +36,14 @@ namespace CKCharaDataEditor.Control
             set
             {
                 _petTalent = value;
-                petTalentComboBox.SelectedIndex = value.Talent;
+                if (value.Talent > PetResource.TalentDescriptionDict.Last().Id)
+                {
+                    petTalentComboBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    petTalentComboBox.SelectedIndex = value.Talent;
+                }
                 petTalentCheckBox.Checked = value.Points is 1;
             }
         }

@@ -1077,7 +1077,6 @@
 6852	WallThermostat	壁付け温度計
 6853	WallGauge	ウォール・ゲージ
 6854	WallMetalSheet	壁用金属板
-6855	BustedRobotArm	故障したロボットアーム
 6858	ExcavationSign	採掘看板
 6859	MetalBarrel	金属のタル
 6860	ExcavationDestructibleReinforcedBox	補強された工業箱
@@ -1243,6 +1242,12 @@
 8459	LargeSeedAndCropsPouch	大きな種と作物のポーチ
 8460	LargeValuablePouch	大きな貴重品のポーチ
 8461	LargeFishPouch	大きな魚のポーチ
+8462	PotionPouch	ポーションのポーチ
+8463	MediumPotionPouch	中くらいのポーションのポーチ
+8464	LargePotionPouch	大きなポーションのポーチ
+8465	CritterPouch	生き物のポーチ
+8466	MediumCritterPouch	中くらいの生き物のポーチ
+8467	LargeCritterPouch	大きな生き物のポーチ
 8500	CopperHelm	銅の兜
 8501	WoodHelm	木の兜
 8502	PeasantHelm	農民の帽子

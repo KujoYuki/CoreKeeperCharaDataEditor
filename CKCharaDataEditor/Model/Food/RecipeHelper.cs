@@ -41,6 +41,7 @@
             new(5502,"GiantMushroom2","ジャンボマッシュルーム", CookedFood.Salad, IngredientAttribute.Harvest),
             new(5503,"AmberLarva2","幼虫の琥珀", CookedFood.Pudding, IngredientAttribute.None),
             new(5773,"GlowingMushroom","ヒカリキノコ", CookedFood.Soup, IngredientAttribute.None),
+            new(7900,"Milk","牧草地のミルク", CookedFood.Cheese, IngredientAttribute.None),
             new(7901,"Meat","霜降り肉", CookedFood.Steak, IngredientAttribute.None),
             new(7902,"Egg","ドードーの卵", CookedFood.Cake, IngredientAttribute.None),
             new(8003,"HeartBerry","ハートベリー", CookedFood.Pudding, IngredientAttribute.Harvest),

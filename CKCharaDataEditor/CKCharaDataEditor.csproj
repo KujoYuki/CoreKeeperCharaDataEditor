@@ -7,7 +7,7 @@
     <UseWindowsForms>True</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>CKCharaDataEditor.Program</StartupObject>
-    <ApplicationIcon>Resource\Cooking_Pot.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Cooking_Pot.ico</ApplicationIcon>
     <Copyright>KujoYuki</Copyright>
     <PackageProjectUrl>https://github.com/KujoYuki/CoreKeeperCharaDataEditor</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resource\Cooking_Pot.ico" />
+    <Content Include="Resources\Cooking_Pot.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,21 +67,25 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Update="Resource\ConditionDescription.csv">
+    <None Update="Resources\ConditionDescription.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resource\AdditionalIngredients.csv">
+    <None Update="Resources\AdditionalIngredients.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resource\Localization Template.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resource\Localization.csv">
+    <None Update="Resources\Localization.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resource\ObjectID.json">
+    <None Update="Resources\ObjectID.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\ButtonIcons\" />
   </ItemGroup>
 
 </Project>

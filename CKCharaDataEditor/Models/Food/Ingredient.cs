@@ -1,0 +1,31 @@
+﻿using CKCharaDataEditor.Models.ItemAux;
+using CKCharaDataEditor.Models.Items;
+
+namespace CKCharaDataEditor.Models.Food
+{
+    public record Ingredient : DiscoveredObjects
+    {
+        public string keyName { get; set; }
+        public string DisplayName { get; set; }
+        public IngredientAttribute Attribute { get; set; }
+
+        /// <summary>
+        /// Primary食材になった場合に調理される料理
+        /// </summary>
+        public CookedFood CookedFood { get; set; }
+
+        public Ingredient(int objectID, string keyName, string displayName, CookedFood cookedFood, IngredientAttribute attribute)
+            : base(objectID, 0)
+        {
+            this.keyName = keyName;
+            DisplayName = displayName;
+            CookedFood = cookedFood;
+            Attribute = attribute;
+        }
+
+        public Item ToItem(int amount = 1)
+        {
+            return new Item(objectID, amount, 0, 0, keyName, ItemAuxData.Default);
+        }
+    }
+}

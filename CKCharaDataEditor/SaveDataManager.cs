@@ -1,8 +1,9 @@
-﻿using CKCharaDataEditor.Model;
-using CKCharaDataEditor.Model.Food;
-using CKCharaDataEditor.Model.ItemAux;
-using CKCharaDataEditor.Model.Items;
-using CKCharaDataEditor.Resource;
+﻿using CKCharaDataEditor.Forms;
+using CKCharaDataEditor.Models;
+using CKCharaDataEditor.Models.Food;
+using CKCharaDataEditor.Models.ItemAux;
+using CKCharaDataEditor.Models.Items;
+using CKCharaDataEditor.Resources;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
@@ -274,7 +275,7 @@ namespace CKCharaDataEditor
             DialogResult outputResult = MessageBox.Show($"現在のレシピ網羅率は {cookRate:P2} %です。" +
                 $"（{userRecipeCount} / {RecipeHelper.AllRecipes.Count}）\n\n" +
                 $"未取得のレシピを出力しますか？", "", MessageBoxButtons.YesNo);
-            if (outputResult is DialogResult.Yes && exceptRecipes.Count() > 0)
+            if (outputResult is DialogResult.Yes && exceptRecipes.Count > 0)
             {
                 var foodBuilder = new StringBuilder();
                 foreach (Recipe recipe in exceptRecipes)
@@ -342,6 +343,42 @@ namespace CKCharaDataEditor
             string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
             changedJson = RestoreJsonString(changedJson);
             File.WriteAllText(SaveDataPath, changedJson);
+        }
+
+        internal int DeleteAbnormalRecipes()
+        {
+            List<DiscoveredObjects> allRecipe = RecipeHelper.AllRecipes
+                .Select(r =>
+                {
+                    // 高レアリティ版も追加する
+                    Recipe higherRarityRecipe = r.Rarity switch
+                    {
+                        CookRarity.Common => r with { Rarity = CookRarity.Rare },
+                        CookRarity.Rare => r with { Rarity = CookRarity.Epic },
+                        _ => throw new ArgumentException("RecipeHelper.AllRecipes was strange."),
+                    };
+                    return new Recipe[] { r, higherRarityRecipe };
+                })
+                .SelectMany(recipes => recipes.Select(recipe => recipe.ToDiscoveredObjects()))
+                .ToList();
+            List<DiscoveredObjects> abnormalRecipes = _saveData["discoveredObjects2"]!.AsArray()
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Where(obj => RecipeHelper.CookedFoodAllIds.Contains(obj.objectID))    // レシピを全て抽出し
+                .Where(discoveredRecipe => !allRecipe.Contains(discoveredRecipe))   // 全レシピにもない、つまり異常なレシピを除外する
+                .ToList();
+
+            List<DiscoveredObjects> withoutAbnormalRecipes = _saveData["discoveredObjects2"]!.AsArray()
+                .Select(obj => JsonSerializer.Deserialize<DiscoveredObjects>(obj)!)
+                .Where(obj => !abnormalRecipes.Any(r => r.objectID == obj.objectID && r.variation == obj.variation))
+                .ToList();
+
+            _saveData["discoveredObjects2"] = JsonNode.Parse(JsonSerializer.Serialize(withoutAbnormalRecipes, StaticResource.SerializerOption));
+            // データ書き込み
+            string changedJson = JsonSerializer.Serialize(_saveData, StaticResource.SerializerOption);
+            changedJson = RestoreJsonString(changedJson);
+            File.WriteAllText(SaveDataPath, changedJson);
+
+            return abnormalRecipes.Count;
         }
 
         public List<Condition> GetConditions()
@@ -595,7 +632,7 @@ namespace CKCharaDataEditor
                 .Distinct()
                 .Order()
                 .ToList();
-            List<int> allEquip = FileManager.Instance.LocalizationData.ToList()
+            List<int> allEquip = FileManager.Instance.LocalizationData
                 .Select(kv => kv.Key)
                 .Order()
                 .ToList();

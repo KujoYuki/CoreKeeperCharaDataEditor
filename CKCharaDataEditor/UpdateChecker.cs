@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net.Http.Headers;
-using System.Reflection;
+﻿using System.Net.Http.Headers;
 using System.Text.Json.Nodes;
 
 namespace CKCharaDataEditor
@@ -59,14 +57,14 @@ namespace CKCharaDataEditor
 
         private static string GetVersion()
         {
-            // アセンブリのパスを取得
+            // old アセンブリのパスを取得
             // 更新時は、プロジェクト -> パッケージ -> ファイルバージョン から変更すること
             //var exePath = Assembly.GetExecutingAssembly().Location;
             //var fileVersion = FileVersionInfo.GetVersionInfo(exePath).FileVersion!;
             //return fileVersion;
 
-            // 単一動作の場合は参照場所が変わる
-            return AboutBox.ApplicationVersion;
+            // 単一exeで動作の場合は参照場所が変わる
+            return Forms.AboutBox.ApplicationVersion;
 		}
     }
 }

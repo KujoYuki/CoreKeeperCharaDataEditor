@@ -1,13 +1,26 @@
+using CKCharaDataEditor.Forms;
+
 namespace CKCharaDataEditor
 {
     internal static class Program
     {
+        private const string MutexName = "CKCharaDataEditor_SingleInstance_Mutex";
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            // Mutexを使用して多重起動を防止
+            using Mutex mutex = new Mutex(true, MutexName, out bool createdNew);
+            if (!createdNew)
+            {
+                // 既に起動している場合
+                MessageBox.Show("アプリケーションは既に起動しています。", "多重起動", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();

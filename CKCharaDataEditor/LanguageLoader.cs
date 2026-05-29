@@ -16,7 +16,7 @@ namespace CKCharaDataEditor
 			var dic = CreateLanguageDictionary(outputFolderPath, out var _);
 			List<string> outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
 			// 新規TSVファイルに出力
-			string langResourceFilePath = Path.Combine(outputFolderPath, "LanguageResource.tsv");
+			string langResourceFilePath = Path.Combine(outputFolderPath, "allItemList.tsv");
 
 			File.WriteAllLines(langResourceFilePath, outputNumericLines, Encoding.UTF8);
 			OutPutJapaneseResource(installPath, outputFolderPath);                                           // 全ての言語リソースの日英を抽出。
@@ -33,9 +33,9 @@ namespace CKCharaDataEditor
 			out IReadOnlyDictionary<int, string> objectIdWithKeyDic)
 		{
 			string originObjectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");
-			string bundledObjectIdPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "ObjectID.json");
+			string bundledObjectIdPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "ObjectID.json");
 			string originLocalizationPath = Path.Combine(installPath, @"localization\Localization.csv");
-			string bundledLocalizationPath = Path.Combine(Directory.GetCurrentDirectory(), "Resource", "Localization.csv");
+			string bundledLocalizationPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Localization.csv");
 			
 			string objectIdPath = File.Exists(originObjectIdPath) ? originObjectIdPath : bundledObjectIdPath;
 			string localizationPath = File.Exists(originLocalizationPath) ? originLocalizationPath : bundledLocalizationPath;

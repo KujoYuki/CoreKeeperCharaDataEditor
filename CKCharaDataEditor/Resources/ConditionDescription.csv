@@ -191,7 +191,7 @@
 190,LookLikeGhost,あなたの姿はまるで幽霊のよう
 191,AttackSpeedBoostAfterDodge,x% melee and range attack speed
 192,DealAoeFireDamageOnBlock,盾で防御すると周囲の敵全員にxダメージ与える
-193,ChanceForOreOnMiningWall,壁破壊時に現在採掘中の壁で一般的な鉱石を得られる確率 x%
+193,GardeningLevelAsArmorPercentage,ガーデニングスキル1レベルごとに防御力 x%
 194,DamageIncreaseAgainstBurning,燃焼している相手へのダメージ x%
 195,CritDamageIncreaseAgainstBurning,燃焼している相手へのクリティカルヒットダメージ x%
 196,ThornsDamageAddedToMeleeAndRange,近接・遠距離ダメージにトゲダメージが可算される
@@ -255,19 +255,19 @@
 254,ChanceToPreserveBait,魚の捕獲時にx%の確率でエサが消費されない
 255,IncreasedManaRegenEffectiveness,マナの回復速度がx%増加
 256,IncreasedMaxMana,最大マナ x
-257,IncreasedMinionLifespanPercentage,ミニオンの寿命 x%
-258,IncreasedChanceToSpawnMinionOnHit,敵をヒットするとx%の確率でミニオンが出現
+257,ReducedManaReservationPercentage,ミニオンのマナ予約コスト -x%
+258,GainGardeningLevelAsArmorPercentage,ガーデニングスキル1レベルごとに防御力 x%
 259,IncreasedMaxMinions,最大ミニオン数 x
 260,IncreasedMinionDamagePercentage,ミニオンダメージ x%
 261,IncreasedMagicDamagePercentage,魔法ダメージ x%
 262,ManaBarrier,x%の被ダメージをマナプールで吸収
 263,MagicBarrier,被ダメージの最大xを吸収する。魔法バリアはしばらくダメージを受けなければ再生する。
-264,GainManaOnCrit,クリティカルヒットで回復するマナ x
+264,GainManaCostOnCrit,クリティカルヒットで回復するマナ使用量 x
 265,GainManaOnHeal,N/A
 266,WellFedManaRegeneration,満腹時のマナ回復量 x
 267,GainManaPercentageOnDamageTaken,被ダメージ時に回復するマナ x%
 268,GainMagicDamagePercentageBoostAfterCrit,クリティカルヒットで魔法ダメージが短時間 x%
-269,ReducedManaRegenDelayPercentage,マナ回復速度の減少 x%
+269,IncreasedManaRegenPercentageWhileCasting,詠唱中のマナ回復量 +x%
 270,ReducedMagicBarrierRegenDelayPercentage,魔法バリア再生時間の減少 x%
 271,PercentageOfMagicBarrierAsMagicDamage,x%の魔法バリアが魔法ダメージに追加
 272,MagicBarrierAsManaRegen,魔法バリアのx%分のマナを毎秒回復する
@@ -283,7 +283,7 @@
 282,IncreasedHealOnMinionDamage,ミニオンの攻撃ダメージのx%を回復
 283,MinionCountAsMagicDamagePercentage,N/A
 284,LiquidMetalBuff,x max health
-285,HealOnMinionDespawn,ミニオンの消滅時に体力がx%回復
+285,IncreasedMinionAttackSpeedPerOwnerHealth,最大体力10ポイントごとにミニオン攻撃スピード x%
 286,IncreasedManaRegen,xマナ/毎秒
 287,IncreasedMinionCritChance,ミニオンクリティカルヒット確率 x%
 288,IncreaseDamageAsLongAsNotBeingHit,N/A
@@ -308,8 +308,8 @@
 307,IncreasedExplosivesRadiusPercentage,爆発範囲 x%
 308,ChanceForAdditionalOreFromExplosives,N/A
 309,ReducedDamageFromExplosions,自分と味方が発生源の爆発によるダメージ減少 x%
-310,GainManaFromExplosion,爆発物が起爆した時xマナを獲得する
-311,ChanceToSpawnMinionOnExplosion,N/A
+310,ExplosionReduceManaCostByPercentage,爆発物の起爆後、短時間マナ使用量軽減 x%
+311,IncreaseLegendaryMiningPickAoeOnHit,ヒットが二次機能をチャージする
 312,ExplosionIncreaseMeleeDamage,爆発物の起爆後に短時間近接ダメージ増加 x%
 313,ChanceToSpawnNapalmFromExplosives,爆発物からナパームが生成される確率 x%
 314,IncreasedBurningDamagePercentage,燃焼ダメージ x%
@@ -326,13 +326,13 @@
 325,LifeOnPetHit,ペットのヒットでライフ x
 326,IncreasedMinionCritDamagePercentage,ミニオンのクリティカルヒットダメージ x%
 327,IncreasedMinionBossDamagePercentage,ボスへのミニオンの与ダメージ x%
-328,ChannelVoidBreach,空虚の突破口を生み出す
+328,LegendaryMiningPickAoeCount,N/A
 329,AffixElectricOrb,N/A
 330,AffixArcaneBeam,N/A
 331,AffixFireBomb,N/A
 332,AffixUnused3,N/A
 333,AffixUnused4,N/A
-334,AffixUnused5,N/A
+334,ApplyExplodeCursedEnemy,呪われた敵は死亡時に爆発し、x爆発ダメージを与える
 335,ExtraHealFromSleepPercentage,睡眠による回復がx%増加する
 336,DrenchedInOil,燃焼が炎の爆破を引き起こす
 337,ImmuneToOil,石油に耐性
@@ -355,3 +355,22 @@
 354,DamageIncreaseFromBurning,N/A
 355,VoidGlow,紫色の光度 {0}
 356,VoidHydraHeartBuff,x max health
+357,TakeMoreDamageFromMinionsCurse,ヒット時に呪いを付与し、呪われたターゲットにミニオンがx%の追加ダメージを与える。
+358,IncreaseCountCurseLegendaryExplosionOnHit,1ヒットごとに二次機能に追加の力を付与
+359,CurseLegendaryExplosionCount,N/A
+360,ApplyTakeMoreDamageFromMinions,N/A
+361,ApplyDarkCharm,呪われたターゲットにx%の確率で「狂乱」を付与し、同士討ちさせる。
+362,DarkCharmed,N/A
+363,ExplodeCursedEnemy,呪われた敵は死亡時に爆発し、x爆発ダメージを与える
+364,ChanceOnRangeHitToKnockback,遠距離ヒットでのノックバック確率 x%
+365,ChanceToShatterProjectiles,遠距離ヒットで発射物が砕け散る確率 x%
+366,ShatteredProjectiles,ヒット時に飛び散る発射物の破片 x個
+367,ReduceManaCostByPercentage,爆発物の起爆後、短時間マナ使用量軽減 x%
+368,SlowedByCold,冷気からの移動スピード x%
+369,ApplySlowedByCold,ターゲットの移動スピードを4秒間x%低下させる
+370,ImmuneToSlowedByCold,N/A
+371,GainGardeningLevelAsArmor,ガーデニングスキル1レベルごとに防御力 x
+372,GardeningLevelAsArmor,N/A
+373,GainMaxManaPercentageAsMagicBarrier,魔法バリアとして追加される超過した最大マナ x%
+374,MaxManaAsMagicBarrier,N/A
+375,ImmuneToCurses,N/A

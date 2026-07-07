@@ -16,5 +16,9 @@
         PetMagic = 1253,
         PetElectric = 1258,
         PetWarlock = 1261,
+        PetFrog = 1264,
+        PetMeleeCat = 1267,
+        PetAzeosJr = 1270,
+        
     }
 }

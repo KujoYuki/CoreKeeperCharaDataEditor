@@ -14,5 +14,7 @@
         DodoBaby = 1310,
         Camel = 1311,
         CamelBaby = 1312,
+        Raptor = 1313,
+        RaptorBaby = 1314,
     }
 }

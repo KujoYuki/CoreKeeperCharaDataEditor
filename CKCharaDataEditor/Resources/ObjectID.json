@@ -98,14 +98,14 @@
 	"HydraBossSeaBait": 154
 	"HydraBossDesertBait": 155
 	"HydraBossVoidBait": 156
-	"BossChest": 170
+	"TitanChest": 170
 	"GlurchChest": 171
 	"GhormChest": 172
 	"HivemotherChest": 173
 	"IvyChest": 174
-	"EasterChest": 175
+	"EasterTitanChest": 175
 	"MorphaChest": 176
-	"OctopusBossChest": 177
+	"FloatingTitanChest": 177
 	"KingSlimeChest": 178
 	"LavaSlimeBossChest": 179
 	"HivemotherHalloweenChest": 180
@@ -164,6 +164,9 @@
 	"Pit": 233
 	"Lava": 234
 	"ImmunityTile": 235
+	"BirdBossChest": 285
+	"ScarabBossChest": 286
+	"OmorothBossChest": 287
 	"WallDirtBlock": 300
 	"WallStoneBlock": 301
 	"WallStoneBricksBlock": 302
@@ -205,6 +208,7 @@
 	"WallExcavationRockBlock": 370
 	"WallExcavationBorderBlock": 371
 	"WallExcavationVoidBlock": 372
+	"WallMossBlock": 373
 	"WateredGround": 398
 	"DugUpGround": 399
 	"GroundDirtBlock": 400
@@ -251,6 +255,7 @@
 	"GroundExcavationRockBlock": 443
 	"GroundExcavationBorderBlock": 444
 	"GroundExcavationVoidBlock": 445
+	"GroundMossBlock": 446
 	"GroundObsidianBlock": 450
 	"LockedReluciteChest": 950
 	"ReluciteChest": 951
@@ -319,6 +324,15 @@
 	"PetWarlockEgg": 1259
 	"PetWarlockEggCracked": 1260
 	"PetWarlock": 1261
+	"PetFrogEgg": 1262
+	"PetFrogEggCracked": 1263
+	"PetFrog": 1264
+	"PetMeleeCatEgg": 1265
+	"PetMeleeCatEggCracked": 1266
+	"PetMeleeCat": 1267
+	"PetBirdBossEgg": 1268
+	"PetBirdBossEggCracked": 1269
+	"PetBirdBoss": 1270
 	"Cow": 1300
 	"CattleFeedTray": 1301
 	"Goat": 1302
@@ -332,6 +346,8 @@
 	"DodoBaby": 1310
 	"Camel": 1311
 	"CamelBaby": 1312
+	"Raptor": 1313
+	"RaptorBaby": 1314
 	"MeleeMinion": 1350
 	"BatMinion": 1351
 	"OrbitingMinion": 1352
@@ -428,10 +444,14 @@
 	"ReluciteOreBoulder": 2218
 	"FieryExplosionSmall": 2219
 	"RobotBossAttackPushback": 2220
+	"CurseExplosion": 2221
 	"MusicArea": 2400
 	"WaterSpreader": 2401
 	"MapMarker": 2402
 	"MapMarkerCoreAttention": 2403
+	"AmbientAudioCue": 2404
+	"InvisibleTrailerWallThin": 2405
+	"InvisibleTrailerWallFull": 2406
 	"LarvaBossCrystal": 2500
 	"SlimeBossCrystal": 2501
 	"HiveBossCrystal": 2502
@@ -531,6 +551,7 @@
 	"GiantCicadaBossShield": 3185
 	"GiantCicadaBossSpawnLocation": 3187
 	"GoldenBombScarab": 3188
+	"SerpentWormSegment": 3189
 	"RobotBoss": 3190
 	"RobotMiner": 3191
 	"RobotPatroller": 3192
@@ -539,6 +560,8 @@
 	"RobotBossVoidChaser": 3195
 	"VoidLarvaCocoon": 3196
 	"VoidLarva": 3197
+	"SerpentWormSegmentTail": 3198
+	"Wingling": 3199
 	"GhostCaveling": 3400
 	"GhostScholar": 3401
 	"YellowFirefly": 3500
@@ -554,6 +577,15 @@
 	"AffixElectricOrb": 3600
 	"AffixArcaneBeam": 3601
 	"AffixFireBomb": 3602
+	"Saddle": 3680
+	"ImprovedSaddle": 3681
+	"CowMount": 3750
+	"GoatMount": 3751
+	"RolyPolyMount": 3752
+	"TurtleMount": 3753
+	"DodoMount": 3754
+	"CamelMount": 3755
+	"RaptorMount": 3756
 	"CavelingMerchant": 3900
 	"AncientHologramPod": 3901
 	"SlimeMerchant": 3902
@@ -629,6 +661,7 @@
 	"SmallIndustrialTable": 4058
 	"CritterCatcher": 4059
 	"ExcavationWorkbench": 4060
+	"TrainingDummy": 4061
 	"RobotBossActivatorConsole": 4097
 	"VoidRift": 4098
 	"Portal": 4099
@@ -926,10 +959,13 @@
 	"VoidCavelingShamanTrophy": 5237
 	"VoidCavelingBruteTrophy": 5238
 	"HydraBossVoidTrophy": 5239
+	"WinglingTrophy": 5240
+	"SerpentTrophy": 5241
 	"Mushroom": 5500
 	"GiantMushroom": 5501
 	"GiantMushroom2": 5502
 	"AmberLarva2": 5503
+	"WinglingMoss": 5504
 	"StoneCavelingMoss": 5505
 	"NatureCavelingMoss": 5506
 	"CityCavelingMoss": 5507
@@ -1027,6 +1063,14 @@
 	"HydraHeadNature": 5638
 	"BigJungleTree": 5639
 	"CicadaBurrow": 5640
+	"Fern": 5641
+	"MossPlant": 5642
+	"MossMushroom": 5643
+	"PineTree": 5646
+	"MossGrowth": 5647
+	"MossDestructible": 5648
+	"MossDestructibleBig": 5649
+	"PineTreeBig": 5650
 	"CavelingFloorTile": 5700
 	"BrokenStonePillar": 5701
 	"CavelingPot": 5702
@@ -1245,6 +1289,7 @@
 	"EventTerminal": 6513
 	"WayPoint": 6514
 	"RemoteExplosive": 6515
+	"PressurePedestal": 6516
 	"PlayerProximitySensor": 6517
 	"UndergroundElectricityGenerator": 6518
 	"ElectricalDropGate": 6519
@@ -1270,8 +1315,10 @@
 	"WoodSpikeTrap": 6610
 	"MovingVoidTrap": 6612
 	"MovingVoidTrapMortarProjectile": 6613
+	"CurseTrap": 6614
 	"Napalm": 6630
 	"OilNapalm": 6631
+	"BlizzardNapalm": 6632
 	"Drill": 6650
 	"ConveyorBelt": 6651
 	"RobotArm": 6652
@@ -1360,6 +1407,7 @@
 	"Milk": 7900
 	"Meat": 7901
 	"Egg": 7902
+	"RaptorTruffle": 7903
 	"HeartBerrySeed": 8001
 	"HeartBerryPlant": 8002
 	"HeartBerry": 8003
@@ -1446,6 +1494,7 @@
 	"EchoMapAlienTerminal2": 8270
 	"EchoMapAlienTerminal3": 8271
 	"EchoMapTitanTemple": 8280
+	"EchoMapLegendaryScepter": 8281
 	"Lantern": 8300
 	"OrbLantern": 8301
 	"SmallLantern": 8302
@@ -1482,6 +1531,8 @@
 	"SummonerOffhand": 8370
 	"MagnetOffHand": 8371
 	"RemoteDetonatorOffHand": 8372
+	"GrapplingHook": 8373
+	"StrongGrapplingHook": 8374
 	"BaitFishBitesFaster": 8380
 	"BaitIncreasedChanceToGetFish": 8381
 	"BaitIncreasedChanceToGetFishLoot": 8382
@@ -1926,6 +1977,13 @@
 	"TomeOfPoison": 9180
 	"TomeOfRadiation": 9181
 	"TomeOfMining": 9183
+	"BasicScepter": 9184
+	"StoneScepter": 9185
+	"NatureScepter": 9186
+	"LegendaryScepter": 9187
+	"SeaScepter": 9188
+	"CrystalScepter": 9189
+	"PandoriumScepter": 9190
 	"FlintlockMusketProjectile": 9200
 	"FireballProjectile": 9201
 	"SlingshotProjectile": 9202
@@ -1942,6 +2000,7 @@
 	"BubbleProjectile": 9224
 	"BubblePlayerProjectile": 9225
 	"ChakramProjectile": 9226
+	"BubblePetProjectile": 9227
 	"CupidArrowProjectile": 9229
 	"IronArrowProjectile": 9230
 	"OctarineArrowProjectile": 9231
@@ -1987,11 +2046,22 @@
 	"StunGrenadeProjectile": 9271
 	"CharmGrenadeProjectile": 9272
 	"VoidClubTrail": 9273
+	"WhisperScepterProjectile": 9274
+	"PiercingScepterProjectile": 9275
+	"LateScepterProjectile": 9276
+	"LegendaryScepterProjectile": 9277
+	"NatureScepterProjectile": 9278
+	"SeaScepterProjectile": 9279
 	"BulletHellProjectile": 9280
 	"OilGrenadeProjectile": 9281
 	"MinigunProjectile": 9282
 	"RobotBossLargeProjectile": 9284
 	"BigGrenadeProjectile": 9285
+	"PandoriumScepterProjectile": 9286
+	"BirdBossPetProjectile": 9287
+	"BlizzardStaffProjectile": 9288
+	"NatureScepterExplosiveProjectile": 9289
+	"LateScepterShatterProjectile": 9290
 	"LarvaHiveBossMortarProjectile": 9300
 	"PoisonSlimeBossMortarProjectile": 9301
 	"ShamanBossMortarProjectile": 9302
@@ -2026,6 +2096,8 @@
 	"LegendaryMortarBigProjectile": 9342
 	"LavaMortarProjectile": 9343
 	"StoneMortarProjectile": 9344
+	"LegendaryScepterMortarProjectile": 9345
+	"BlizzardStaffMortarProjectile": 9346
 	"HealingPotion": 9400
 	"EnragePotion": 9401
 	"StoneskinPotion": 9402
@@ -2272,17 +2344,61 @@
 	"MeadowBush": 15501
 	"MeadowTallGrass": 15502
 	"PottedEnvelopeTree": 16009
+	"AcidBeam": 18802
+	"BlizzardStaff": 18806
+	"SniperRifle": 18809
+	"SniperRifleProjectile": 18819
 	"AtlantianWormRing": 18850
 	"CrystalRing": 18851
 	"HydraJewelryNatureRing": 18852
 	"HydraJewelrySeaRing": 18853
 	"CrescentRing": 18854
+	"ToothedRing": 18855
+	"AzureRing": 18856
+	"SingedRing": 18857
+	"MoonbellRing": 18858
+	"InfestedRing": 18859
+	"ScaledRing": 18861
+	"BubbleRing": 18862
+	"BrimstoneShardRing": 18863
+	"SacredRing": 18864
+	"LavaSpikeRing": 18865
+	"PowerRing": 18866
+	"ClarityRing": 18867
+	"BrimstoneRing": 18868
+	"WarpedRing": 18869
+	"JailorsRing": 18870
 	"HourglassRing": 18890
 	"ViciousRing": 18891
 	"BoundaryRing": 18892
 	"PuppetRing": 18893
 	"ExcavationBurnerRing": 18894
 	"ExcavationScrewNutRing": 18895
+	"AzureNecklace": 18900
+	"OrbNecklace": 18901
+	"SingedNecklace": 18902
+	"MoonbellNecklace": 18903
+	"ThornNecklace": 18904
+	"CodexNecklace": 18905
+	"SmokePearlNecklace": 18906
+	"KnightsNecklace": 18907
+	"ChimeNecklace": 18908
+	"EnigmaticNecklace": 18909
+	"EruptiveNecklace": 18910
+	"HelioNecklace": 18911
+	"NeedleNecklace": 18912
+	"WarpedNecklace": 18913
+	"BombshellNecklace": 18914
+	"WarriorHelmet": 18940
+	"WarriorChestplate": 18941
+	"WarriorGreaves": 18942
+	"SkirmisherQuiver": 18943
+	"BombScarabVisor": 18944
+	"BombScarabHarness": 18945
+	"BombScarabLegs": 18946
+	"MossHelm": 18947
+	"MossBreastArmor": 18948
+	"MossPants": 18949
 	"MakeAWishHat": 18999
 	"ContributorItem0": 19000
 	"ContributorItemDaresielSword": 19001

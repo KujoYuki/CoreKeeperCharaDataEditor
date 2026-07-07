@@ -91,7 +91,7 @@ namespace CKCharaDataEditor.Forms
 
         private void conditionListLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/CKCharaDataEditor/Resource/ConditionDescription.csv") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/CKCharaDataEditor/Resources/ConditionDescription.csv") { UseShellExecute = true });
         }
 
         private void backUpConditionsButton_Click(object sender, EventArgs e)

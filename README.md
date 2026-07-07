@@ -1,8 +1,11 @@
 # CKCharaDataEditor
-
+[![Latest Release](https://img.shields.io/github/v/release/KujoYuki/CoreKeeperCharaDataEditor)](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases/latest) [![Latest Downloads](https://img.shields.io/github/downloads/KujoYuki/CoreKeeperCharaDataEditor/latest/total)](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases/latest) [![All Downloads](https://img.shields.io/github/downloads/KujoYuki/CoreKeeperCharaDataEditor/total)](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases)  
+[![GitHub Release Date](https://img.shields.io/github/release-date/KujoYuki/CoreKeeperCharaDataEditor)](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases) ![Last Commit](https://img.shields.io/github/last-commit/KujoYuki/CoreKeeperCharaDataEditor)  
 [CoreKeepr](https://store.steampowered.com/app/1621690/Core_Keeper/)のインベントリ内容を操作する外部拡張エディターです。  
 通常の手段では作れない料理の作成やアイテムの編集を目的として制作しています。  
-ダウンロードは[こちら](https://github.com/KujoYuki/CoreKeeperCharaDataEditor/releases/latest/)から。
+
+使い方はUI上のツールチップを参照してください。  
+仕様を理解する必要がある時は、このページの[仕組みと解説](#仕組みと解説)を確認してください。
 
 ## このツールが持つ機能
 - インベントリ内のあらゆるアイテムを作成できます。  

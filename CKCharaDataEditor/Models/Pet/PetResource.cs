@@ -20,6 +20,9 @@ namespace CKCharaDataEditor.Models.Pet
             { (int)PetType.PetMagic, (PetType.PetMagic, PetType.PetMagic.ToString(), PetBattleType.Buff, false) },
             { (int)PetType.PetElectric, (PetType.PetElectric, PetType.PetElectric.ToString(), PetBattleType.Melee, false) },
             { (int)PetType.PetWarlock, (PetType.PetWarlock, PetType.PetWarlock.ToString(), PetBattleType.Buff, true) },
+            { (int)PetType.PetFrog, (PetType.PetFrog, PetType.PetFrog.ToString(), PetBattleType.Buff, true) },
+            { (int)PetType.PetMeleeCat, (PetType.PetMeleeCat, PetType.PetMeleeCat.ToString(), PetBattleType.Buff, true) },
+            { (int)PetType.PetAzeosJr, (PetType.PetAzeosJr, PetType.PetAzeosJr.ToString(), PetBattleType.Range, false) },
         };
 
         /// <summary>
@@ -62,6 +65,9 @@ namespace CKCharaDataEditor.Models.Pet
                 (31, "未定義キー", "長命", "ミニオンの寿命+0%", "飼い主へのバフ:ミニオンの寿命+15%"),
                 (32, "未定義キー", "コロニーの採餌", "ミニオンのヒットでライフ+0", "飼い主へのバフ:ミニオンのヒットでライフ+9999"),
                 (33, "未定義キー", "未定義キー", "ペットのヒットでライフ+9999", "飼い主へのバフ:ペットのヒットでライフ+0"),
+                (34, "ヘビータッチ", "未定義キー", "遠距離ヒットでのノックバック確率+10%", "飼い主へのバフ:遠距離ヒットでのノックバック確率+0%"),
+                (35, "不安定な挙動", "未定義キー", "遠距離ヒットでの発射物が砕け散る確率+10%", "飼い主へのバフ:遠距離ヒットでの発射物が砕け散る確率+0%"),
+                (36, "おもちゃのボール", "未定義キー", "ヒット時に飛び散る発射物の破片+1個", "飼い主へのバフ:ヒット時に飛び散る発射物の破片+0"),
             };
 
         public static IReadOnlyDictionary<(PetType petType, PetColor color), string> ColorDict
@@ -123,13 +129,51 @@ namespace CKCharaDataEditor.Models.Pet
             { (PetType.PetWarlock,PetColor.Color_5) ,"紫(Purple)" },
             { (PetType.PetWarlock,PetColor.Color_6) ,"赤(Red)" },
             { (PetType.PetWarlock,PetColor.Color_7) ,"黄(Yellow)" },
+            { (PetType.PetFrog,PetColor.Color_0) ,"緑(Default)" },
+            { (PetType.PetFrog,PetColor.Color_1) ,"深緑" },
+            { (PetType.PetFrog,PetColor.Color_2) ,"翡翠" },
+            { (PetType.PetFrog,PetColor.Color_3) ,"青" },
+            { (PetType.PetFrog,PetColor.Color_4) ,"灰" },
+            { (PetType.PetFrog,PetColor.Color_5) ,"白" },
+            { (PetType.PetFrog,PetColor.Color_6) ,"紫" },
+            { (PetType.PetFrog,PetColor.Color_7) ,"黄" },
+            { (PetType.PetMeleeCat,PetColor.Color_0) ,"桃(Default)" },
+            { (PetType.PetMeleeCat,PetColor.Color_1) ,"青" },
+            { (PetType.PetMeleeCat,PetColor.Color_2) ,"黄" },
+            { (PetType.PetMeleeCat,PetColor.Color_3) ,"緑" },
+            { (PetType.PetMeleeCat,PetColor.Color_4) ,"茶" },
+            { (PetType.PetMeleeCat,PetColor.Color_5) ,"白" },
+            { (PetType.PetMeleeCat,PetColor.Color_6) ,"紫" },
+            { (PetType.PetMeleeCat,PetColor.Color_7) ,"深緑" },
             { (PetType.PetSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetType.PetSlipperySlimeBlob,PetColor.Color_0) ,"----" },
             { (PetType.PetPoisonSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetType.PetLavaSlimeBlob,PetColor.Color_0) ,"----" },
             { (PetType.PetPrinceSlimeBlob,PetColor.Color_0) ,"----" },
-            { (PetType.PetMagic,PetColor.Color_0) ,"----" },
-            { (PetType.PetElectric,PetColor.Color_0) ,"----" },
+            { (PetType.PetMagic,PetColor.Color_0) ,"薄緑(Default)" },
+            { (PetType.PetMagic,PetColor.Color_1) ,"水" },
+            { (PetType.PetMagic,PetColor.Color_2) ,"青" },
+            { (PetType.PetMagic,PetColor.Color_3) ,"緑" },
+            { (PetType.PetMagic,PetColor.Color_4) ,"紫" },
+            { (PetType.PetMagic,PetColor.Color_5) ,"黄" },
+            { (PetType.PetMagic,PetColor.Color_6) ,"白" },
+            { (PetType.PetMagic,PetColor.Color_7) ,"赤" },
+            { (PetType.PetElectric,PetColor.Color_0) ,"灰(Default)" },
+            { (PetType.PetElectric,PetColor.Color_1) ,"黒" },
+            { (PetType.PetElectric,PetColor.Color_2) ,"白" },
+            { (PetType.PetElectric,PetColor.Color_3) ,"茶" },
+            { (PetType.PetElectric,PetColor.Color_4) ,"赤" },
+            { (PetType.PetElectric,PetColor.Color_5) ,"青" },
+            { (PetType.PetElectric,PetColor.Color_6) ,"紫" },
+            { (PetType.PetElectric,PetColor.Color_7) ,"緑" },
+            { (PetType.PetAzeosJr,PetColor.Color_0) ,"黄(Default)" },
+            { (PetType.PetAzeosJr,PetColor.Color_1) ,"白金(Easter)" },
+            { (PetType.PetAzeosJr,PetColor.Color_2) ,"緑" },
+            { (PetType.PetAzeosJr,PetColor.Color_3) ,"白緑2" },
+            { (PetType.PetAzeosJr,PetColor.Color_4) ,"紫" },
+            { (PetType.PetAzeosJr,PetColor.Color_5) ,"青" },
+            { (PetType.PetAzeosJr,PetColor.Color_6) ,"赤" },
+            { (PetType.PetAzeosJr,PetColor.Color_7) ,"深緑" },
         };
 
         public static IReadOnlyDictionary<PetType, PetBattleType> BattleType
@@ -149,6 +193,9 @@ namespace CKCharaDataEditor.Models.Pet
                 { PetType.PetMagic, PetBattleType.Buff},
                 { PetType.PetElectric, PetBattleType.Melee},
                 { PetType.PetWarlock, PetBattleType.Buff},
+                { PetType.PetFrog, PetBattleType.Range},
+                { PetType.PetMeleeCat, PetBattleType.Melee},
+                { PetType.PetAzeosJr, PetBattleType.Range},
             };
 
         public static readonly PetType[] ColorSelectablePets =
@@ -159,7 +206,12 @@ namespace CKCharaDataEditor.Models.Pet
             PetType.PetBunny,
             PetType.PetMoth,
             PetType.PetTardigrade,
-            PetType.PetWarlock
+            PetType.PetMagic,
+            PetType.PetElectric,
+            PetType.PetWarlock,
+            PetType.PetFrog,
+            PetType.PetMeleeCat,
+            PetType.PetAzeosJr,
         ];
 
         public static readonly List<PetTalent> DefaultTalents = Enumerable.Repeat(new PetTalent(2, 0), 9).ToList();

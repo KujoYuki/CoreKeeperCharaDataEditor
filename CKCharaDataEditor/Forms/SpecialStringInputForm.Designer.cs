@@ -32,7 +32,10 @@
             specialTextBox = new TextBox();
             okButton = new Button();
             cancelButton = new Button();
-            tableLayoutPanel1 = new TableLayoutPanel();
+            buttonsTableLayoutPanel = new TableLayoutPanel();
+            button89 = new Button();
+            button88 = new Button();
+            button87 = new Button();
             button86 = new Button();
             button85 = new Button();
             button84 = new Button();
@@ -121,19 +124,17 @@
             button1 = new Button();
             panel1 = new Panel();
             label1 = new Label();
-            button87 = new Button();
-            button88 = new Button();
-            button89 = new Button();
-            tableLayoutPanel1.SuspendLayout();
+            fillRandomButton = new Button();
+            buttonsTableLayoutPanel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // specialTextBox
             // 
-            specialTextBox.Font = new Font("Yu Gothic UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            specialTextBox.Font = new Font("Yu Gothic UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             specialTextBox.Location = new Point(59, 36);
             specialTextBox.Name = "specialTextBox";
-            specialTextBox.Size = new Size(665, 35);
+            specialTextBox.Size = new Size(665, 43);
             specialTextBox.TabIndex = 0;
             specialTextBox.TextChanged += specialTextBox_TextChanged;
             // 
@@ -159,124 +160,160 @@
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += cancelButton_Click;
             // 
-            // tableLayoutPanel1
+            // buttonsTableLayoutPanel
             // 
-            tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel1.ColumnCount = 8;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.50021F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002174F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002155F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002155F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002174F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002155F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002127F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.4984951F));
-            tableLayoutPanel1.Controls.Add(button89, 0, 11);
-            tableLayoutPanel1.Controls.Add(button88, 7, 10);
-            tableLayoutPanel1.Controls.Add(button87, 6, 10);
-            tableLayoutPanel1.Controls.Add(button86, 5, 10);
-            tableLayoutPanel1.Controls.Add(button85, 4, 10);
-            tableLayoutPanel1.Controls.Add(button84, 3, 10);
-            tableLayoutPanel1.Controls.Add(button83, 2, 10);
-            tableLayoutPanel1.Controls.Add(button82, 1, 10);
-            tableLayoutPanel1.Controls.Add(button81, 0, 10);
-            tableLayoutPanel1.Controls.Add(button80, 7, 9);
-            tableLayoutPanel1.Controls.Add(button79, 6, 9);
-            tableLayoutPanel1.Controls.Add(button78, 5, 9);
-            tableLayoutPanel1.Controls.Add(button77, 4, 9);
-            tableLayoutPanel1.Controls.Add(button76, 3, 9);
-            tableLayoutPanel1.Controls.Add(button75, 2, 9);
-            tableLayoutPanel1.Controls.Add(button74, 1, 9);
-            tableLayoutPanel1.Controls.Add(button73, 0, 9);
-            tableLayoutPanel1.Controls.Add(button72, 7, 8);
-            tableLayoutPanel1.Controls.Add(button71, 6, 8);
-            tableLayoutPanel1.Controls.Add(button70, 5, 8);
-            tableLayoutPanel1.Controls.Add(button69, 4, 8);
-            tableLayoutPanel1.Controls.Add(button68, 3, 8);
-            tableLayoutPanel1.Controls.Add(button67, 2, 8);
-            tableLayoutPanel1.Controls.Add(button66, 1, 8);
-            tableLayoutPanel1.Controls.Add(button65, 0, 8);
-            tableLayoutPanel1.Controls.Add(button64, 7, 7);
-            tableLayoutPanel1.Controls.Add(button63, 6, 7);
-            tableLayoutPanel1.Controls.Add(button62, 5, 7);
-            tableLayoutPanel1.Controls.Add(button61, 4, 7);
-            tableLayoutPanel1.Controls.Add(button60, 3, 7);
-            tableLayoutPanel1.Controls.Add(button59, 2, 7);
-            tableLayoutPanel1.Controls.Add(button58, 1, 7);
-            tableLayoutPanel1.Controls.Add(button57, 0, 7);
-            tableLayoutPanel1.Controls.Add(button56, 7, 6);
-            tableLayoutPanel1.Controls.Add(button55, 6, 6);
-            tableLayoutPanel1.Controls.Add(button54, 5, 6);
-            tableLayoutPanel1.Controls.Add(button53, 4, 6);
-            tableLayoutPanel1.Controls.Add(button52, 3, 6);
-            tableLayoutPanel1.Controls.Add(button51, 2, 6);
-            tableLayoutPanel1.Controls.Add(button50, 1, 6);
-            tableLayoutPanel1.Controls.Add(button49, 0, 6);
-            tableLayoutPanel1.Controls.Add(button48, 7, 5);
-            tableLayoutPanel1.Controls.Add(button47, 6, 5);
-            tableLayoutPanel1.Controls.Add(button46, 5, 5);
-            tableLayoutPanel1.Controls.Add(button45, 4, 5);
-            tableLayoutPanel1.Controls.Add(button44, 3, 5);
-            tableLayoutPanel1.Controls.Add(button43, 2, 5);
-            tableLayoutPanel1.Controls.Add(button42, 1, 5);
-            tableLayoutPanel1.Controls.Add(button41, 0, 5);
-            tableLayoutPanel1.Controls.Add(button40, 7, 4);
-            tableLayoutPanel1.Controls.Add(button39, 6, 4);
-            tableLayoutPanel1.Controls.Add(button38, 5, 4);
-            tableLayoutPanel1.Controls.Add(button37, 4, 4);
-            tableLayoutPanel1.Controls.Add(button36, 3, 4);
-            tableLayoutPanel1.Controls.Add(button35, 2, 4);
-            tableLayoutPanel1.Controls.Add(button34, 1, 4);
-            tableLayoutPanel1.Controls.Add(button33, 0, 4);
-            tableLayoutPanel1.Controls.Add(button32, 7, 3);
-            tableLayoutPanel1.Controls.Add(button31, 6, 3);
-            tableLayoutPanel1.Controls.Add(button30, 5, 3);
-            tableLayoutPanel1.Controls.Add(button29, 4, 3);
-            tableLayoutPanel1.Controls.Add(button28, 3, 3);
-            tableLayoutPanel1.Controls.Add(button27, 2, 3);
-            tableLayoutPanel1.Controls.Add(button26, 1, 3);
-            tableLayoutPanel1.Controls.Add(button25, 0, 3);
-            tableLayoutPanel1.Controls.Add(button24, 7, 2);
-            tableLayoutPanel1.Controls.Add(button23, 6, 2);
-            tableLayoutPanel1.Controls.Add(button22, 5, 2);
-            tableLayoutPanel1.Controls.Add(button21, 4, 2);
-            tableLayoutPanel1.Controls.Add(button20, 3, 2);
-            tableLayoutPanel1.Controls.Add(button19, 2, 2);
-            tableLayoutPanel1.Controls.Add(button18, 1, 2);
-            tableLayoutPanel1.Controls.Add(button17, 0, 2);
-            tableLayoutPanel1.Controls.Add(button16, 7, 1);
-            tableLayoutPanel1.Controls.Add(button15, 6, 1);
-            tableLayoutPanel1.Controls.Add(button14, 5, 1);
-            tableLayoutPanel1.Controls.Add(button13, 4, 1);
-            tableLayoutPanel1.Controls.Add(button12, 3, 1);
-            tableLayoutPanel1.Controls.Add(button11, 2, 1);
-            tableLayoutPanel1.Controls.Add(button10, 1, 1);
-            tableLayoutPanel1.Controls.Add(button9, 0, 1);
-            tableLayoutPanel1.Controls.Add(button8, 7, 0);
-            tableLayoutPanel1.Controls.Add(button7, 6, 0);
-            tableLayoutPanel1.Controls.Add(button6, 5, 0);
-            tableLayoutPanel1.Controls.Add(button5, 4, 0);
-            tableLayoutPanel1.Controls.Add(button4, 3, 0);
-            tableLayoutPanel1.Controls.Add(button3, 2, 0);
-            tableLayoutPanel1.Controls.Add(button2, 1, 0);
-            tableLayoutPanel1.Controls.Add(button1, 0, 0);
-            tableLayoutPanel1.Location = new Point(3, 3);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 12;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.Size = new Size(752, 549);
-            tableLayoutPanel1.TabIndex = 3;
+            buttonsTableLayoutPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            buttonsTableLayoutPanel.ColumnCount = 8;
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.50021F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002174F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002155F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002155F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002174F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002155F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5002127F));
+            buttonsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.4984951F));
+            buttonsTableLayoutPanel.Controls.Add(button89, 0, 11);
+            buttonsTableLayoutPanel.Controls.Add(button88, 7, 10);
+            buttonsTableLayoutPanel.Controls.Add(button87, 6, 10);
+            buttonsTableLayoutPanel.Controls.Add(button86, 5, 10);
+            buttonsTableLayoutPanel.Controls.Add(button85, 4, 10);
+            buttonsTableLayoutPanel.Controls.Add(button84, 3, 10);
+            buttonsTableLayoutPanel.Controls.Add(button83, 2, 10);
+            buttonsTableLayoutPanel.Controls.Add(button82, 1, 10);
+            buttonsTableLayoutPanel.Controls.Add(button81, 0, 10);
+            buttonsTableLayoutPanel.Controls.Add(button80, 7, 9);
+            buttonsTableLayoutPanel.Controls.Add(button79, 6, 9);
+            buttonsTableLayoutPanel.Controls.Add(button78, 5, 9);
+            buttonsTableLayoutPanel.Controls.Add(button77, 4, 9);
+            buttonsTableLayoutPanel.Controls.Add(button76, 3, 9);
+            buttonsTableLayoutPanel.Controls.Add(button75, 2, 9);
+            buttonsTableLayoutPanel.Controls.Add(button74, 1, 9);
+            buttonsTableLayoutPanel.Controls.Add(button73, 0, 9);
+            buttonsTableLayoutPanel.Controls.Add(button72, 7, 8);
+            buttonsTableLayoutPanel.Controls.Add(button71, 6, 8);
+            buttonsTableLayoutPanel.Controls.Add(button70, 5, 8);
+            buttonsTableLayoutPanel.Controls.Add(button69, 4, 8);
+            buttonsTableLayoutPanel.Controls.Add(button68, 3, 8);
+            buttonsTableLayoutPanel.Controls.Add(button67, 2, 8);
+            buttonsTableLayoutPanel.Controls.Add(button66, 1, 8);
+            buttonsTableLayoutPanel.Controls.Add(button65, 0, 8);
+            buttonsTableLayoutPanel.Controls.Add(button64, 7, 7);
+            buttonsTableLayoutPanel.Controls.Add(button63, 6, 7);
+            buttonsTableLayoutPanel.Controls.Add(button62, 5, 7);
+            buttonsTableLayoutPanel.Controls.Add(button61, 4, 7);
+            buttonsTableLayoutPanel.Controls.Add(button60, 3, 7);
+            buttonsTableLayoutPanel.Controls.Add(button59, 2, 7);
+            buttonsTableLayoutPanel.Controls.Add(button58, 1, 7);
+            buttonsTableLayoutPanel.Controls.Add(button57, 0, 7);
+            buttonsTableLayoutPanel.Controls.Add(button56, 7, 6);
+            buttonsTableLayoutPanel.Controls.Add(button55, 6, 6);
+            buttonsTableLayoutPanel.Controls.Add(button54, 5, 6);
+            buttonsTableLayoutPanel.Controls.Add(button53, 4, 6);
+            buttonsTableLayoutPanel.Controls.Add(button52, 3, 6);
+            buttonsTableLayoutPanel.Controls.Add(button51, 2, 6);
+            buttonsTableLayoutPanel.Controls.Add(button50, 1, 6);
+            buttonsTableLayoutPanel.Controls.Add(button49, 0, 6);
+            buttonsTableLayoutPanel.Controls.Add(button48, 7, 5);
+            buttonsTableLayoutPanel.Controls.Add(button47, 6, 5);
+            buttonsTableLayoutPanel.Controls.Add(button46, 5, 5);
+            buttonsTableLayoutPanel.Controls.Add(button45, 4, 5);
+            buttonsTableLayoutPanel.Controls.Add(button44, 3, 5);
+            buttonsTableLayoutPanel.Controls.Add(button43, 2, 5);
+            buttonsTableLayoutPanel.Controls.Add(button42, 1, 5);
+            buttonsTableLayoutPanel.Controls.Add(button41, 0, 5);
+            buttonsTableLayoutPanel.Controls.Add(button40, 7, 4);
+            buttonsTableLayoutPanel.Controls.Add(button39, 6, 4);
+            buttonsTableLayoutPanel.Controls.Add(button38, 5, 4);
+            buttonsTableLayoutPanel.Controls.Add(button37, 4, 4);
+            buttonsTableLayoutPanel.Controls.Add(button36, 3, 4);
+            buttonsTableLayoutPanel.Controls.Add(button35, 2, 4);
+            buttonsTableLayoutPanel.Controls.Add(button34, 1, 4);
+            buttonsTableLayoutPanel.Controls.Add(button33, 0, 4);
+            buttonsTableLayoutPanel.Controls.Add(button32, 7, 3);
+            buttonsTableLayoutPanel.Controls.Add(button31, 6, 3);
+            buttonsTableLayoutPanel.Controls.Add(button30, 5, 3);
+            buttonsTableLayoutPanel.Controls.Add(button29, 4, 3);
+            buttonsTableLayoutPanel.Controls.Add(button28, 3, 3);
+            buttonsTableLayoutPanel.Controls.Add(button27, 2, 3);
+            buttonsTableLayoutPanel.Controls.Add(button26, 1, 3);
+            buttonsTableLayoutPanel.Controls.Add(button25, 0, 3);
+            buttonsTableLayoutPanel.Controls.Add(button24, 7, 2);
+            buttonsTableLayoutPanel.Controls.Add(button23, 6, 2);
+            buttonsTableLayoutPanel.Controls.Add(button22, 5, 2);
+            buttonsTableLayoutPanel.Controls.Add(button21, 4, 2);
+            buttonsTableLayoutPanel.Controls.Add(button20, 3, 2);
+            buttonsTableLayoutPanel.Controls.Add(button19, 2, 2);
+            buttonsTableLayoutPanel.Controls.Add(button18, 1, 2);
+            buttonsTableLayoutPanel.Controls.Add(button17, 0, 2);
+            buttonsTableLayoutPanel.Controls.Add(button16, 7, 1);
+            buttonsTableLayoutPanel.Controls.Add(button15, 6, 1);
+            buttonsTableLayoutPanel.Controls.Add(button14, 5, 1);
+            buttonsTableLayoutPanel.Controls.Add(button13, 4, 1);
+            buttonsTableLayoutPanel.Controls.Add(button12, 3, 1);
+            buttonsTableLayoutPanel.Controls.Add(button11, 2, 1);
+            buttonsTableLayoutPanel.Controls.Add(button10, 1, 1);
+            buttonsTableLayoutPanel.Controls.Add(button9, 0, 1);
+            buttonsTableLayoutPanel.Controls.Add(button8, 7, 0);
+            buttonsTableLayoutPanel.Controls.Add(button7, 6, 0);
+            buttonsTableLayoutPanel.Controls.Add(button6, 5, 0);
+            buttonsTableLayoutPanel.Controls.Add(button5, 4, 0);
+            buttonsTableLayoutPanel.Controls.Add(button4, 3, 0);
+            buttonsTableLayoutPanel.Controls.Add(button3, 2, 0);
+            buttonsTableLayoutPanel.Controls.Add(button2, 1, 0);
+            buttonsTableLayoutPanel.Controls.Add(button1, 0, 0);
+            buttonsTableLayoutPanel.Location = new Point(3, 3);
+            buttonsTableLayoutPanel.Name = "buttonsTableLayoutPanel";
+            buttonsTableLayoutPanel.RowCount = 12;
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
+            buttonsTableLayoutPanel.Size = new Size(752, 549);
+            buttonsTableLayoutPanel.TabIndex = 3;
+            // 
+            // button89
+            // 
+            button89.BackgroundImage = (Image)resources.GetObject("button89.BackgroundImage");
+            button89.BackgroundImageLayout = ImageLayout.Stretch;
+            button89.Dock = DockStyle.Fill;
+            button89.Location = new Point(3, 498);
+            button89.Name = "button89";
+            button89.Size = new Size(88, 48);
+            button89.TabIndex = 88;
+            button89.Tag = "U+24C1";
+            button89.UseVisualStyleBackColor = true;
+            // 
+            // button88
+            // 
+            button88.BackgroundImage = (Image)resources.GetObject("button88.BackgroundImage");
+            button88.BackgroundImageLayout = ImageLayout.Stretch;
+            button88.Dock = DockStyle.Fill;
+            button88.Location = new Point(661, 453);
+            button88.Name = "button88";
+            button88.Size = new Size(88, 39);
+            button88.TabIndex = 87;
+            button88.Tag = "U+2036";
+            button88.UseVisualStyleBackColor = true;
+            // 
+            // button87
+            // 
+            button87.BackgroundImage = (Image)resources.GetObject("button87.BackgroundImage");
+            button87.BackgroundImageLayout = ImageLayout.Stretch;
+            button87.Dock = DockStyle.Fill;
+            button87.Location = new Point(567, 453);
+            button87.Name = "button87";
+            button87.Size = new Size(88, 39);
+            button87.TabIndex = 86;
+            button87.Tag = "U+2035";
+            button87.UseVisualStyleBackColor = true;
             // 
             // button86
             // 
@@ -719,7 +756,7 @@
             button50.Name = "button50";
             button50.Size = new Size(88, 39);
             button50.TabIndex = 49;
-            button50.Tag = "U+24CE";
+            button50.Tag = "U+2045";
             button50.UseVisualStyleBackColor = true;
             // 
             // button49
@@ -1314,7 +1351,7 @@
             // 
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panel1.AutoScroll = true;
-            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Controls.Add(buttonsTableLayoutPanel);
             panel1.Location = new Point(12, 83);
             panel1.Name = "panel1";
             panel1.Size = new Size(775, 473);
@@ -1329,47 +1366,23 @@
             label1.TabIndex = 5;
             label1.Text = "ゲーム内でのみ表記が変更される文字を挿入できます";
             // 
-            // button87
+            // fillRandomButton
             // 
-            button87.BackgroundImage = (Image)resources.GetObject("button87.BackgroundImage");
-            button87.BackgroundImageLayout = ImageLayout.Stretch;
-            button87.Dock = DockStyle.Fill;
-            button87.Location = new Point(567, 453);
-            button87.Name = "button87";
-            button87.Size = new Size(88, 39);
-            button87.TabIndex = 86;
-            button87.Tag = "U+2035";
-            button87.UseVisualStyleBackColor = true;
-            // 
-            // button88
-            // 
-            button88.BackgroundImage = (Image)resources.GetObject("button88.BackgroundImage");
-            button88.BackgroundImageLayout = ImageLayout.Stretch;
-            button88.Dock = DockStyle.Fill;
-            button88.Location = new Point(661, 453);
-            button88.Name = "button88";
-            button88.Size = new Size(88, 39);
-            button88.TabIndex = 87;
-            button88.Tag = "U+2036";
-            button88.UseVisualStyleBackColor = true;
-            // 
-            // button89
-            // 
-            button89.BackgroundImage = (Image)resources.GetObject("button89.BackgroundImage");
-            button89.BackgroundImageLayout = ImageLayout.Stretch;
-            button89.Dock = DockStyle.Fill;
-            button89.Location = new Point(3, 498);
-            button89.Name = "button89";
-            button89.Size = new Size(88, 48);
-            button89.TabIndex = 88;
-            button89.Tag = "U+24C1";
-            button89.UseVisualStyleBackColor = true;
+            fillRandomButton.Location = new Point(442, 572);
+            fillRandomButton.Name = "fillRandomButton";
+            fillRandomButton.Size = new Size(75, 23);
+            fillRandomButton.TabIndex = 6;
+            fillRandomButton.Text = "ランダム追加";
+            fillRandomButton.UseVisualStyleBackColor = true;
+            fillRandomButton.Visible = false;
+            fillRandomButton.Click += fillRandomButton_Click;
             // 
             // SpecialStringInputForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(787, 607);
+            Controls.Add(fillRandomButton);
             Controls.Add(label1);
             Controls.Add(panel1);
             Controls.Add(cancelButton);
@@ -1378,7 +1391,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "SpecialStringInputForm";
             Text = "特殊文字挿入";
-            tableLayoutPanel1.ResumeLayout(false);
+            buttonsTableLayoutPanel.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -1389,7 +1402,7 @@
         private TextBox specialTextBox;
         private Button okButton;
         private Button cancelButton;
-        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel buttonsTableLayoutPanel;
         private Panel panel1;
         private Label label1;
         private Button button1;
@@ -1481,5 +1494,6 @@
         private Button button88;
         private Button button87;
         private Button button89;
+        private Button fillRandomButton;
     }
 }

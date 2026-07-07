@@ -17,7 +17,9 @@ namespace CKCharaDataEditor.Models.Cattle
             { (int)CattleType.Dodo, (CattleType.Dodo, CattleType.Dodo.ToString(), true) },
             { (int)CattleType.DodoBaby, (CattleType.DodoBaby, CattleType.DodoBaby.ToString(), false) },
             { (int)CattleType.Camel, (CattleType.Camel, CattleType.Camel.ToString(), true) },
-            { (int)CattleType.CamelBaby, (CattleType.CamelBaby, CattleType.CamelBaby.ToString(), true) },
+            { (int)CattleType.CamelBaby, (CattleType.CamelBaby, CattleType.CamelBaby.ToString(), false) },
+            { (int)CattleType.Raptor, (CattleType.Raptor, CattleType.Raptor.ToString(), true) },
+            { (int)CattleType.RaptorBaby, (CattleType.RaptorBaby, CattleType.RaptorBaby.ToString(), false) },
         };
 
         public static readonly List<AuxPrefab> DefaultCattlePrefabs =
@@ -29,36 +31,41 @@ namespace CKCharaDataEditor.Models.Cattle
 
         public static readonly Dictionary<(CattleType, int), string> Colors = new Dictionary<(CattleType, int), string>()
         {
-            { (CattleType.Cow, 0), "デフォルト"},
+            { (CattleType.Cow, 0), "紫(Default)"},
             { (CattleType.Cow, 1), "黄"},
             { (CattleType.Cow, 2), "灰"},
             { (CattleType.Cow, 3), "アイボリー"},
             { (CattleType.Cow, 4), "緑"},
-            { (CattleType.Bambuck, 0), "デフォルト"},
+            { (CattleType.Bambuck, 0), "ピンク(Default)"},
             { (CattleType.Bambuck, 1), "白"},
             { (CattleType.Bambuck, 2), "黒"},
             { (CattleType.Bambuck, 3), "黄"},
             { (CattleType.Bambuck, 4), "桃"},
-            { (CattleType.RolyPoly, 0), "デフォルト"},
+            { (CattleType.RolyPoly, 0), "黄(Default)"},
             { (CattleType.RolyPoly, 1), "橙"},
             { (CattleType.RolyPoly, 2), "紫"},
             { (CattleType.RolyPoly, 3), "緑"},
             { (CattleType.RolyPoly, 4), "青"},
-            { (CattleType.Turtle, 0), "デフォルト"},
+            { (CattleType.Turtle, 0), "水(Default)"},
             { (CattleType.Turtle, 1), "灰"},
             { (CattleType.Turtle, 2), "白"},
             { (CattleType.Turtle, 3), "青"},
             { (CattleType.Turtle, 4), "紫"},
-            { (CattleType.Dodo, 0), "デフォルト"},
+            { (CattleType.Dodo, 0), "白(Default)"},
             { (CattleType.Dodo, 1), "水"},
             { (CattleType.Dodo, 2), "薄茶"},
             { (CattleType.Dodo, 3), "灰"},
             { (CattleType.Dodo, 4), "黄"},
-            { (CattleType.Camel, 0), "デフォルト"},
+            { (CattleType.Camel, 0), "黄(Default)"},
             { (CattleType.Camel, 1), "黄？"},
             { (CattleType.Camel, 2), "黒"},
             { (CattleType.Camel, 3), "茶"},
             { (CattleType.Camel, 4), "白"},
+            { (CattleType.Raptor, 0), "緑(Default)"},
+            { (CattleType.Raptor, 1), "茶"},
+            { (CattleType.Raptor, 2), "青"},
+            { (CattleType.Raptor, 3), "紫"},
+            { (CattleType.Raptor, 4), "黒"},
         };
 
         public static readonly Dictionary<CattleType, CattleType> CattleSpecies = new Dictionary<CattleType, CattleType>()
@@ -69,6 +76,7 @@ namespace CKCharaDataEditor.Models.Cattle
             { CattleType.TurtleBaby, CattleType.Turtle },
             { CattleType.DodoBaby, CattleType.Dodo },
             { CattleType.CamelBaby, CattleType.Camel },
+            { CattleType.RaptorBaby, CattleType.Raptor },
         };
 
         public static readonly ItemAuxData DefaultAdultCattleAuxData = new(0, new AuxPrefabManager(DefaultCattlePrefabs));

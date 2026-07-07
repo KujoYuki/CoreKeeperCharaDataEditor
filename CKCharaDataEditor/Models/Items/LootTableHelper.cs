@@ -255,8 +255,10 @@ namespace CKCharaDataEditor.Models.Items
             { "FallExcavationRockDestructible", (Biome.BreakersReach, TableAction.Destructible) },
             { "BrokenRobotDestructibleSmall", (Biome.BreakersReach, TableAction.Destructible) },
             { "BrokenRobotDestructibleBig", (Biome.BreakersReach, TableAction.Destructible) },
-
-
+            { "Wingling", (Biome.Dirt, TableAction.Enemy) },
+            { "Serpent", (Biome.Sea, TableAction.Enemy) },
+            { "MossDestructible", (Biome.Stone, TableAction.Destructible) },
+            { "MossDestructibleBig", (Biome.Stone, TableAction.Destructible) },
         };
 
         /// <summary>
@@ -370,6 +372,7 @@ namespace CKCharaDataEditor.Models.Items
             {"FallExcavationRockDestructible", "落石(突破者の到達点)" },
             {"BrokenRobotDestructibleSmall", "壊れたジオボット" },
             {"BrokenRobotDestructibleBig", "老朽化したジオボット" },
+            {"Serpent", "オオウミヘビ" },
         });
     }
 

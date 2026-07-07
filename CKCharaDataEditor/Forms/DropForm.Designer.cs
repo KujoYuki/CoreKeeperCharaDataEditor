@@ -95,7 +95,7 @@
             lootTableListBox.ItemHeight = 15;
             lootTableListBox.Location = new Point(12, 27);
             lootTableListBox.Name = "lootTableListBox";
-            lootTableListBox.Size = new Size(183, 589);
+            lootTableListBox.Size = new Size(200, 589);
             lootTableListBox.TabIndex = 0;
             lootTableListBox.DrawItem += lootTableListBox_DrawItem;
             lootTableListBox.SelectedIndexChanged += lootTableListBox_SelectedIndexChanged;
@@ -111,8 +111,9 @@
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label2.AutoSize = true;
-            label2.Location = new Point(201, 9);
+            label2.Location = new Point(218, 9);
             label2.Name = "label2";
             label2.Size = new Size(66, 15);
             label2.TabIndex = 2;
@@ -123,9 +124,10 @@
             lootDataGridView.AllowUserToAddRows = false;
             lootDataGridView.AllowUserToDeleteRows = false;
             lootDataGridView.AllowUserToResizeRows = false;
+            lootDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lootDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             lootDataGridView.Columns.AddRange(new DataGridViewColumn[] { objectID, ItemName, Amount, Weight, RollPerDop, GuaranteedRoll });
-            lootDataGridView.Location = new Point(201, 27);
+            lootDataGridView.Location = new Point(218, 27);
             lootDataGridView.MultiSelect = false;
             lootDataGridView.Name = "lootDataGridView";
             lootDataGridView.ReadOnly = true;
@@ -204,6 +206,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox1.Controls.Add(playerCountNumericUpDown);
             groupBox1.Controls.Add(increasedChanceToGetFish);
             groupBox1.Controls.Add(label13);
@@ -228,7 +231,7 @@
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(worldModeComboBox);
             groupBox1.Controls.Add(label4);
-            groupBox1.Location = new Point(201, 392);
+            groupBox1.Location = new Point(218, 392);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(744, 224);
             groupBox1.TabIndex = 6;
@@ -491,8 +494,9 @@
             // 
             // lootIdExplaneLabel
             // 
+            lootIdExplaneLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lootIdExplaneLabel.AutoSize = true;
-            lootIdExplaneLabel.Location = new Point(201, 627);
+            lootIdExplaneLabel.Location = new Point(218, 627);
             lootIdExplaneLabel.Name = "lootIdExplaneLabel";
             lootIdExplaneLabel.Size = new Size(45, 15);
             lootIdExplaneLabel.TabIndex = 7;
@@ -501,8 +505,9 @@
             // 
             // lootIdLabel
             // 
+            lootIdLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lootIdLabel.AutoSize = true;
-            lootIdLabel.Location = new Point(252, 627);
+            lootIdLabel.Location = new Point(269, 627);
             lootIdLabel.Name = "lootIdLabel";
             lootIdLabel.Size = new Size(36, 15);
             lootIdLabel.TabIndex = 8;
@@ -518,7 +523,8 @@
             // 
             // copyTableButton
             // 
-            copyTableButton.Location = new Point(408, 619);
+            copyTableButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            copyTableButton.Location = new Point(425, 619);
             copyTableButton.Name = "copyTableButton";
             copyTableButton.Size = new Size(140, 23);
             copyTableButton.TabIndex = 9;
@@ -530,7 +536,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(12, 627);
+            label12.Location = new Point(29, 627);
             label12.Name = "label12";
             label12.Size = new Size(88, 15);
             label12.TabIndex = 10;
@@ -538,7 +544,7 @@
             // 
             // searchIdTextBox
             // 
-            searchIdTextBox.Location = new Point(95, 624);
+            searchIdTextBox.Location = new Point(112, 624);
             searchIdTextBox.Name = "searchIdTextBox";
             searchIdTextBox.Size = new Size(100, 23);
             searchIdTextBox.TabIndex = 11;
@@ -548,7 +554,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(955, 664);
+            ClientSize = new Size(972, 664);
             Controls.Add(searchIdTextBox);
             Controls.Add(label12);
             Controls.Add(copyTableButton);

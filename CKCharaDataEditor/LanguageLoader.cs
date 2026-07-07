@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 
 namespace CKCharaDataEditor
 {
@@ -17,19 +18,36 @@ namespace CKCharaDataEditor
 			List<string> outputNumericLines = dic.Select(pair => $"{pair.Key}\t{pair.Value.key}\t{pair.Value.displayString}").ToList();
 			// 新規TSVファイルに出力
 			string langResourceFilePath = Path.Combine(outputFolderPath, "allItemList.tsv");
-
-			File.WriteAllLines(langResourceFilePath, outputNumericLines, Encoding.UTF8);
-			OutPutJapaneseResource(installPath, outputFolderPath);                                           // 全ての言語リソースの日英を抽出。
-			Console.WriteLine($"TSVファイルが出力されました: {outputFolderPath}");
+#if DEBUG
+			OutPutFixedLineFeedResource(installPath, outputFolderPath); // 改行コードの混入を修正したリソースを出力
+#endif
+            File.WriteAllLines(langResourceFilePath, outputNumericLines, Encoding.UTF8);
+			OutPutJapaneseResource(installPath, outputFolderPath);		// 全ての言語リソースの日英を抽出。
+			Debug.WriteLine($"TSVファイルが出力されました: {outputFolderPath}");
 		}
 
-		/// <summary>
-		/// 日本語のリソースを取得します。
-		/// </summary>
-		/// <param name="installPath"></param>
-		/// <returns>KeyはobjectId, Valueは[0]でkeyName, [1]で日本語表示名</returns>
-		/// <exception cref="FileNotFoundException"></exception>
-		public static IReadOnlyDictionary<int, (string key, string displayString)> CreateLanguageDictionary(string installPath,
+		public static void OutPutFixedLineFeedResource(string installPath, string outputFolderPath)
+        {
+            string localizationPath = Path.Combine(installPath, @"localization\Localization.csv");
+            if (!File.Exists(localizationPath)) return;
+            List<string[]> languageResourceTwo = File.ReadAllLines(localizationPath)
+                .Select(line => line.Split('\t'))
+                .ToList();
+            List<string> trancelation = FixLineFeed(languageResourceTwo)
+                .Select(words => string.Join("\t", words))
+                .ToList();
+            string outputPath = Path.Combine(outputFolderPath, "FixedLineFeedLocalization.tsv");
+            File.WriteAllLines(outputPath, trancelation, Encoding.UTF8);
+            Debug.WriteLine($"改行修正したTSVファイルが出力されました: {outputPath}");
+        }
+
+        /// <summary>
+        /// 日本語のリソースを取得します。
+        /// </summary>
+        /// <param name="installPath"></param>
+        /// <returns>KeyはobjectId, Valueは[0]でkeyName, [1]で日本語表示名</returns>
+        /// <exception cref="FileNotFoundException"></exception>
+        public static IReadOnlyDictionary<int, (string key, string displayString)> CreateLanguageDictionary(string installPath,
 			out IReadOnlyDictionary<int, string> objectIdWithKeyDic)
 		{
 			string originObjectIdPath = Path.Combine(installPath, @"CoreKeeper_Data\StreamingAssets\Conf\ID\ObjectID.json");

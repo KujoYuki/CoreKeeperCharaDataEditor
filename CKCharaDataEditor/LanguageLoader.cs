@@ -26,7 +26,12 @@ namespace CKCharaDataEditor
 			Debug.WriteLine($"TSVファイルが出力されました: {outputFolderPath}");
 		}
 
-		public static void OutPutFixedLineFeedResource(string installPath, string outputFolderPath)
+        /// <summary>
+        /// Ressourcesに同梱するための修正済みリソースを出力します。
+        /// </summary>
+        /// <param name="installPath"></param>
+        /// <param name="outputFolderPath"></param>
+        public static void OutPutFixedLineFeedResource(string installPath, string outputFolderPath)
         {
             string localizationPath = Path.Combine(installPath, @"localization\Localization.csv");
             if (!File.Exists(localizationPath)) return;
@@ -34,11 +39,25 @@ namespace CKCharaDataEditor
                 .Select(line => line.Split('\t'))
                 .ToList();
             List<string> trancelation = FixLineFeed(languageResourceTwo)
+				.Where(words => IsNecessaryKey(words[0]))
                 .Select(words => string.Join("\t", words))
                 .ToList();
             string outputPath = Path.Combine(outputFolderPath, "FixedLineFeedLocalization.tsv");
             File.WriteAllLines(outputPath, trancelation, Encoding.UTF8);
             Debug.WriteLine($"改行修正したTSVファイルが出力されました: {outputPath}");
+        }
+
+		public static bool IsNecessaryKey(string key)
+		{
+            // 不要なキーの条件を定義する、主にmod由来
+            if (key.EndsWith("Desc") ||
+                key.StartsWith("Changelog") ||
+                key.StartsWith("Credits") ||
+                key.StartsWith("ItemBrowser") ||
+                key.StartsWith("BuildingBlueprint") ||
+                key.StartsWith("PlacementPlus"))
+                return false;
+            return true;
         }
 
         /// <summary>

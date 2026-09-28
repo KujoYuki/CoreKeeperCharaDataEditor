@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 memo.txt
-output
-CKCharaDataEditor/Resources/Forbidden.cs
+DecompiledCode
+CKCharaDataEditor/Resources/Forbidden.Local.cs

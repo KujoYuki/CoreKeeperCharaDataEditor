@@ -8,6 +8,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Globalization;
 
 namespace CKCharaDataEditor
 {
@@ -542,8 +543,7 @@ namespace CKCharaDataEditor
             var changedOrderWorldId = lastActiveSessionNode["Value"]!.AsObject()
                 .Select(fourbyte =>
                 {
-                    byte[] bytes = new byte[4];
-                    uint values = (fourbyte.Value as JsonValue)!.GetValue<uint>();
+                    uint values = uint.Parse(fourbyte.Value!.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture);
                     return BitConverter.GetBytes(values).ToArray();
                 })
                 .SelectMany(bytes => bytes)
@@ -574,19 +574,6 @@ namespace CKCharaDataEditor
                 originalId[i] = changedbytes[map[i]];
             }
             return originalId;
-        }
-
-        private void IncrementLastActiveSessionWorldId()
-        {
-            if (!_saveData.TryGetPropertyValue("lastActiveSession", out var lastActiveSessionNode) || lastActiveSessionNode is null)
-            {
-                return;
-            }
-            JsonObject valueObj = lastActiveSessionNode["Value"]!.AsObject();
-            uint x = valueObj["x"]!.GetValue<uint>();
-            valueObj["x"] = x + 1;
-            _saveData["lastActiveSession"]!["Value"] = valueObj;
-
         }
 
         /// <summary>

@@ -624,7 +624,7 @@ namespace CKCharaDataEditor
                 .Order()
                 .ToList();
             var unobtainedEquipIds = allEquip.Except(discoveredEquipIds)
-                .Where(objectID => objectID > 3000 && objectID >= 3400) // 敵モブアイテムを除外
+                .Where(objectID => (objectID > 3000 && objectID >= 3400) || (objectID >= 3550 && objectID < 3600)) // 敵モブアイテムを除外
                 .Select(objectID =>
                 {
                     string displayName = FileManager.Instance.LocalizationData.TryGetValue(objectID, out var translateResources) ?

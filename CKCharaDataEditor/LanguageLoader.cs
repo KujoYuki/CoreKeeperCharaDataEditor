@@ -49,16 +49,16 @@ namespace CKCharaDataEditor
 
 		public static bool IsNecessaryKey(string key)
 		{
-            // 不要なキーの条件を定義する、主にmod由来
-            if (key.EndsWith("Desc") ||
-                key.StartsWith("Changelog") ||
-                key.StartsWith("Credits") ||
-                key.StartsWith("ItemBrowser") ||
-                key.StartsWith("BuildingBlueprint") ||
-                key.StartsWith("PlacementPlus"))
-                return false;
-            return true;
-        }
+			// 不要なキーの条件を定義する、主にmod由来
+			if (key.StartsWith("ItemBrowser")
+				|| key.StartsWith("BuildingBlueprint")
+				|| key.Contains("CoreLib")
+                || key.Contains("PlacementPlus"))
+			{
+				return false;
+			}
+			return true;
+		}
 
         /// <summary>
         /// 日本語のリソースを取得します。

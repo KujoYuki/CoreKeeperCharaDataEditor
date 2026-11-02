@@ -123,6 +123,13 @@ namespace CKCharaDataEditor.Forms
                                   "--",
                                   Condition.Default.Timer,
                                   ConditionDescriptions.Single(d => d.ID == Condition.Default.Id).Description);
+
+            // 新しい行のDescriptionのコンボボックスの背景色が黒くなる問題を回避するために、Description列の他の行を選択してからフォーカスを戻す
+            if (dataGridView.Rows.Count > 1)
+            {
+                dataGridView.CurrentCell = dataGridView.Rows[dataGridView.Rows.Count - 2].Cells["Description"];
+                addNewRowButton.Focus();
+            }
         }
 
         private void dataGridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)

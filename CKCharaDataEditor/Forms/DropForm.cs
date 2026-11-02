@@ -82,6 +82,10 @@ namespace CKCharaDataEditor.Forms
                 {
                     displayName = translateResources.DisplayName;
                 }
+                else if (_fileManager.ObjectIdWithKey.TryGetValue(item.ObjectID, out string? objectKey))
+                {
+                    displayName = objectKey;
+                }
                 lootDataGridView.Rows.Add(item.ObjectID, displayName, item.Amount, item.Weight, item.RollPerDrop * 100f,
                                           item.GuaranteedRollPerDrop * 100f);
             }

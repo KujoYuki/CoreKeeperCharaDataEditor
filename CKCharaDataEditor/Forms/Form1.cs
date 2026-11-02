@@ -1087,12 +1087,12 @@ namespace CKCharaDataEditor.Forms
             _saveDataManager.DupeInventory();
 
             // 0のセーブデータのインベントリを全て1,2にコピーしてアイテム個数を8000個にする
-            _saveDataManager.CopyInventory();
-            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[1].FullName;
-            _saveDataManager.PasteInventory();
-            _saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[2].FullName;
-            _saveDataManager.PasteInventory();
-            LoadPanel();
+            //_saveDataManager.CopyInventory();
+            //_saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[1].FullName;
+            //_saveDataManager.PasteInventory();
+            //_saveDataManager.SaveDataPath = _fileManager.CharacterFilePaths[2].FullName;
+            //_saveDataManager.PasteInventory();
+            LoadItems();
         }
 
         private void specialTextInputButton_Click(object sender, EventArgs e)

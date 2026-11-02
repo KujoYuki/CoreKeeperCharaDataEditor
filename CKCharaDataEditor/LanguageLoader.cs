@@ -20,13 +20,19 @@ namespace CKCharaDataEditor
 			string langResourceFilePath = Path.Combine(outputFolderPath, "allItemList.tsv");
 #if DEBUG
 			OutPutFixedLineFeedResource(installPath, outputFolderPath); // 改行コードの混入を修正したリソースを出力
+            OutputTextlessResource(installPath, outputFolderPath); // 翻訳が空のリソースを出力
 #endif
             File.WriteAllLines(langResourceFilePath, outputNumericLines, Encoding.UTF8);
 			OutPutJapaneseResource(installPath, outputFolderPath);		// 全ての言語リソースの日英を抽出。
 			Debug.WriteLine($"TSVファイルが出力されました: {outputFolderPath}");
 		}
 
-		public static void OutPutFixedLineFeedResource(string installPath, string outputFolderPath)
+        /// <summary>
+        /// Ressourcesに同梱するための修正済みリソースを出力します。
+        /// </summary>
+        /// <param name="installPath"></param>
+        /// <param name="outputFolderPath"></param>
+        public static void OutPutFixedLineFeedResource(string installPath, string outputFolderPath)
         {
             string localizationPath = Path.Combine(installPath, @"localization\Localization.csv");
             if (!File.Exists(localizationPath)) return;
@@ -34,11 +40,44 @@ namespace CKCharaDataEditor
                 .Select(line => line.Split('\t'))
                 .ToList();
             List<string> trancelation = FixLineFeed(languageResourceTwo)
+				.Where(words => IsNecessaryKey(words[0]))
                 .Select(words => string.Join("\t", words))
                 .ToList();
             string outputPath = Path.Combine(outputFolderPath, "FixedLineFeedLocalization.tsv");
             File.WriteAllLines(outputPath, trancelation, Encoding.UTF8);
             Debug.WriteLine($"改行修正したTSVファイルが出力されました: {outputPath}");
+        }
+
+		public static bool IsNecessaryKey(string key)
+		{
+			// 不要なキーの条件を定義する、主にmod由来
+			if (key.StartsWith("ItemBrowser")
+				|| key.StartsWith("BuildingBlueprint")
+				|| key.Contains("CoreLib")
+                || key.Contains("PlacementPlus"))
+			{
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// ローカライズ データに存在しない ObjectID とキーの組み合わせを抽出し、TSV ファイルとして出力します。
+		/// </summary>
+		/// <remarks>出力ファイルは UTF-8 で保存され、各行は ObjectID とキーをタブ区切りで含みます。</remarks>
+		/// <param name="installPath">ローカライズ情報と ObjectID 対応情報の読み込み元となるインストール パス。</param>
+		/// <param name="outputFolderPath">TextlessResources.tsv の出力先フォルダー パス。</param>
+        private static void OutputTextlessResource(string installPath, string outputFolderPath)
+        {
+            var localizationData = CreateLanguageDictionary(installPath, out var ObjectIdWithKey);
+            List<string> textlessResources = ObjectIdWithKey
+                .Where(pair => !localizationData.TryGetValue(pair.Key, out _))
+				.Where(p => !p.Value.EndsWith("Projectile"))
+				.Select(pair => $"{pair.Key}\t{pair.Value}")
+                .ToList();
+            string outputPath = Path.Combine(outputFolderPath, "TextlessResources.tsv");
+            File.WriteAllLines(outputPath, textlessResources, Encoding.UTF8);
+			Debug.WriteLine($"翻訳テキストのないObjectID一覧が出力されました: {outputPath}");
         }
 
         /// <summary>

@@ -32,7 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             itemEditTabControl = new TabControl();
             advancedTab = new TabPage();
+            specialTextInputButton = new Button();
             itemDataGroupBox = new GroupBox();
+            searchButton = new Button();
             objectIdNumericUpDown = new NumericUpDown();
             variationNumericUpDown = new NumericUpDown();
             labelVariation = new Label();
@@ -59,7 +61,6 @@
             itemPasteButton = new Button();
             itemCopyButton = new Button();
             SetDefaultButton = new Button();
-            objectIdsLinkLabel = new LinkLabel();
             foodTab = new TabPage();
             groupBox1 = new GroupBox();
             DeleteAbnormalRecipeButton = new Button();
@@ -141,7 +142,6 @@
             mapButton = new Button();
             dropButton = new Button();
             folderBrowserDialog = new FolderBrowserDialog();
-            specialTextInputButton = new Button();
             itemEditTabControl.SuspendLayout();
             advancedTab.SuspendLayout();
             itemDataGroupBox.SuspendLayout();
@@ -176,7 +176,7 @@
             itemEditTabControl.MinimumSize = new Size(650, 300);
             itemEditTabControl.Name = "itemEditTabControl";
             itemEditTabControl.SelectedIndex = 0;
-            itemEditTabControl.Size = new Size(658, 357);
+            itemEditTabControl.Size = new Size(658, 422);
             itemEditTabControl.TabIndex = 0;
             // 
             // advancedTab
@@ -192,17 +192,27 @@
             advancedTab.Controls.Add(itemPasteButton);
             advancedTab.Controls.Add(itemCopyButton);
             advancedTab.Controls.Add(SetDefaultButton);
-            advancedTab.Controls.Add(objectIdsLinkLabel);
             advancedTab.Location = new Point(4, 24);
             advancedTab.Name = "advancedTab";
             advancedTab.Padding = new Padding(3);
-            advancedTab.Size = new Size(650, 329);
+            advancedTab.Size = new Size(650, 394);
             advancedTab.TabIndex = 1;
             advancedTab.Text = "上級者向け";
             advancedTab.UseVisualStyleBackColor = true;
             // 
+            // specialTextInputButton
+            // 
+            specialTextInputButton.Location = new Point(165, 262);
+            specialTextInputButton.Name = "specialTextInputButton";
+            specialTextInputButton.Size = new Size(134, 23);
+            specialTextInputButton.TabIndex = 39;
+            specialTextInputButton.Text = "特殊表示文字を入力";
+            specialTextInputButton.UseVisualStyleBackColor = true;
+            specialTextInputButton.Click += specialTextInputButton_Click;
+            // 
             // itemDataGroupBox
             // 
+            itemDataGroupBox.Controls.Add(searchButton);
             itemDataGroupBox.Controls.Add(objectIdNumericUpDown);
             itemDataGroupBox.Controls.Add(variationNumericUpDown);
             itemDataGroupBox.Controls.Add(labelVariation);
@@ -222,10 +232,21 @@
             itemDataGroupBox.Controls.Add(auxDataTextBox);
             itemDataGroupBox.Location = new Point(8, 3);
             itemDataGroupBox.Name = "itemDataGroupBox";
-            itemDataGroupBox.Size = new Size(632, 198);
+            itemDataGroupBox.Size = new Size(632, 247);
             itemDataGroupBox.TabIndex = 38;
             itemDataGroupBox.TabStop = false;
             itemDataGroupBox.Text = "データ部";
+            // 
+            // searchButton
+            // 
+            searchButton.BackColor = Color.Cyan;
+            searchButton.Location = new Point(138, 44);
+            searchButton.Name = "searchButton";
+            searchButton.Size = new Size(90, 23);
+            searchButton.TabIndex = 38;
+            searchButton.Text = "objectID検索";
+            searchButton.UseVisualStyleBackColor = false;
+            searchButton.Click += searchButton_Click;
             // 
             // objectIdNumericUpDown
             // 
@@ -238,17 +259,17 @@
             // 
             // variationNumericUpDown
             // 
-            variationNumericUpDown.Location = new Point(127, 44);
+            variationNumericUpDown.Location = new Point(318, 100);
             variationNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             variationNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             variationNumericUpDown.Name = "variationNumericUpDown";
-            variationNumericUpDown.Size = new Size(136, 23);
+            variationNumericUpDown.Size = new Size(83, 23);
             variationNumericUpDown.TabIndex = 34;
             // 
             // labelVariation
             // 
             labelVariation.AutoSize = true;
-            labelVariation.Location = new Point(125, 25);
+            labelVariation.Location = new Point(318, 81);
             labelVariation.Name = "labelVariation";
             labelVariation.Size = new Size(53, 15);
             labelVariation.TabIndex = 12;
@@ -257,7 +278,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(493, 25);
+            label9.Location = new Point(14, 131);
             label9.Name = "label9";
             label9.Size = new Size(123, 15);
             label9.TabIndex = 14;
@@ -266,7 +287,7 @@
             // labelAmount
             // 
             labelAmount.AutoSize = true;
-            labelAmount.Location = new Point(15, 85);
+            labelAmount.Location = new Point(15, 81);
             labelAmount.Name = "labelAmount";
             labelAmount.Size = new Size(48, 15);
             labelAmount.TabIndex = 10;
@@ -274,7 +295,7 @@
             // 
             // auxIndexNumericUpDown
             // 
-            auxIndexNumericUpDown.Location = new Point(493, 105);
+            auxIndexNumericUpDown.Location = new Point(168, 150);
             auxIndexNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             auxIndexNumericUpDown.Name = "auxIndexNumericUpDown";
             auxIndexNumericUpDown.ReadOnly = true;
@@ -292,15 +313,15 @@
             // 
             // keyNameTextBox
             // 
-            keyNameTextBox.Location = new Point(278, 43);
+            keyNameTextBox.Location = new Point(263, 43);
             keyNameTextBox.Name = "keyNameTextBox";
             keyNameTextBox.ReadOnly = true;
-            keyNameTextBox.Size = new Size(191, 23);
+            keyNameTextBox.Size = new Size(251, 23);
             keyNameTextBox.TabIndex = 17;
             // 
             // variationUpdateCountNumericUpDown
             // 
-            variationUpdateCountNumericUpDown.Location = new Point(493, 44);
+            variationUpdateCountNumericUpDown.Location = new Point(14, 150);
             variationUpdateCountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             variationUpdateCountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             variationUpdateCountNumericUpDown.Name = "variationUpdateCountNumericUpDown";
@@ -311,7 +332,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(278, 25);
+            label3.Location = new Point(263, 25);
             label3.Name = "label3";
             label3.Size = new Size(60, 15);
             label3.TabIndex = 16;
@@ -319,17 +340,17 @@
             // 
             // amountNumericUpDown
             // 
-            amountNumericUpDown.Location = new Point(14, 104);
+            amountNumericUpDown.Location = new Point(14, 100);
             amountNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             amountNumericUpDown.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             amountNumericUpDown.Name = "amountNumericUpDown";
-            amountNumericUpDown.Size = new Size(100, 23);
+            amountNumericUpDown.Size = new Size(96, 23);
             amountNumericUpDown.TabIndex = 32;
             // 
             // amountConstCheckBox
             // 
             amountConstCheckBox.AutoSize = true;
-            amountConstCheckBox.Location = new Point(126, 85);
+            amountConstCheckBox.Location = new Point(139, 80);
             amountConstCheckBox.Name = "amountConstCheckBox";
             amountConstCheckBox.Size = new Size(99, 19);
             amountConstCheckBox.TabIndex = 20;
@@ -339,7 +360,7 @@
             // objectLockedCheckBox
             // 
             objectLockedCheckBox.AutoSize = true;
-            objectLockedCheckBox.Location = new Point(278, 106);
+            objectLockedCheckBox.Location = new Point(431, 101);
             objectLockedCheckBox.Name = "objectLockedCheckBox";
             objectLockedCheckBox.Size = new Size(83, 19);
             objectLockedCheckBox.TabIndex = 31;
@@ -348,7 +369,7 @@
             // 
             // amountConst
             // 
-            amountConst.Location = new Point(125, 105);
+            amountConst.Location = new Point(138, 100);
             amountConst.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             amountConst.Minimum = new decimal(new int[] { int.MinValue, 0, 0, int.MinValue });
             amountConst.Name = "amountConst";
@@ -359,7 +380,7 @@
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(493, 85);
+            label17.Location = new Point(168, 130);
             label17.Name = "label17";
             label17.Size = new Size(55, 15);
             label17.TabIndex = 22;
@@ -368,7 +389,7 @@
             // labelAuxData
             // 
             labelAuxData.AutoSize = true;
-            labelAuxData.Location = new Point(14, 143);
+            labelAuxData.Location = new Point(14, 188);
             labelAuxData.Name = "labelAuxData";
             labelAuxData.Size = new Size(50, 15);
             labelAuxData.TabIndex = 24;
@@ -376,7 +397,7 @@
             // 
             // auxDataTextBox
             // 
-            auxDataTextBox.Location = new Point(15, 161);
+            auxDataTextBox.Location = new Point(15, 206);
             auxDataTextBox.Name = "auxDataTextBox";
             auxDataTextBox.ReadOnly = true;
             auxDataTextBox.Size = new Size(601, 23);
@@ -384,7 +405,7 @@
             // 
             // dupeEquipmentEachLv
             // 
-            dupeEquipmentEachLv.Location = new Point(121, 293);
+            dupeEquipmentEachLv.Location = new Point(121, 349);
             dupeEquipmentEachLv.Name = "dupeEquipmentEachLv";
             dupeEquipmentEachLv.Size = new Size(152, 23);
             dupeEquipmentEachLv.TabIndex = 36;
@@ -395,7 +416,7 @@
             // 
             // displayNameTextBox
             // 
-            displayNameTextBox.Location = new Point(10, 231);
+            displayNameTextBox.Location = new Point(10, 287);
             displayNameTextBox.Name = "displayNameTextBox";
             displayNameTextBox.Size = new Size(333, 23);
             displayNameTextBox.TabIndex = 1;
@@ -404,7 +425,7 @@
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(10, 210);
+            label18.Location = new Point(10, 266);
             label18.Name = "label18";
             label18.Size = new Size(149, 15);
             label18.TabIndex = 0;
@@ -412,7 +433,7 @@
             // 
             // inventryPasteButton
             // 
-            inventryPasteButton.Location = new Point(463, 293);
+            inventryPasteButton.Location = new Point(463, 349);
             inventryPasteButton.Name = "inventryPasteButton";
             inventryPasteButton.Size = new Size(148, 23);
             inventryPasteButton.TabIndex = 30;
@@ -422,7 +443,7 @@
             // 
             // inventryCopyButton
             // 
-            inventryCopyButton.Location = new Point(463, 262);
+            inventryCopyButton.Location = new Point(463, 318);
             inventryCopyButton.Name = "inventryCopyButton";
             inventryCopyButton.Size = new Size(148, 23);
             inventryCopyButton.TabIndex = 29;
@@ -433,17 +454,17 @@
             // parameterlinkLabel
             // 
             parameterlinkLabel.AutoSize = true;
-            parameterlinkLabel.Location = new Point(9, 270);
+            parameterlinkLabel.Location = new Point(9, 326);
             parameterlinkLabel.Name = "parameterlinkLabel";
             parameterlinkLabel.Size = new Size(87, 15);
             parameterlinkLabel.TabIndex = 28;
             parameterlinkLabel.TabStop = true;
             parameterlinkLabel.Text = "パラメータについて";
-            parameterlinkLabel.LinkClicked += linkLabel1_LinkClicked;
+            parameterlinkLabel.LinkClicked += parameterlinkLabel_LinkClicked;
             // 
             // itemPasteButton
             // 
-            itemPasteButton.Location = new Point(305, 293);
+            itemPasteButton.Location = new Point(305, 349);
             itemPasteButton.Name = "itemPasteButton";
             itemPasteButton.Size = new Size(130, 23);
             itemPasteButton.TabIndex = 27;
@@ -453,7 +474,7 @@
             // 
             // itemCopyButton
             // 
-            itemCopyButton.Location = new Point(305, 262);
+            itemCopyButton.Location = new Point(305, 318);
             itemCopyButton.Name = "itemCopyButton";
             itemCopyButton.Size = new Size(130, 23);
             itemCopyButton.TabIndex = 26;
@@ -463,24 +484,13 @@
             // 
             // SetDefaultButton
             // 
-            SetDefaultButton.Location = new Point(122, 262);
+            SetDefaultButton.Location = new Point(122, 318);
             SetDefaultButton.Name = "SetDefaultButton";
             SetDefaultButton.Size = new Size(152, 23);
             SetDefaultButton.TabIndex = 18;
             SetDefaultButton.Text = "デフォルト値(空アイテム)セット";
             SetDefaultButton.UseVisualStyleBackColor = true;
             SetDefaultButton.Click += SetDefaultButton_Click;
-            // 
-            // objectIdsLinkLabel
-            // 
-            objectIdsLinkLabel.AutoSize = true;
-            objectIdsLinkLabel.Location = new Point(9, 297);
-            objectIdsLinkLabel.Name = "objectIdsLinkLabel";
-            objectIdsLinkLabel.Size = new Size(58, 15);
-            objectIdsLinkLabel.TabIndex = 14;
-            objectIdsLinkLabel.TabStop = true;
-            objectIdsLinkLabel.Text = "ObjectIDs";
-            objectIdsLinkLabel.LinkClicked += objectIdsLinkLabel_LinkClicked;
             // 
             // foodTab
             // 
@@ -500,7 +510,7 @@
             foodTab.Location = new Point(4, 24);
             foodTab.Name = "foodTab";
             foodTab.Padding = new Padding(3);
-            foodTab.Size = new Size(650, 329);
+            foodTab.Size = new Size(650, 394);
             foodTab.TabIndex = 0;
             foodTab.Text = "料理作成";
             foodTab.UseVisualStyleBackColor = true;
@@ -604,7 +614,7 @@
             // toMinusOneButton
             // 
             toMinusOneButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            toMinusOneButton.Location = new Point(7, 260);
+            toMinusOneButton.Location = new Point(7, 325);
             toMinusOneButton.Name = "toMinusOneButton";
             toMinusOneButton.Size = new Size(86, 23);
             toMinusOneButton.TabIndex = 13;
@@ -616,7 +626,7 @@
             // toMaxButton
             // 
             toMaxButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            toMaxButton.Location = new Point(7, 231);
+            toMaxButton.Location = new Point(7, 296);
             toMaxButton.Name = "toMaxButton";
             toMaxButton.Size = new Size(86, 23);
             toMaxButton.TabIndex = 12;
@@ -628,7 +638,7 @@
             // 
             label10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label10.AutoSize = true;
-            label10.Location = new Point(7, 174);
+            label10.Location = new Point(7, 239);
             label10.Name = "label10";
             label10.Size = new Size(55, 15);
             label10.TabIndex = 9;
@@ -637,7 +647,7 @@
             // createdNumericNo
             // 
             createdNumericNo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            createdNumericNo.Location = new Point(7, 192);
+            createdNumericNo.Location = new Point(7, 257);
             createdNumericNo.Maximum = new decimal(new int[] { 869778, 0, 0, 0 });
             createdNumericNo.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             createdNumericNo.Name = "createdNumericNo";
@@ -692,7 +702,7 @@
             petTab.Location = new Point(4, 24);
             petTab.Name = "petTab";
             petTab.Padding = new Padding(3);
-            petTab.Size = new Size(650, 329);
+            petTab.Size = new Size(650, 394);
             petTab.TabIndex = 2;
             petTab.Text = "ペット";
             petTab.UseVisualStyleBackColor = true;
@@ -712,7 +722,7 @@
             cattleTab.Controls.Add(label7);
             cattleTab.Location = new Point(4, 24);
             cattleTab.Name = "cattleTab";
-            cattleTab.Size = new Size(650, 329);
+            cattleTab.Size = new Size(650, 394);
             cattleTab.TabIndex = 3;
             cattleTab.Text = "家畜";
             cattleTab.UseVisualStyleBackColor = true;
@@ -827,7 +837,7 @@
             otherTab.Location = new Point(4, 24);
             otherTab.Name = "otherTab";
             otherTab.Padding = new Padding(3);
-            otherTab.Size = new Size(650, 329);
+            otherTab.Size = new Size(650, 394);
             otherTab.TabIndex = 4;
             otherTab.Text = "その他";
             otherTab.UseVisualStyleBackColor = true;
@@ -1046,7 +1056,7 @@
             // createButton
             // 
             createButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            createButton.Location = new Point(306, 502);
+            createButton.Location = new Point(306, 567);
             createButton.Name = "createButton";
             createButton.Size = new Size(147, 45);
             createButton.TabIndex = 13;
@@ -1058,7 +1068,7 @@
             // 
             resultLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             resultLabel.AutoSize = true;
-            resultLabel.Location = new Point(465, 517);
+            resultLabel.Location = new Point(465, 582);
             resultLabel.Name = "resultLabel";
             resultLabel.Size = new Size(64, 15);
             resultLabel.TabIndex = 14;
@@ -1124,10 +1134,10 @@
             itemListBox.ItemHeight = 15;
             itemListBox.Location = new Point(12, 146);
             itemListBox.Name = "itemListBox";
-            itemListBox.Size = new Size(286, 394);
+            itemListBox.Size = new Size(286, 469);
             itemListBox.TabIndex = 22;
             itemListBox.DrawItem += itemListBox_DrawItem;
-            itemListBox.SelectedIndexChanged += itemListBox_TextChanged;
+            itemListBox.SelectedIndexChanged += itemListBox_SelectedIndexChanged;
             itemListBox.KeyDown += itemListBox_KeyDown;
             // 
             // label14
@@ -1221,9 +1231,9 @@
             lastActivatedSessionWorld.ForeColor = Color.Purple;
             lastActivatedSessionWorld.Location = new Point(592, 59);
             lastActivatedSessionWorld.Name = "lastActivatedSessionWorld";
-            lastActivatedSessionWorld.Size = new Size(149, 15);
+            lastActivatedSessionWorld.Size = new Size(142, 15);
             lastActivatedSessionWorld.TabIndex = 26;
-            lastActivatedSessionWorld.Text = "AbortedSessionWorldLabel";
+            lastActivatedSessionWorld.Text = "LastActiveSessionWorldId";
             lastActivatedSessionWorld.Visible = false;
             lastActivatedSessionWorld.Click += lastActivatedSessionWorldLabel_Click;
             // 
@@ -1257,20 +1267,10 @@
             dropButton.UseVisualStyleBackColor = true;
             dropButton.Click += dropButton_Click;
             // 
-            // specialTextInputButton
-            // 
-            specialTextInputButton.Location = new Point(165, 206);
-            specialTextInputButton.Name = "specialTextInputButton";
-            specialTextInputButton.Size = new Size(134, 23);
-            specialTextInputButton.TabIndex = 39;
-            specialTextInputButton.Text = "特殊表示文字を入力";
-            specialTextInputButton.UseVisualStyleBackColor = true;
-            specialTextInputButton.Click += specialTextInputButton_Click;
-            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
-            ClientSize = new Size(972, 561);
+            ClientSize = new Size(972, 626);
             Controls.Add(dropButton);
             Controls.Add(mapButton);
             Controls.Add(worldEditButton);
@@ -1349,7 +1349,6 @@
         private NumericUpDown createdNumericNo;
         private Label label9;
         private Button createButton;
-        private LinkLabel objectIdsLinkLabel;
         private Button toMinusOneButton;
         private ComboBox rarityComboBox;
         private ComboBox cookedCategoryComboBox;
@@ -1444,5 +1443,6 @@
         private RadioButton charaTypeNormalButton;
         private Button DeleteAbnormalRecipeButton;
         private Button specialTextInputButton;
+        private Button searchButton;
     }
 }

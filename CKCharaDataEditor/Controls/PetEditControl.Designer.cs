@@ -72,7 +72,7 @@
             // 
             // petTalentTableLayoutPanel
             // 
-            petTalentTableLayoutPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            petTalentTableLayoutPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             petTalentTableLayoutPanel.ColumnCount = 3;
             petTalentTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33222F));
             petTalentTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.335556F));

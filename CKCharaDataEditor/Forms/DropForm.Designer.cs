@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropForm));
             lootTableListBox = new ListBox();
             label1 = new Label();
@@ -49,6 +49,7 @@
             groupBox1 = new GroupBox();
             playerCountNumericUpDown = new NumericUpDown();
             increasedChanceToGetFish = new NumericUpDown();
+            copyTableButton = new Button();
             label13 = new Label();
             increasedChanceToGetFishLoot = new NumericUpDown();
             notFishLabel = new Label();
@@ -56,7 +57,7 @@
             label20 = new Label();
             normalRollCountLabel = new Label();
             label15 = new Label();
-            linkLabel1 = new LinkLabel();
+            dropCalcLinkLabel = new LinkLabel();
             expectedCountForDrop90Label = new Label();
             expectedCountForDrop70Label = new Label();
             expectedCountForDrop50Label = new Label();
@@ -76,9 +77,7 @@
             lootIdExplaneLabel = new Label();
             lootIdLabel = new Label();
             skillNotFishToolTip = new ToolTip(components);
-            copyTableButton = new Button();
-            label12 = new Label();
-            searchIdTextBox = new TextBox();
+            searchButton = new Button();
             ((System.ComponentModel.ISupportInitialize)lootDataGridView).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)playerCountNumericUpDown).BeginInit();
@@ -93,7 +92,7 @@
             lootTableListBox.DrawMode = DrawMode.OwnerDrawFixed;
             lootTableListBox.FormattingEnabled = true;
             lootTableListBox.ItemHeight = 15;
-            lootTableListBox.Location = new Point(12, 27);
+            lootTableListBox.Location = new Point(12, 61);
             lootTableListBox.Name = "lootTableListBox";
             lootTableListBox.Size = new Size(200, 589);
             lootTableListBox.TabIndex = 0;
@@ -103,7 +102,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 9);
+            label1.Location = new Point(12, 43);
             label1.Name = "label1";
             label1.Size = new Size(66, 15);
             label1.TabIndex = 1;
@@ -113,7 +112,7 @@
             // 
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label2.AutoSize = true;
-            label2.Location = new Point(218, 9);
+            label2.Location = new Point(218, 43);
             label2.Name = "label2";
             label2.Size = new Size(66, 15);
             label2.TabIndex = 2;
@@ -127,7 +126,7 @@
             lootDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lootDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             lootDataGridView.Columns.AddRange(new DataGridViewColumn[] { objectID, ItemName, Amount, Weight, RollPerDop, GuaranteedRoll });
-            lootDataGridView.Location = new Point(218, 27);
+            lootDataGridView.Location = new Point(218, 61);
             lootDataGridView.MultiSelect = false;
             lootDataGridView.Name = "lootDataGridView";
             lootDataGridView.ReadOnly = true;
@@ -137,13 +136,14 @@
             lootDataGridView.TabIndex = 3;
             lootDataGridView.CellEnter += lootDataGridView_CellEnter;
             lootDataGridView.CellFormatting += lootDataGridView_CellFormatting;
+            lootDataGridView.CellMouseClick += lootDataGridView_CellMouseClick;
             // 
             // objectID
             // 
             objectID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            objectID.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            objectID.DefaultCellStyle = dataGridViewCellStyle6;
             objectID.HeaderText = "objectID";
             objectID.Name = "objectID";
             objectID.ReadOnly = true;
@@ -160,8 +160,8 @@
             // Amount
             // 
             Amount.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Amount.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Amount.DefaultCellStyle = dataGridViewCellStyle7;
             Amount.HeaderText = "個数";
             Amount.Name = "Amount";
             Amount.ReadOnly = true;
@@ -170,8 +170,8 @@
             // Weight
             // 
             Weight.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleRight;
-            Weight.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleRight;
+            Weight.DefaultCellStyle = dataGridViewCellStyle8;
             Weight.HeaderText = "ウェイト";
             Weight.Name = "Weight";
             Weight.ReadOnly = true;
@@ -180,8 +180,8 @@
             // RollPerDop
             // 
             RollPerDop.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            RollPerDop.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            RollPerDop.DefaultCellStyle = dataGridViewCellStyle9;
             RollPerDop.HeaderText = "通常抽選枠確率[%]";
             RollPerDop.Name = "RollPerDop";
             RollPerDop.ReadOnly = true;
@@ -190,8 +190,8 @@
             // GuaranteedRoll
             // 
             GuaranteedRoll.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            GuaranteedRoll.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            GuaranteedRoll.DefaultCellStyle = dataGridViewCellStyle10;
             GuaranteedRoll.HeaderText = "保証抽選枠確率[%]";
             GuaranteedRoll.Name = "GuaranteedRoll";
             GuaranteedRoll.ReadOnly = true;
@@ -199,7 +199,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(169, 360);
+            label3.Location = new Point(169, 394);
             label3.Name = "label3";
             label3.Size = new Size(0, 15);
             label3.TabIndex = 4;
@@ -209,6 +209,7 @@
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             groupBox1.Controls.Add(playerCountNumericUpDown);
             groupBox1.Controls.Add(increasedChanceToGetFish);
+            groupBox1.Controls.Add(copyTableButton);
             groupBox1.Controls.Add(label13);
             groupBox1.Controls.Add(increasedChanceToGetFishLoot);
             groupBox1.Controls.Add(notFishLabel);
@@ -216,7 +217,7 @@
             groupBox1.Controls.Add(label20);
             groupBox1.Controls.Add(normalRollCountLabel);
             groupBox1.Controls.Add(label15);
-            groupBox1.Controls.Add(linkLabel1);
+            groupBox1.Controls.Add(dropCalcLinkLabel);
             groupBox1.Controls.Add(expectedCountForDrop90Label);
             groupBox1.Controls.Add(expectedCountForDrop70Label);
             groupBox1.Controls.Add(expectedCountForDrop50Label);
@@ -231,7 +232,7 @@
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(worldModeComboBox);
             groupBox1.Controls.Add(label4);
-            groupBox1.Location = new Point(218, 392);
+            groupBox1.Location = new Point(218, 426);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(744, 224);
             groupBox1.TabIndex = 6;
@@ -257,6 +258,17 @@
             increasedChanceToGetFish.Size = new Size(48, 23);
             increasedChanceToGetFish.TabIndex = 25;
             increasedChanceToGetFish.ValueChanged += increasedChanceToGetFish_ValueChanged;
+            // 
+            // copyTableButton
+            // 
+            copyTableButton.Location = new Point(203, 163);
+            copyTableButton.Name = "copyTableButton";
+            copyTableButton.Size = new Size(140, 23);
+            copyTableButton.TabIndex = 9;
+            copyTableButton.Text = "テーブルコピー(wiki用)";
+            copyTableButton.UseVisualStyleBackColor = true;
+            copyTableButton.Visible = false;
+            copyTableButton.Click += copyTableButton_Click;
             // 
             // label13
             // 
@@ -321,16 +333,16 @@
             label15.TabIndex = 16;
             label15.Text = "通常抽選枠数:";
             // 
-            // linkLabel1
+            // dropCalcLinkLabel
             // 
-            linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(549, 189);
-            linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(76, 15);
-            linkLabel1.TabIndex = 15;
-            linkLabel1.TabStop = true;
-            linkLabel1.Text = "計算の仕組み";
-            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            dropCalcLinkLabel.AutoSize = true;
+            dropCalcLinkLabel.Location = new Point(549, 189);
+            dropCalcLinkLabel.Name = "dropCalcLinkLabel";
+            dropCalcLinkLabel.Size = new Size(76, 15);
+            dropCalcLinkLabel.TabIndex = 15;
+            dropCalcLinkLabel.TabStop = true;
+            dropCalcLinkLabel.Text = "計算の仕組み";
+            dropCalcLinkLabel.LinkClicked += dropCalcLinkLabel_LinkClicked;
             // 
             // expectedCountForDrop90Label
             // 
@@ -496,7 +508,7 @@
             // 
             lootIdExplaneLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lootIdExplaneLabel.AutoSize = true;
-            lootIdExplaneLabel.Location = new Point(218, 627);
+            lootIdExplaneLabel.Location = new Point(185, 16);
             lootIdExplaneLabel.Name = "lootIdExplaneLabel";
             lootIdExplaneLabel.Size = new Size(45, 15);
             lootIdExplaneLabel.TabIndex = 7;
@@ -507,7 +519,7 @@
             // 
             lootIdLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lootIdLabel.AutoSize = true;
-            lootIdLabel.Location = new Point(269, 627);
+            lootIdLabel.Location = new Point(236, 16);
             lootIdLabel.Name = "lootIdLabel";
             lootIdLabel.Size = new Size(36, 15);
             lootIdLabel.TabIndex = 8;
@@ -521,43 +533,23 @@
             skillNotFishToolTip.InitialDelay = 100;
             skillNotFishToolTip.ReshowDelay = 20;
             // 
-            // copyTableButton
+            // searchButton
             // 
-            copyTableButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            copyTableButton.Location = new Point(425, 619);
-            copyTableButton.Name = "copyTableButton";
-            copyTableButton.Size = new Size(140, 23);
-            copyTableButton.TabIndex = 9;
-            copyTableButton.Text = "テーブルコピー(wiki用)";
-            copyTableButton.UseVisualStyleBackColor = true;
-            copyTableButton.Visible = false;
-            copyTableButton.Click += copyTableButton_Click;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(29, 627);
-            label12.Name = "label12";
-            label12.Size = new Size(88, 15);
-            label12.TabIndex = 10;
-            label12.Text = "objectIDで検索:";
-            // 
-            // searchIdTextBox
-            // 
-            searchIdTextBox.Location = new Point(112, 624);
-            searchIdTextBox.Name = "searchIdTextBox";
-            searchIdTextBox.Size = new Size(100, 23);
-            searchIdTextBox.TabIndex = 11;
-            searchIdTextBox.TextChanged += searchIdTextBox_TextChanged;
+            searchButton.BackColor = Color.Cyan;
+            searchButton.Location = new Point(20, 12);
+            searchButton.Name = "searchButton";
+            searchButton.Size = new Size(147, 23);
+            searchButton.TabIndex = 10;
+            searchButton.Text = "objectID検索";
+            searchButton.UseVisualStyleBackColor = false;
+            searchButton.Click += searchButton_Click;
             // 
             // DropForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(972, 664);
-            Controls.Add(searchIdTextBox);
-            Controls.Add(label12);
-            Controls.Add(copyTableButton);
+            Controls.Add(searchButton);
             Controls.Add(lootIdLabel);
             Controls.Add(lootIdExplaneLabel);
             Controls.Add(groupBox1);
@@ -605,7 +597,7 @@
         private Label label10;
         private Label label9;
         private Label label8;
-        private LinkLabel linkLabel1;
+        private LinkLabel dropCalcLinkLabel;
         private Label normalRollCountLabel;
         private Label label15;
         private Label guaranteedRollCountLabel;
@@ -620,8 +612,6 @@
         private NumericUpDown increasedChanceToGetFish;
         private ToolTip skillNotFishToolTip;
         private Button copyTableButton;
-        private Label label12;
-        private TextBox searchIdTextBox;
         private NumericUpDown playerCountNumericUpDown;
         private DataGridViewTextBoxColumn objectID;
         private DataGridViewTextBoxColumn ItemName;
@@ -629,5 +619,6 @@
         private DataGridViewTextBoxColumn Weight;
         private DataGridViewTextBoxColumn RollPerDop;
         private DataGridViewTextBoxColumn GuaranteedRoll;
+        private Button searchButton;
     }
 }

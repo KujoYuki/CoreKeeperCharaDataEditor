@@ -19,7 +19,7 @@
         PetFrog = 1264,
         PetMeleeCat = 1267,
         PetAzeosJr = 1270,
-        PetDave = 1273, // 1.3.1 で追加する
-        PetMomoCat = 1276,
+        //PetDave = 1273, // 1.3.1 で追加する
+        //PetMomoCat = 1276,
     }
 }

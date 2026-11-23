@@ -22,6 +22,7 @@ namespace CKCharaDataEditor.Forms
         private SaveDataManager _saveDataManager = SaveDataManager.Instance;
         private List<Ingredient> _ingredientCategories = [];
         private DropForm? _dropForm = null;
+        private SearchForm? _searchForm = null;
         public Form1()
         {
             InitializeComponent();
@@ -371,17 +372,12 @@ namespace CKCharaDataEditor.Forms
             createdNumericNo.Value = -1;
         }
 
-        private void itemListBox_TextChanged(object sender, EventArgs e)
+        private void itemListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadPanel();
         }
 
-        private void objectIdsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo(@"https://raw.githubusercontent.com/KujoYuki/CoreKeeperCharaDataEditor/refs/heads/main/Document/allItemList.tsv") { UseShellExecute = true });
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void parameterlinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/Document/parameter.md") { UseShellExecute = true });
         }
@@ -402,7 +398,6 @@ namespace CKCharaDataEditor.Forms
                     return false;
                 }
                 string characterName = _saveDataManager.GetCharacterName();
-#if !debug
                 foreach (var name in Forbidden.Users)
                 {
                     if (characterName.StartsWith(name))
@@ -412,7 +407,6 @@ namespace CKCharaDataEditor.Forms
                         return false;
                     }
                 }
-#endif
             }
             return true;
         }
@@ -1097,7 +1091,7 @@ namespace CKCharaDataEditor.Forms
 
         private void specialTextInputButton_Click(object sender, EventArgs e)
         {
-            using(var detailInputForm = new SpecialStringInputForm())
+            using (var detailInputForm = new SpecialStringInputForm())
             {
                 detailInputForm.SpecialText = displayNameTextBox.Text;
                 if (detailInputForm.ShowDialog() == DialogResult.OK)
@@ -1105,6 +1099,26 @@ namespace CKCharaDataEditor.Forms
                     displayNameTextBox.Text = detailInputForm.SpecialText;
                 }
             }
+        }
+
+        private void searchButton_Click(object sender, EventArgs e)
+        {
+            if (_searchForm is not null && !_searchForm.IsDisposed)
+            {
+                if (_searchForm.WindowState == FormWindowState.Minimized)
+                {
+                    _searchForm.WindowState = FormWindowState.Normal;
+                }
+
+                _searchForm.Activate();
+                return;
+            }
+
+            _searchForm = new SearchForm(objectId =>
+                objectIdNumericUpDown.BeginInvoke(new Action(() => objectIdNumericUpDown.Value = objectId)));
+            _searchForm.FormClosed += (_, _) => _searchForm = null;
+            _searchForm.Text += "(ã‹‰ÒŒü‚¯ƒ^ƒu)";
+            _searchForm.Show(this);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace CKCharaDataEditor.Forms
     {
         FileManager _fileManager = FileManager.Instance;
         List<LootTable> _lootTables = [];
+        SearchForm? _searchForm = null;
         Func<int, double>? CalculateChancePerRoll;    // ドロップ期待値計算式(n回やって少なくともm個取得できる)
         const double DropUpperLimit = 0.9;      // 複数回シミュレートにおける計算上限確率
         List<int> _searchResultIndexes = [];    // 検索結果のドロップテーブルインデックスリスト
@@ -90,10 +91,21 @@ namespace CKCharaDataEditor.Forms
                                           item.GuaranteedRollPerDrop * 100f);
             }
 
-            // 検索中のアイテムが含まれてる場合、ハイライト表示する
+            HighlightTargetItemRow(_searchingId);
+
+            // 抽選枠数の表示
+            guaranteedRollCountLabel.Text = table.Loots.Exists(item => item.IsOneOfGuaranteedToDrop) ? "1" : "0";
+        }
+
+        /// <summary>
+        /// 検索中のアイテムが含まれてる場合、ハイライト表示する
+        /// </summary>
+        /// <param name="objectId"></param>
+        private void HighlightTargetItemRow(int objectId)
+        {
             var highLightRow = lootDataGridView.Rows
                 .Cast<DataGridViewRow>()
-                .FirstOrDefault(row => Convert.ToInt32(row.Cells["objectID"].Value) == _searchingId);
+                .FirstOrDefault(row => Convert.ToInt32(row.Cells["objectID"].Value) == objectId);
             if (highLightRow is not null)
             {
                 lootDataGridView.ClearSelection();
@@ -101,9 +113,6 @@ namespace CKCharaDataEditor.Forms
                 lootDataGridView.CurrentCell = highLightRow.Cells[0];
                 // CellEnterイベントが自動で発生してシミュレートが走る
             }
-
-            // 抽選枠数の表示
-            guaranteedRollCountLabel.Text = table.Loots.Exists(item => item.IsOneOfGuaranteedToDrop) ? "1" : "0";
         }
 
         private void lootDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -146,6 +155,21 @@ namespace CKCharaDataEditor.Forms
         private void lootDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             SimurateTrialCounts();
+        }
+
+        /// <summary>
+        /// DGVのアイテム名をクリックした時にコピーする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lootDataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != ItemName.Index) return;
+
+            if (lootDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].FormattedValue is string itemName && itemName.Length > 0)
+            {
+                Clipboard.SetText(itemName);
+            }
         }
 
         private void worldModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -283,8 +307,8 @@ namespace CKCharaDataEditor.Forms
 
         private void decimalPlacesNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            lootDataGridView.Refresh();
-            tryRollsDataGridView.Refresh();
+            lootDataGridView.Invalidate();
+            tryRollsDataGridView.Invalidate();
         }
 
         private void lootTableListBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -336,7 +360,7 @@ namespace CKCharaDataEditor.Forms
             e.DrawFocusRectangle();
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void dropCalcLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://github.com/KujoYuki/CoreKeeperCharaDataEditor/blob/main/Document/dropItems.md") { UseShellExecute = true });
         }
@@ -383,24 +407,43 @@ namespace CKCharaDataEditor.Forms
         }
 
         /// <summary>
-        /// objectgIDでのアイテム検索
+        /// objectIDでの検索ダイアログを出す
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void searchIdTextBox_TextChanged(object sender, EventArgs e)
+        private void searchButton_Click(object sender, EventArgs e)
         {
-            _searchResultIndexes.Clear();
-            string searchText = searchIdTextBox.Text.Trim();
-            if (!int.TryParse(searchText, out _searchingId))
+            if (_searchForm is not null && !_searchForm.IsDisposed)
             {
+                if (_searchForm.WindowState == FormWindowState.Minimized)
+                {
+                    _searchForm.WindowState = FormWindowState.Normal;
+                }
+
+                _searchForm.Activate();
                 return;
             }
+
+            _searchForm = new SearchForm(HighlightTable);
+            _searchForm.FormClosed += SearchForm_FormClosed;
+            _searchForm.Text += "(ドロップ率計算)";
+            _searchForm.Show(this);
+        }
+
+        /// <summary>
+        /// 検索から選択したobjectIDが含まれるテーブルをハイライトする処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HighlightTable(int objectId)
+        {
+            _searchResultIndexes.Clear();
 
             // 検索IDを持つドロップテーブルをハイライトする
             for (int i = 0; i < _lootTables.Count; i++)
             {
                 LootTable table = _lootTables[i];
-                if (table.Loots.Any(loot => loot.ObjectID == _searchingId))
+                if (table.Loots.Any(loot => loot.ObjectID == objectId))
                 {
                     _searchResultIndexes.Add(i);
                 }
@@ -408,9 +451,20 @@ namespace CKCharaDataEditor.Forms
             if (_searchResultIndexes.Count > 0)
             {
                 // 最初の検索結果を選択状態にする
+                _searchingId = objectId;
                 lootTableListBox.SelectedIndex = _searchResultIndexes.FirstOrDefault();
-                lootTableListBox.Refresh();
+                HighlightTargetItemRow(_searchingId);
             }
+            lootTableListBox.Invalidate();
+        }
+
+        private void SearchForm_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            // 検索結果を初期化して、ドロップテーブルのハイライトを解除する
+            _searchForm = null;
+            _searchingId = -1;
+            _searchResultIndexes.Clear();
+            lootTableListBox.Invalidate();
         }
     }
 }

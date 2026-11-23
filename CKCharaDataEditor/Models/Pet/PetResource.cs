@@ -23,6 +23,8 @@ namespace CKCharaDataEditor.Models.Pet
             { (int)PetType.PetFrog, (PetType.PetFrog, PetType.PetFrog.ToString(), PetBattleType.Buff, true) },
             { (int)PetType.PetMeleeCat, (PetType.PetMeleeCat, PetType.PetMeleeCat.ToString(), PetBattleType.Buff, true) },
             { (int)PetType.PetAzeosJr, (PetType.PetAzeosJr, PetType.PetAzeosJr.ToString(), PetBattleType.Range, false) },
+            //{ (int)PetType.PetDave, (PetType.PetDave, PetType.PetDave.ToString(), PetBattleType.Melee, false) },  // 1.3.1 で追加する
+            //{ (int)PetType.PetMomoCat, (PetType.PetMomoCat, PetType.PetMomoCat.ToString(), PetBattleType.Melee, true) },
         };
 
         /// <summary>
@@ -68,6 +70,8 @@ namespace CKCharaDataEditor.Models.Pet
                 (34, "ヘビータッチ", "未定義キー", "遠距離ヒットでのノックバック確率+10%", "飼い主へのバフ:遠距離ヒットでのノックバック確率+0%"),
                 (35, "不安定な挙動", "未定義キー", "遠距離ヒットでの発射物が砕け散る確率+10%", "飼い主へのバフ:遠距離ヒットでの発射物が砕け散る確率+0%"),
                 (36, "おもちゃのボール", "未定義キー", "ヒット時に飛び散る発射物の破片+1個", "飼い主へのバフ:ヒット時に飛び散る発射物の破片+0"),
+                //(37, "未定義キー", "未定義キー", "未定義効果", "飼い主へのバフ:未定義効果"),   // 1.3.1 で追加する
+                //(38, "未定義キー", "未定義キー", "未定義効果", "飼い主へのバフ:未定義効果"),
             };
 
         public static IReadOnlyDictionary<(PetType petType, PetColor color), string> ColorDict
@@ -174,6 +178,8 @@ namespace CKCharaDataEditor.Models.Pet
             { (PetType.PetAzeosJr,PetColor.Color_5) ,"青(FizzyPop)" },
             { (PetType.PetAzeosJr,PetColor.Color_6) ,"赤(Red)" },
             { (PetType.PetAzeosJr,PetColor.Color_7) ,"深緑(Teal)" },
+            //{ (PetType.PetDave, PetColor.Color_0) ,"人(Default)" },  // 1.3.1 で追加する
+            //{ (PetType.PetMomoCat, PetColor.Color_0) ,"灰色(Default)" },
         };
 
         public static IReadOnlyDictionary<PetType, PetBattleType> BattleType
@@ -196,6 +202,8 @@ namespace CKCharaDataEditor.Models.Pet
                 { PetType.PetFrog, PetBattleType.Range},
                 { PetType.PetMeleeCat, PetBattleType.Melee},
                 { PetType.PetAzeosJr, PetBattleType.Range},
+                //{ PetType.PetDave, PetBattleType.Melee},  //1.3.1 で追加する
+                //{ PetType.PetMomoCat, PetBattleType.Buff},
             };
 
         public static readonly PetType[] ColorSelectablePets =
@@ -212,6 +220,8 @@ namespace CKCharaDataEditor.Models.Pet
             PetType.PetFrog,
             PetType.PetMeleeCat,
             PetType.PetAzeosJr,
+            //PetType.PetDave,  // 1.3.1 で追加する
+            //PetType.PetMomoCat,  // 1.3.1 で追加する
         ];
 
         public static readonly List<PetTalent> DefaultTalents = Enumerable.Repeat(new PetTalent(2, 0), 9).ToList();

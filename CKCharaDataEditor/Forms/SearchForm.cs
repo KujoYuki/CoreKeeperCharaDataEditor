@@ -26,9 +26,6 @@ namespace CKCharaDataEditor.Forms
             // フォームロード時に検索結果を初期化(全てのアイテムを表示)
             string[] results = SearchObjectIds(string.Empty);
             resultListBox.Items.AddRange(results);
-
-            // 検索履歴のコンボボックスに履歴を追加
-            searchComboBox.Items.AddRange(_searchWordHistories.ToArray());
         }
 
         private void closeButton_Click(object sender, EventArgs e)
@@ -46,27 +43,19 @@ namespace CKCharaDataEditor.Forms
 
         private string[] SearchObjectIds(string searchText)
         {
-            // 検索を前方一致で行う
-            var forwardMatchResults = _localizationDic.Where(p => p.Value.StartsWith(searchText, StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-
-            // 検索を部分一致で行う
-            var partialMatchResults = _localizationDic.Where(p => p.Value.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-
-            // LINQのUNIONで前方一致と部分一致の結果を結合する
-            string[] combinedResults = forwardMatchResults.Union(partialMatchResults)
+            // 検索は部分一致で行う
+            var searchResults = _localizationDic.Where(p => p.Value.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(p => p.Key)
                 .Select(p => string.Format(FORMAT_SEARCH_RESULT, p.Key, p.Value))
                 .ToArray();
 
-            if (combinedResults.Length == 0)
+            if (searchResults.Length == 0)
             {
-                combinedResults = [FORMAT_NO_RESULT];
+                searchResults = [FORMAT_NO_RESULT];
             }
 
             // 結果を返す
-            return combinedResults;
+            return searchResults;
         }
 
         private void resultListBox_SelectedIndexChanged(object sender, EventArgs e)

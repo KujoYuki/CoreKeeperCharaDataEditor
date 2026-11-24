@@ -89,10 +89,11 @@
             // 
             // searchComboBox
             // 
+            searchComboBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             searchComboBox.FormattingEnabled = true;
-            searchComboBox.Location = new Point(12, 45);
+            searchComboBox.Location = new Point(12, 30);
             searchComboBox.Name = "searchComboBox";
-            searchComboBox.Size = new Size(224, 23);
+            searchComboBox.Size = new Size(224, 29);
             searchComboBox.TabIndex = 6;
             searchComboBox.TextUpdate += searchComboBox_TextUpdate;
             // 
